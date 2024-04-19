@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PetWorldOficial.Domain", "PetWorldOficial.Domain", "{DA7BBFB6-322A-43A9-A480-4CD083860D7E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetWorldOficial.Domain", "PetWorldOficial.Domain\PetWorldOficial.Domain\PetWorldOficial.Domain.csproj", "{B5D03DE1-1C93-4958-AD1C-06123722A746}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PetWorldOficial.Application", "PetWorldOficial.Application", "{2EFAC487-FA6A-4CA3-A40D-D829014FF5C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetWorldOficial.Application", "PetWorldOficial.Application\PetWorldOficial.Application\PetWorldOficial.Application.csproj", "{10DF9394-85E0-4CC9-8FE2-248928DDCD7A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PetWorldOficial.Infrastructure", "PetWorldOficial.Infrastructure", "{B993CC91-5757-4991-87E4-615491BFAE7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetWorldOficial.Infrastructure", "PetWorldOficial.Infrastructure\PetWorldOficial.Infrastructure\PetWorldOficial.Infrastructure.csproj", "{C92A036C-2203-49C7-81A0-D8A0D35E2C8C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PetworldOficial.Presentation", "PetworldOficial.Presentation", "{A23B1162-3850-487B-AEB5-4D0A177599E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetworldOficial.MVC", "PetworldOficial.Presentation\PetworldOficial.MVC\PetworldOficial.MVC.csproj", "{07EBAE19-E57A-4BAF-9D84-10035725EAB4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5D03DE1-1C93-4958-AD1C-06123722A746}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5D03DE1-1C93-4958-AD1C-06123722A746}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5D03DE1-1C93-4958-AD1C-06123722A746}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5D03DE1-1C93-4958-AD1C-06123722A746}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10DF9394-85E0-4CC9-8FE2-248928DDCD7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10DF9394-85E0-4CC9-8FE2-248928DDCD7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10DF9394-85E0-4CC9-8FE2-248928DDCD7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10DF9394-85E0-4CC9-8FE2-248928DDCD7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C92A036C-2203-49C7-81A0-D8A0D35E2C8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C92A036C-2203-49C7-81A0-D8A0D35E2C8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C92A036C-2203-49C7-81A0-D8A0D35E2C8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C92A036C-2203-49C7-81A0-D8A0D35E2C8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07EBAE19-E57A-4BAF-9D84-10035725EAB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07EBAE19-E57A-4BAF-9D84-10035725EAB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07EBAE19-E57A-4BAF-9D84-10035725EAB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07EBAE19-E57A-4BAF-9D84-10035725EAB4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B5D03DE1-1C93-4958-AD1C-06123722A746} = {DA7BBFB6-322A-43A9-A480-4CD083860D7E}
+		{10DF9394-85E0-4CC9-8FE2-248928DDCD7A} = {2EFAC487-FA6A-4CA3-A40D-D829014FF5C7}
+		{C92A036C-2203-49C7-81A0-D8A0D35E2C8C} = {B993CC91-5757-4991-87E4-615491BFAE7C}
+		{07EBAE19-E57A-4BAF-9D84-10035725EAB4} = {A23B1162-3850-487B-AEB5-4D0A177599E6}
+	EndGlobalSection
+EndGlobal
