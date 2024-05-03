@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PetWorldOficial.Infrastructure.Data;
-using PetWorldOficial.Infrastructure.IdentityModels;
+using PetWorldOficial.Application.Mappers;
+using PetWorldOficial.Application.Services.Identity;
+using PetWorldOficial.Infrastructure.Context;
+using PetWorldOficial.Infrastructure.IdentityEntities;
+using PetWorldOficial.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,12 +19,18 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddDbContext<AppDbContext>(
     options =>
     {
-        options.UseSqlServer();
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<IRoleService, RoleService>();
+
+builder.Services.AddAutoMapper(typeof(UserProfile));
 
 var app = builder.Build();
 

@@ -1,32 +1,25 @@
-﻿using Flunt.Notifications;
-using Flunt.Validations;
-using PetWorldOficial.Domain.Enums;
+﻿using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Domain.ValueObjects;
 
-public class Document : Notifiable<Notification>
+public class Document
 {
-    public Document(string number, EDocument type)
+    public Document(string number)
     {
         Number = number;
-        Type = type;
+        Type = Validation(number);
     }
 
-    public EDocument Type { get; private set; }
+    public EDocument? Type { get; private set; }
     public string Number { get; private set; }
 
-    public bool Validate()
+    private EDocument? Validation(string number)
     {
-        switch (Number.Length)
+        return number.Length switch
         {
-            case 8 when Type == EDocument.Cpf:
-            case 11 when Type == EDocument.Cnpj:
-                return true;
-            default:
-                AddNotification(new Notification(
-                    "Document.Number",
-                    "No caso de CPF deve ter 8 digitos e CNPJ 11 digitos (SEM CARACTERES ESPECIAIS) "));
-                return false;
-        }
+            8 => EDocument.Cpf,
+            11 => EDocument.Cnpj,
+            _ => null
+        };
     }
 }

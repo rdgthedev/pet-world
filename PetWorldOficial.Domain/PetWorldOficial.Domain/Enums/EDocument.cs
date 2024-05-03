@@ -1,4 +1,6 @@
-﻿namespace PetWorldOficial.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PetWorldOficial.Domain.Enums;
 
 public enum EDocument
 {
