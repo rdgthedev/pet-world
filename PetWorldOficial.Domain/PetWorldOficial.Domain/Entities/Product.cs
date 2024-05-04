@@ -8,11 +8,14 @@ public class Product : Entity
     public Product(
         string name, 
         string description, 
-        double price)
+        double price, string image, 
+        Supplier supplier)
     {
         Name = name;
         Description = description;
         Price = price;
+        Image = image;
+        Supplier = supplier;
     }
     
     public string Name { get; private set; }
