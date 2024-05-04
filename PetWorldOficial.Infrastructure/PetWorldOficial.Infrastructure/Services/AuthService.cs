@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.DTOs.Input;
@@ -14,11 +16,11 @@ public class AuthService : IAuthService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IUserService _userService;
-
     public AuthService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IUserService userService)
+        IUserService userService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -26,7 +28,7 @@ public class AuthService : IAuthService
     }
 
     [HttpPost]
-    public async Task<bool> Login(UserLoginDTO user)
+    public async Task Login(UserLoginDTO user)
     {
         var userResult = await _userManager.
             Users.
@@ -39,8 +41,6 @@ public class AuthService : IAuthService
             throw new LoginInvalidException("Usuário ou Senha inválidos!"); 
         
         await _signInManager.SignInAsync(userResult, false);
-        
-        return true;
     }
     
     public async Task<bool> Register(UserRegisterDTO model)
@@ -63,10 +63,11 @@ public class AuthService : IAuthService
             model.City,
             model.State);
 
-        var resultCreate = await _userManager.CreateAsync(user, model.Password);
+        var result = await _userManager.CreateAsync(user, model.Password);
 
-        if (resultCreate.Succeeded){ created = await _userService.AddToRole(model, ERole.User); }
-
+        if (result.Succeeded){ created = await _userService.AddToRole(model, ERole.User); }
         return created;
     }
+
+    public async Task Logout() => await _signInManager.SignOutAsync();
 }

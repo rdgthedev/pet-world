@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Net;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Input;
 using PetWorldOficial.Application.Services.Identity;
@@ -75,5 +78,11 @@ public class AuthController : Controller
             ModelState.AddModelError(string.Empty, ex.Message);
             return View("Register");
         }
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await _authService.Logout();
+        return RedirectToAction("Index", "Home");
     }
 }

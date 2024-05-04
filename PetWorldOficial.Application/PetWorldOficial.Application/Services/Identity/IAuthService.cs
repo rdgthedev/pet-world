@@ -4,6 +4,7 @@ namespace PetWorldOficial.Application.Services.Identity;
 
 public interface IAuthService
 {
-    Task<bool> Login(UserLoginDTO user);
+    Task Login(UserLoginDTO user);
     Task<bool> Register(UserRegisterDTO user);
+    Task Logout();
 }
