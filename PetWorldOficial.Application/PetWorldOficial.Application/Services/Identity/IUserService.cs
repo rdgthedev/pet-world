@@ -15,6 +15,4 @@ public interface IUserService
         string? document = null,
         string? email = null,
         string? phoneNumber = null);
-
-    Task<bool> AddToRole(UserRegisterDTO user, ERole typeRole);
 }

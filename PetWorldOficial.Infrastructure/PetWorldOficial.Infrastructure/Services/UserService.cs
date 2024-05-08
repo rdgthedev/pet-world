@@ -12,17 +12,14 @@ namespace PetWorldOficial.Infrastructure.Services;
 public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly IRoleService _roleService;
     
     public UserService(
         UserManager<ApplicationUser> userManager,
-        IRoleService roleService,
-        RoleManager<ApplicationRole> roleManager)
+        IRoleService roleService)
     {
         _userManager = userManager;
         _roleService = roleService;
-        _roleManager = roleManager;
     }
     
     public async Task<List<OutputUserDto>> GetAll()

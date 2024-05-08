@@ -1,0 +1,43 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PetWorldOficial.Domain.Entities;
+
+namespace PetWorldOficial.Infrastructure.Mappings;
+
+public class ProductMap : IEntityTypeConfiguration<Product>
+{
+    public void Configure(EntityTypeBuilder<Product> builder)
+    {
+        builder.ToTable("Product");
+
+        builder.HasKey(product => product.Id);
+        builder.Property(product => product.Id)
+            .ValueGeneratedOnAdd()
+            .UseIdentityColumn();
+
+        builder.Property(product => product.Name)
+            .HasColumnName("Name")
+            .HasColumnType("VARCHAR")
+            .HasMaxLength(180);
+        
+        builder.Property(product => product.Description)
+            .HasColumnName("Description")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(255);
+        
+        builder.Property(product => product.Image)
+            .HasColumnName("Image")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(255);
+
+        builder.Property(product => product.Price)
+            .HasColumnName("Price")
+            .HasColumnType("DECIMAL(18,2)");
+
+        builder.HasOne(product => product.Supplier)
+            .WithMany(supplier => supplier.Products)
+            .HasForeignKey("SupplierId")
+            .HasConstraintName("FK_Product_Supplier")
+            .OnDelete(DeleteBehavior.SetNull);
+    }
+}

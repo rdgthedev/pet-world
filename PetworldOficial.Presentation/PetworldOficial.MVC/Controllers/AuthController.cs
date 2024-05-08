@@ -1,7 +1,4 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Input;
 using PetWorldOficial.Application.Services.Identity;
@@ -53,7 +50,7 @@ public class AuthController : Controller
     public async Task<IActionResult> Register([FromForm] UserRegisterDTO userRegisterDTO)
     {
         if (!ModelState.IsValid) return View();
-        
+
         try
         {
             var userResult = await _userService.UserExists(
@@ -62,15 +59,15 @@ public class AuthController : Controller
                 userRegisterDTO.Email,
                 userRegisterDTO.PhoneNumber);
 
-            if (userResult != null) 
+            if (userResult != null)
                 throw new UserAlreadyExistsException("Usuário já existe, verifique os campos: " +
                                                      "Nome de Usuário, Documento, Email e Número de Telefone");
 
             if (!await _authService.Register(userRegisterDTO))
-                ModelState.AddModelError(string.Empty,"Não foi possível cadastrar o usuário!");
-            
+                ModelState.AddModelError(string.Empty, "Não foi possível cadastrar o usuário!");
+
             TempData["SuccessMessage"] = "Usuário criado com sucesso!";
-            
+
             return View();
         }
         catch (UserAlreadyExistsException ex)
@@ -78,11 +75,25 @@ public class AuthController : Controller
             ModelState.AddModelError(string.Empty, ex.Message);
             return View("Register");
         }
+        catch(Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o cadastro!";
+            return RedirectToPage("Error");
+        }
     }
-
+    
+    [HttpGet]
     public async Task<IActionResult> Logout()
     {
-        await _authService.Logout();
-        return RedirectToAction("Index", "Home");
-    }
+        try
+        {
+            await _authService.Logout();
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Occoreu um erro interno!";
+            return RedirectToPage("Error");
+        }
+    }  
 }

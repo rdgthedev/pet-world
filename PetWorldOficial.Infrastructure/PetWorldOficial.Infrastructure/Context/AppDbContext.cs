@@ -10,7 +10,8 @@ namespace PetWorldOficial.Infrastructure.Context;
 public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
 {
     public DbSet<Product> Products { get; set; }
-
+    public DbSet<Supplier> Suppliers { get; set; }
+    
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }

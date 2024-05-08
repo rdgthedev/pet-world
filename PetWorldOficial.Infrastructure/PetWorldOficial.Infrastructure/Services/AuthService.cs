@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.DTOs.Input;
@@ -15,16 +13,12 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IUserService _userService;
     public AuthService(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IUserService userService,
-        IHttpContextAccessor httpContextAccessor)
+        SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
-        _userService = userService;
     }
 
     [HttpPost]
@@ -45,8 +39,6 @@ public class AuthService : IAuthService
     
     public async Task<bool> Register(UserRegisterDTO model)
     {
-        var created = false;
-        
         var user = new ApplicationUser(
             model.Name,
             model.UserName,
@@ -62,11 +54,11 @@ public class AuthService : IAuthService
             model.Complement,
             model.City,
             model.State);
+        
+        var resultUserCreated = await _userManager.CreateAsync(user, model.Password);
+        var resultRoleAdded = await _userManager.AddToRoleAsync(user, ERole.User.ToString());
 
-        var result = await _userManager.CreateAsync(user, model.Password);
-
-        if (result.Succeeded){ created = await _userService.AddToRole(model, ERole.User); }
-        return created;
+        return resultUserCreated.Equals(resultRoleAdded);
     }
 
     public async Task Logout() => await _signInManager.SignOutAsync();
