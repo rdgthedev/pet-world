@@ -4,6 +4,8 @@ namespace PetWorldOficial.Domain.Entities;
 
 public class Supplier : Entity
 {
+    public Supplier(){ }
+    
     public Supplier(
         string company, 
         string cnpj, 

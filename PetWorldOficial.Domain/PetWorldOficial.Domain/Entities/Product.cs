@@ -1,10 +1,13 @@
 ﻿using System.Data;
+using System.Drawing;
 using PetWorldOficial.Domain.Common;
 
 namespace PetWorldOficial.Domain.Entities;
 
 public class Product : Entity
 {
+    public Product(){ }
+    
     public Product(
         string name, 
         string description, 
