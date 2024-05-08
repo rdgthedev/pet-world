@@ -9,28 +9,37 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    public Task<IEnumerable<Product>> GetAllAsync()
+    private readonly AppDbContext _context; 
+    public ProductRepository(AppDbContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+    
+    public async Task<IEnumerable<Product>> GetAllAsync()
+    {
+        return await _context.Products.AsNoTracking().ToListAsync();  
     }
 
-    public Task<Product> GetByIdAsync(int id)
+    public async Task<Product?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id)!;  
     }
 
-    public Task CreateAsync(Product product)
+    public async Task CreateAsync(Product product)
     {
-        throw new NotImplementedException();
+        await _context.Products.AddAsync(product);
+        await _context.SaveChangesAsync();
     }
 
-    public Task Update(Product product)
+    public async Task Update(Product product)
     {
-        throw new NotImplementedException();
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync();
     }
 
-    public Task Delete(Product product)
+    public async Task Delete(Product product)
     {
-        throw new NotImplementedException();
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
     }
 }
