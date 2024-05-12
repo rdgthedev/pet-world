@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PetWorldOficial.Application.DTOs.Input;
-using PetWorldOficial.Application.DTOs.Output;
-using PetWorldOficial.Application.Services.Identity;
+using PetWorldOficial.Application.DTOs.Role.Input;
+using PetWorldOficial.Application.DTOs.User.Output;
+using PetWorldOficial.Application.Services.Interfaces.Identity;
 using PetWorldOficial.Infrastructure.IdentityEntities;
 
 namespace PetWorldOficial.Infrastructure.Services;

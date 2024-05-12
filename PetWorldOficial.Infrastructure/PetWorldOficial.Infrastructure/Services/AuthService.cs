@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PetWorldOficial.Application.DTOs.Input;
-using PetWorldOficial.Application.Services.Identity;
+using PetWorldOficial.Application.DTOs.User.Input;
+using PetWorldOficial.Application.Services.Interfaces.Identity;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Infrastructure.IdentityEntities;

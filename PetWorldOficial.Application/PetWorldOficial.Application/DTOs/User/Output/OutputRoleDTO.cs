@@ -1,4 +1,4 @@
-﻿namespace PetWorldOficial.Application.DTOs.Output;
+﻿namespace PetWorldOficial.Application.DTOs.User.Output;
 
 public class OutputRoleDTO
 {

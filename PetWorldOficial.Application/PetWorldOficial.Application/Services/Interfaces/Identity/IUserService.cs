@@ -1,9 +1,6 @@
-﻿using PetWorldOficial.Application.DTOs;
-using PetWorldOficial.Application.DTOs.Input;
-using PetWorldOficial.Application.DTOs.Output;
-using PetWorldOficial.Domain.Enums;
+﻿using PetWorldOficial.Application.DTOs.User.Output;
 
-namespace PetWorldOficial.Application.Services.Identity;
+namespace PetWorldOficial.Application.Services.Interfaces.Identity;
 
 public interface IUserService
 {

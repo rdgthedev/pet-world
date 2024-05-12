@@ -1,0 +1,20 @@
+﻿@model IEnumerable<Product>
+
+@{
+    Layout = "_Layout";
+}
+
+@foreach (var product in Model)
+{
+    <div class="card" style="width: 18rem;">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <p class="card-text">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam
+                architecto culpa dolorum esse eveniet facere fuga harum incidunt molestias nam nisi
+                officiis perspiciatis quisquam, ratione recusandae reiciendis totam, ut voluptatibus!
+            </p>
+            <a href="#" class="btn btn-primary d-flex justify-content-center align-items-center">Adicionar ao carrinho</a>
+        </div>
+    </div>
+}

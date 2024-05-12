@@ -1,4 +1,4 @@
-﻿namespace PetWorldOficial.Application.DTOs.Input;
+﻿namespace PetWorldOficial.Application.DTOs.User.Input;
 
 public class UserLoginDTO
 {

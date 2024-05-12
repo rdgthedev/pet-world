@@ -1,41 +1,40 @@
-﻿using System.Data;
-using System.Drawing;
-using PetWorldOficial.Domain.Common;
-
+﻿using PetWorldOficial.Domain.Common;
 namespace PetWorldOficial.Domain.Entities;
 
 public class Product : Entity
 {
-    public Product(){ }
+    protected Product(){ }
     
     public Product(
         string name, 
         string description, 
-        double price, string image, 
-        Supplier supplier)
+        double price, 
+        string image,
+        int supplierId)
     {
         Name = name;
         Description = description;
         Price = price;
         Image = image;
-        Supplier = supplier;
+        // Quantity = quantity;
+        SupplierId = supplierId;
     }
     
     public string Name { get; private set; }
     public string Description { get; private set; } 
     public string Image { get; private set; } 
-    public double Price { get; private set; } 
+    public double Price { get; private set; }
+    public int SupplierId { get; private set; }
     public Supplier Supplier { get; private set; }
     
-    public void Update(
-        string name,
-        string description,
-        string image,
-        double price)
+    public void Update(Product product)
     {
-        Name = name;
-        Description = description;
-        Image = image;
-        Price = price;
+        if(!string.IsNullOrEmpty(product.Name))
+            Name = product.Name;
+        
+        Description = product.Description;
+        Image = product.Image;
+        Price = product.Price;
+        SupplierId = product.SupplierId;
     }
 }

@@ -1,0 +1,12 @@
+﻿@model IEnumerable<Supplier>
+
+<div class="col-md-8">
+    <label asp-for="@Model" class="form-label">Fornecedor<span style="color: red;">*</span></label>
+    <select class="form-select shadow-none" name="" id="">
+        <option value="" selected disabled>Selecione um fornecedor</option>
+        @foreach (var supplier in Model)
+        {
+            <option value="@supplier.Id">@supplier.Company</option>
+        }
+    </select>
+</div>
