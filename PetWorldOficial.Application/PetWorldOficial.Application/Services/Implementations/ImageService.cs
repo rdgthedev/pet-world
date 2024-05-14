@@ -18,30 +18,24 @@ public class ImageService : IImageService
         return imageExtension;
     }
 
-    public string PathBind(string path1, string path2)
-    {
-        var a = Path.Combine(path1, "Images");
-        return Path.Combine(path1, path2);
-    }
+    public string PathBind(string path1, string path2) => Path.Combine(path1, path2);
 
     public bool DirectoryValidator(string directory) => Directory.Exists(directory);
 
-    public async Task CreateImage(IFormFile file, string path)
+    public async Task SaveImage(IFormFile file, string path, string imageUrl)
     {
-        await using var imageFileStream = new FileStream(path, FileMode.Create);
+        var filePath = Path.Combine(path, "Images");
+        
+        if (!DirectoryValidator(filePath)) throw new NotFoundException("Este diretório não existe ou está incorreto!");
+        
+        await using var imageFileStream = new FileStream(Path.Combine(filePath, imageUrl), FileMode.Create);
         await file.CopyToAsync(imageFileStream);
     }
 
-    public async Task<string> ProcessImage(IFormFile file, string wwwrootPath)
+    public string GenerateImageName(IFormFile file, string wwwrootPath)
     {
         var extension = ExtensionValidator(file.FileName);
-        var filePath = PathBind(wwwrootPath, "Images");
-
-        if (!DirectoryValidator(filePath))
-            throw new NotFoundException("Este diretório não existe ou está incorreto!");
-        
-        var newFilePath = PathBind(filePath, $"{Guid.NewGuid()}{extension}");
-        await CreateImage(file, newFilePath);
-        return newFilePath;
+        var imageName = $"{Guid.NewGuid()}{extension}";
+        return imageName;
     }
 }

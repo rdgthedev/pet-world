@@ -6,7 +6,7 @@ public class Product : Entity
     protected Product(){ }
     
     public Product(
-        string name, 
+        string name,
         string description, 
         double price, 
         string image,
@@ -16,7 +16,6 @@ public class Product : Entity
         Description = description;
         Price = price;
         Image = image;
-        // Quantity = quantity;
         SupplierId = supplierId;
     }
     
@@ -26,15 +25,4 @@ public class Product : Entity
     public double Price { get; private set; }
     public int SupplierId { get; private set; }
     public Supplier Supplier { get; private set; }
-    
-    public void Update(Product product)
-    {
-        if(!string.IsNullOrEmpty(product.Name))
-            Name = product.Name;
-        
-        Description = product.Description;
-        Image = product.Image;
-        Price = product.Price;
-        SupplierId = product.SupplierId;
-    }
 }

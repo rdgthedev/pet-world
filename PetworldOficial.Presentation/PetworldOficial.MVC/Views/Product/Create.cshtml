@@ -1,4 +1,5 @@
-﻿@model CreateViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RegisterProductDTO
 
 @{
     Layout = "_LayoutRegister";
@@ -10,50 +11,50 @@
     <br>
 </div>
 
-    <div class="container">
-        <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Product" asp-action="Create" method="post">
+<div class="container">
+    <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Product" asp-action="Create" method="post">
             
-            <div class="col-md-8">
-                <label asp-for="@Model.Product.Name" class="form-label">Nome<span style="color: red;">*</span></label>
-                <input asp-for="@Model.Product.Name" type="text" class="form-control shadow-none" placeholder="Nome">
-            </div>
+        <div class="col-md-8">
+            <label asp-for="@Model.Name" class="form-label">Nome<span style="color: red;">*</span></label>
+            <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Nome">
+        </div>
 
-            <div class="col-md-8">
-                <label asp-for="@Model.Product.Description" class="form-label">Descrição<span style="color: red;">*</span></label>
-                <input asp-for="@Model.Product.Description" type="text" class="form-control shadow-none" placeholder="Descrição">
-            </div>
+        <div class="col-md-8">
+            <label asp-for="@Model.Description" class="form-label">Descrição<span style="color: red;">*</span></label>
+            <input asp-for="@Model.Description" type="text" class="form-control shadow-none" placeholder="Descrição">
+        </div>
 
-            <div class="col-md-8">
-                <label asp-for="@Model.Product.Price" class="form-label">Preço<span style="color: red;">*</span></label>
-                <input asp-for="@Model.Product.Price" type="text" class="form-control shadow-none" placeholder="Preço">
-            </div>
+        <div class="col-md-8">
+            <label asp-for="@Model.Price" class="form-label">Preço<span style="color: red;">*</span></label>
+            <input asp-for="@Model.Price" type="text" class="form-control shadow-none" placeholder="Preço">
+        </div>
 
-            @* <div class="col-md-8"> *@
-            @*     <label asp-for="@Model.Product.Quantity" class="form-label">Quantidade<span style="color: red;">*</span></label> *@
-            @*     <input asp-for="@Model.Product.Quantity" type="text" class="form-control shadow-none" placeholder="Quantidade"> *@
-            @* </div> *@
-                <div class="col-md-8">
-                    <label asp-for="@Model.Product.SupplierId" class="form-label">Fornecedor<span style="color: red;">*</span></label>
-                    <select asp-for="@Model.Product.SupplierId" class="form-select shadow-none">
-                        <option value="" selected disabled>Selecione um fornecedor</option>
-                        @foreach (var supplier in Model.Suppliers)
-                        {
-                            <option value="@supplier!.Id">@supplier.Company</option>
-                        }
-                    </select>
-                </div>
+        @* <div class="col-md-8"> *@
+        @*     <label asp-for="@Model.Product.Quantity" class="form-label">Quantidade<span style="color: red;">*</span></label> *@
+        @*     <input asp-for="@Model.Product.Quantity" type="text" class="form-control shadow-none" placeholder="Quantidade"> *@
+        @* </div> *@
+        <div class="col-md-8">
+            <label asp-for="@Model.SupplierId" class="form-label">Fornecedor<span style="color: red;">*</span></label>
+            <select asp-for="@Model.SupplierId" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione um fornecedor</option>
+                @foreach (var supplier in Model.Suppliers)
+                {
+                    <option value="@supplier!.Id">@supplier.Company</option>
+                }
+            </select>
+        </div>
             
-            <div class="col-md-8">
-                <label asp-for="@Model.Product.Image" class="form-label">Imagem<span style="color: red;">*</span></label>
-                <input asp-for="@Model.Product.Image" type="file" class="form-control shadow-none" placeholder="Escolha uma imagem">
-            </div>
-            <div class="d-grid gap-2 col-4 mx-auto col-md-5">
-                <br>
-                <button class="btn btn-dark btn-lg" type="submit">Cadastrar</button>
-            </div>
-        </form>
+        <div class="col-md-8">
+            <label class="form-label">Imagem<span style="color: red;">*</span></label>
+            <input type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
+        </div>
+        <div class="d-grid gap-2 col-4 mx-auto col-md-5">
+            <br>
+            <button class="btn btn-dark btn-lg" type="submit">Cadastrar</button>
+        </div>
+    </form>
         
-        <footer>
+    <footer>
 
-        </footer>
-    </div>
+    </footer>
+</div>

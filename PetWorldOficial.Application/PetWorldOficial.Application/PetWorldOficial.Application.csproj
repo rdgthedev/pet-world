@@ -9,9 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\Product\Output\" />
-    <Folder Include="DTOs\Role\Output\" />
-    <Folder Include="DTOs\Supplier\" />
     <Folder Include="Services\Interfaces\" />
   </ItemGroup>
 

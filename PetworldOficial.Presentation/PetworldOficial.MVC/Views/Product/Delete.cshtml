@@ -1,18 +1,56 @@
-﻿@* @model TModel *@
-@* *@
-@* @{ *@
-@*     Layout = null; *@
-@* } *@
-@* *@
-@* <!DOCTYPE html> *@
-@* *@
-@* <html> *@
-@* <head> *@
-@*     <title>title</title> *@
-@* </head> *@
-@* <body> *@
-@* <div> *@
-@*        *@
-@* </div> *@
-@* </body> *@
-@* </html> *@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model DeleteProductDTO
+@{
+    Layout = "_LayoutRegister";
+}
+
+<div class="container-fluid text-black py-3">
+    <br>
+    <h2 class="display-6 text-center fw">Dados do Produto</h2>
+    <br>
+</div>
+
+<div class="d-flex justify-content-center align-items-center">
+    <img style="width: 350px;" src="\Images/@Model.Product.Image" alt="AQUI">
+</div>
+
+<div class="container">
+    <br>
+    <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Product" asp-action="Update" method="post">
+
+
+        <div class="col-md-8">
+            <label asp-for="@Model.Product.Id" class="form-label">Id</label>
+            <input asp-for="@Model.Product.Id" type="text" class="form-control shadow-none" placeholder="Id" readonly>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.Product.Name" class="form-label">Nome</label>
+            <input asp-for="@Model.Product.Name" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.Product.Description" class="form-label">Descrição</label>
+            <input asp-for="@Model.Product.Description" type="text" class="form-control shadow-none" placeholder="Descrição" readonly>
+        </div>
+        
+        <div class="col-md-8">
+            <label asp-for="@Model.Product.Price" class="form-label">Preço</label>
+            <input asp-for="@Model.Product.Price" type="text" class="form-control shadow-none" placeholder="Preço" readonly>
+        </div>
+        
+        <div class="col-md-8">
+            <label asp-for="@Model.Supplier.Company" class="form-label">Fornecedor</label>
+            <input asp-for="@Model.Supplier.Company" type="text" class="form-control shadow-none" placeholder="Descrição" readonly>
+        </div>
+
+        <div class="d-grid gap-2 col-4 mx-auto col-md-5">
+            <br>
+            <button class="btn btn-dark btn-lg" type="submit">Deletar</button>
+        </div>
+    </form>
+
+    <footer>
+
+    </footer>
+</div>

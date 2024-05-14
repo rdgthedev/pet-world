@@ -45,7 +45,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddTransient<IImageService, ImageService>();
 
-builder.Services.AddAutoMapper(typeof(UserProfile));
+builder.Services.AddAutoMapper(typeof(ProductUpdateDTOToProduct));
 
 var app = builder.Build();
 

@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PetWorldOficial.Application.DTOs.Product.Input;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using PetWorldOficial.Application.DTOs.Product;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetworldOficial.MVC.ViewModels.Product;
+using PetworldOficial.MVC.Models.Product;
 
 namespace PetworldOficial.MVC.Controllers;
 
@@ -14,17 +15,20 @@ public class ProductController : Controller
     private readonly ISupplierRepository _supplierRepository;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IImageService _imageService;
+    private readonly IMapper _mapper;
     
     public ProductController(
         IProductRepository productRepository,
         ISupplierRepository supplierRepository,
         IWebHostEnvironment webHostEnvironment,
-        IImageService imageService)
+        IImageService imageService,
+        IMapper mapper)
     {
         _productRepository = productRepository;
         _supplierRepository = supplierRepository;
         _webHostEnvironment = webHostEnvironment;
         _imageService = imageService;
+        _mapper = mapper;
     }
     
     [HttpGet]
@@ -67,105 +71,145 @@ public class ProductController : Controller
 
     [HttpGet]
     public async Task<IActionResult> Create()
-        => View(new CreateViewModel(null, await _supplierRepository.GetAllAsync()));
+        => View(new RegisterProductDTO { Suppliers = await _supplierRepository.GetAllAsync() });
     
     
     [HttpPost]
-    public async Task<IActionResult> Create([FromForm] CreateViewModel productModel)
+    public async Task<IActionResult> Create([FromForm] RegisterProductDTO registerProductModel, IFormFile file)
     {
-        if (!ModelState.IsValid) 
-            return View(new CreateViewModel(productModel.Product, await _supplierRepository.GetAllAsync()));
+        registerProductModel.Suppliers = await _supplierRepository.GetAllAsync();
 
+        if (!ModelState.IsValid)
+        {
+            if(file == null)
+                ModelState.AddModelError(string.Empty, "A imagem é obrigatória!");
+            
+            return View(registerProductModel);
+        }
+        
         try
         {
-            var supplier = await _supplierRepository.GetByIdAsync(productModel.Product.SupplierId);
+            var supplier = await _supplierRepository.GetByIdAsync(registerProductModel.SupplierId);
 
             if (supplier == null) throw new NotFoundException("Fornecedor não encontrado!");
-
-            var imageUrl = await _imageService.ProcessImage(productModel.Product.Image, _webHostEnvironment.WebRootPath);
             
-            var product = new Product(
-                productModel.Product.Name,
-                productModel.Product.Description,
-                productModel.Product.Price,
-                imageUrl,
-                supplier!.Id);
+            registerProductModel.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
 
+            var product = _mapper.Map<Product>(registerProductModel);
+            
             await _productRepository.CreateAsync(product);
+            await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, product.Image);
+            
             TempData["SuccessMessage"] = "Produto criado com sucesso!";
             
-            ModelState.Clear();
-            return View(new CreateViewModel(null!, await _supplierRepository.GetAllAsync()));
+            return View();
         }
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
             ModelState.Clear();
-            return View(new CreateViewModel(null!, await _supplierRepository.GetAllAsync()));
+            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers});
         }
         catch(Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
             ModelState.Clear();
-            return View(new CreateViewModel(null!, await _supplierRepository.GetAllAsync()));
+            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers});
         }
     }
-    
-    // [HttpPost]
-    // public async Task<IActionResult> Update([FromForm] ProductUpdateDTO productUpdateDto)
-    // {
-    //     if (!ModelState.IsValid) return View(productUpdateDto);
-    //
-    //     try
-    //     {
-    //         var product = await _productRepository.GetByIdAsync(productUpdateDto.Id);
-    //
-    //         if (product is null) throw new NotFoundException("Produto não encontrado!");
-    //
-    //         var imageUrl = _processImageService.ProcessImage(productUpdateDto.Image!, _webHostEnvironment.WebRootPath);
-    //         
-    //         product.Update(productUpdateDto);
-    //
-    //         await _productRepository.Update(product);
-    //         TempData["SuccessMessage"] = "Produto alterado com sucesso!";
-    //         
-    //         return View();
-    //     }
-    //     catch (NotFoundException e)
-    //     {
-    //         ModelState.AddModelError(String.Empty, e.Message);
-    //         return View();
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-    //         return View();
-    //     }
-    // }
+
+    [HttpGet]
+    public async Task<IActionResult> Update([FromRoute] int id)
+    {
+        var productResult = await _productRepository.GetByIdAsync(id);
+        var suppliers = await _supplierRepository.GetAllAsync();
+        
+        if (productResult is null) throw new NotFoundException("Produto não encontrado!");
+        
+        var product = _mapper.Map<UpdateProductDTO>(productResult);
+        
+        product.Suppliers = suppliers;
+        
+        return View(product);
+    }
     
     [HttpPost]
-    public async Task<IActionResult> Delete([FromForm] int id)
+    public async Task<IActionResult> Update(
+        [FromForm] UpdateProductDTO updateProductDto, 
+        IFormFile? file)
     {
+        updateProductDto.Suppliers = await _supplierRepository.GetAllAsync();
+        
+        if (!ModelState.IsValid) 
+            return View(updateProductDto);
+        
         try
         {
-            var product = await _productRepository.GetByIdAsync(id);
+            var productResult = await _productRepository.GetByIdAsync(updateProductDto.Id);
+    
+            if (productResult is null) throw new NotFoundException("Produto não encontrado!");
 
-            if (product is null) throw new NotFoundException("Produto não encontrado!");
+            updateProductDto.ImageUrl = productResult.Image;
 
-            await _productRepository.Delete(product);
-            TempData["SuccessMessage"] = "Produto deletado com sucesso!";
+            if (file != null)
+            {
+                updateProductDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
+                await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, updateProductDto.ImageUrl);
+            }
 
-            return View();
+            var productUpdate = _mapper.Map<Product>(updateProductDto);
+            
+            await _productRepository.Update(productUpdate);
+            
+            TempData["SuccessMessage"] = "Produto alterado com sucesso!";
+            
+            return View(updateProductDto);
         }
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
+            return RedirectToAction("Products", "Product");
         }
-        catch (Exception e)
+        catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return View();
+            return RedirectToAction("Error", "Home");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        var product = await _productRepository.GetByIdAsync(id);
+
+        if (product is null) throw new NotFoundException("Produto não encontrado!");
+
+        var supplier = await _supplierRepository.GetByIdAsync(product.SupplierId);
+        
+        if (supplier is null) throw new NotFoundException("Fornecedor não encontrado!");
+        
+        return View(new DeleteProductDTO(product, supplier));
+    }
+    
+    [HttpDelete]
+    public async Task<IActionResult> Delete([FromForm] Product product)
+    {
+        try
+        {
+            await _productRepository.Delete(product);
+            TempData["SuccessMessage"] = "Produto deletado com sucesso!";
+
+            return RedirectToAction("Products", "Product");
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Products", "Product");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("Products", "Product");
         }
     }
 }
