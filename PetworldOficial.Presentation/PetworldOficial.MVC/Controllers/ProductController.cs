@@ -5,7 +5,6 @@ using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetworldOficial.MVC.Models.Product;
 
 namespace PetworldOficial.MVC.Controllers;
 

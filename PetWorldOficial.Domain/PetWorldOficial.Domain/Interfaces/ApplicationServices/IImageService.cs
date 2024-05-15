@@ -1,5 +1,4 @@
-﻿using System.Net.Mime;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace PetWorldOficial.Domain.Interfaces.ApplicationServices;
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using PetWorldOficial.Domain.Entities;
+﻿using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.DTOs.Product;
 public class RegisterProductDTO

@@ -43,6 +43,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IServiceRepository, IServiceRepository>();
 builder.Services.AddTransient<IImageService, ImageService>();
 
 builder.Services.AddAutoMapper(typeof(ProductUpdateDTOToProduct));
