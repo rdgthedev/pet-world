@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
@@ -14,6 +13,7 @@ public class ServiceController : Controller
         _serviceRepository = serviceRepository;
     }
 
+    [HttpGet("v1/services")]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -35,4 +35,28 @@ public class ServiceController : Controller
             return RedirectToAction("Error", "Home");
         }
     }
+
+    [HttpGet("v1/products/{id:int}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        try
+        {
+            var service = await _serviceRepository.GetById(id);
+
+            if (service is null) throw new NotFoundException("Serviço não encontrado!");
+
+            return View(service);
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("Error", "Home");
+        }
+    }
+    
 }
