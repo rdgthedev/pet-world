@@ -30,13 +30,21 @@ public class ProductController : Controller
         _mapper = mapper;
     }
     
-    [HttpGet]
-    public async Task<IActionResult> Products()
+    [HttpGet("v1/products")]
+    public async Task<IActionResult> GetAll()
     {
         try
         {
             var products = await _productRepository.GetAllAsync();
+            if (products == null)
+                throw new NotFoundException("Nenhum produto encontrado!");
+            
             return View(products);
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
         }
         catch (Exception)
         {
@@ -45,8 +53,8 @@ public class ProductController : Controller
         }
     }
     
-    [HttpGet]
-    public async Task<IActionResult> Product([FromRoute] int id)
+    [HttpGet("v1/products/{id:int}")]
+    public async Task<IActionResult> GetById([FromRoute] int id)
     {
         try
         {
@@ -68,7 +76,7 @@ public class ProductController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpGet("/v1/products/create")]
     public async Task<IActionResult> Create()
         => View(new RegisterProductDTO { Suppliers = await _supplierRepository.GetAllAsync() });
     
@@ -117,7 +125,7 @@ public class ProductController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpGet("v1/products/update/{id:int}")]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
         var productResult = await _productRepository.GetByIdAsync(id);
@@ -167,7 +175,7 @@ public class ProductController : Controller
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToAction("Products", "Product");
+            return RedirectToAction("GetAll", "Product");
         }
         catch (Exception)
         {
@@ -176,7 +184,7 @@ public class ProductController : Controller
         }
     }
 
-    [HttpGet]
+    [HttpGet("v1/products/delete/{id:int}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var product = await _productRepository.GetByIdAsync(id);
@@ -198,17 +206,17 @@ public class ProductController : Controller
             await _productRepository.Delete(product);
             TempData["SuccessMessage"] = "Produto deletado com sucesso!";
 
-            return RedirectToAction("Products", "Product");
+            return RedirectToAction("GetAll", "Product");
         }
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToAction("Products", "Product");
+            return RedirectToAction("GetAll", "Product");
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return RedirectToAction("Products", "Product");
+            return RedirectToAction("GetAll", "Product");
         }
     }
 }
