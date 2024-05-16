@@ -20,6 +20,11 @@ public class ServiceRepository : IServiceRepository
     {
         return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
     }
+    
+    public async Task<Service?> GetByName(string name)
+    {
+        return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Name == name);
+    }
 
     public async Task Create(Service service)
     {

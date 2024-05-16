@@ -13,8 +13,8 @@ public class ImageService : IImageService
         var imageExtension = Path.GetExtension(fileName);
         
         if (string.IsNullOrEmpty(extensions.FirstOrDefault(extension => extension.Equals(imageExtension))))
-            throw new Exception("Não foi possível processar esta imagem! Certifique de que a imagem é do tipo " +
-                                ".jpg\", \".png\", \".jpeg");
+            throw new InvalidExtensionException("O Tipo do arquivo é inválido! Certifique-se de que a imagem é do tipo " +
+                                                    ".jpg\", \".png\" ou \".jpeg");
         
         return imageExtension;
     }

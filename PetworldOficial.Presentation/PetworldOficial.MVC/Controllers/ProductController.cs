@@ -114,14 +114,17 @@ public class ProductController : Controller
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            ModelState.Clear();
-            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers});
+            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
+        }
+        catch (InvalidExtensionException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
         }
         catch(Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            ModelState.Clear();
-            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers});
+            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
         }
     }
 
@@ -173,6 +176,11 @@ public class ProductController : Controller
             return View(updateProductDto);
         }
         catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("GetAll", "Product");
+        }
+        catch (InvalidExtensionException e)
         {
             TempData["ErrorMessage"] = e.Message;
             return RedirectToAction("GetAll", "Product");

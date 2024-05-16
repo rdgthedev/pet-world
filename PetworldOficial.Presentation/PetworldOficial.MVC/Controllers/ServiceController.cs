@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using PetWorldOficial.Application.DTOs.Service;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
+using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetworldOficial.MVC.Controllers;
@@ -7,10 +11,20 @@ namespace PetworldOficial.MVC.Controllers;
 public class ServiceController : Controller
 {
     private readonly IServiceRepository _serviceRepository;
+    private readonly IImageService _imageService;
+    private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly IMapper _mapper;
     
-    public ServiceController(IServiceRepository serviceRepository)
+    public ServiceController(
+        IServiceRepository serviceRepository,
+        IImageService imageService,
+        IWebHostEnvironment webHostEnvironment,
+        IMapper mapper)
     {
         _serviceRepository = serviceRepository;
+        _imageService = imageService;
+        _webHostEnvironment = webHostEnvironment;
+        _mapper = mapper;
     }
 
     [HttpGet("v1/services")]
@@ -52,11 +66,10 @@ public class ServiceController : Controller
             TempData["ErrorMessage"] = e.Message;
             return View();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
             return RedirectToAction("Error", "Home");
         }
     }
-    
 }
