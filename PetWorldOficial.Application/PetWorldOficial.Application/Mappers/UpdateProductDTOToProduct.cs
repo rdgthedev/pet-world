@@ -4,9 +4,9 @@ using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Mappers;
 
-public class ProductUpdateDTOToProduct : Profile
+public class UpdateProductDTOToProduct : Profile
 {
-    public ProductUpdateDTOToProduct()
+    public UpdateProductDTOToProduct()
     {
         CreateMap<UpdateProductDTO, Product>()
             .ForMember(prod => prod.Id,
