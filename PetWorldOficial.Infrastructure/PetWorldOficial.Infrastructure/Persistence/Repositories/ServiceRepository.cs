@@ -5,11 +5,11 @@ using PetWorldOficial.Infrastructure.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
-public class ServiceRepostiory : IServiceRepository
+public class ServiceRepository : IServiceRepository
 {
     private readonly AppDbContext _context;
 
-    public ServiceRepostiory(AppDbContext context) => _context = context;
+    public ServiceRepository(AppDbContext context) => _context = context;
     
     public async Task<IEnumerable<Service>> GetAll()
     {

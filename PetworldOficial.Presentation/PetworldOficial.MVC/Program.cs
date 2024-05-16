@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Mappers;
 using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces.Identity;
-using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
@@ -43,7 +42,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
-builder.Services.AddScoped<IServiceRepository, IServiceRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddTransient<IImageService, ImageService>();
 
 builder.Services.AddAutoMapper(typeof(ProductUpdateDTOToProduct));
