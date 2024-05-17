@@ -30,7 +30,7 @@ public class ProductController : Controller
         _mapper = mapper;
     }
     
-    [HttpGet("v1/products")]
+    [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -53,7 +53,7 @@ public class ProductController : Controller
         }
     }
     
-    [HttpGet("v1/products/{id:int}")]
+    [HttpGet]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         try
@@ -76,7 +76,7 @@ public class ProductController : Controller
         }
     }
 
-    [HttpGet("/v1/products/create")]
+    [HttpGet]
     public async Task<IActionResult> Create()
         => View(new RegisterProductDTO { Suppliers = await _supplierRepository.GetAllAsync() });
     
@@ -108,27 +108,30 @@ public class ProductController : Controller
             await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, product.Image);
             
             TempData["SuccessMessage"] = "Produto criado com sucesso!";
-            
-            return View();
+            ModelState.Clear();
+            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
         }
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            ModelState.Clear();
             return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
         }
         catch (InvalidExtensionException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            ModelState.Clear();
             return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
         }
         catch(Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            ModelState.Clear();
             return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
         }
     }
 
-    [HttpGet("v1/products/update/{id:int}")]
+    [HttpGet]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
         var productResult = await _productRepository.GetByIdAsync(id);
@@ -192,7 +195,7 @@ public class ProductController : Controller
         }
     }
 
-    [HttpGet("v1/products/delete/{id:int}")]
+    [HttpGet]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
         var product = await _productRepository.GetByIdAsync(id);

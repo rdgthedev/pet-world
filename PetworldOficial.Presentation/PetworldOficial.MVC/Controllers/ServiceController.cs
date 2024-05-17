@@ -27,7 +27,7 @@ public class ServiceController : Controller
         _mapper = mapper;
     }
 
-    [HttpGet("v1/services")]
+    [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         try
@@ -50,7 +50,7 @@ public class ServiceController : Controller
         }
     }
 
-    [HttpGet("v1/services/{id:int}")]
+    [HttpGet]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -73,8 +73,8 @@ public class ServiceController : Controller
         }
     }
 
-    [HttpGet("v1/services/create")]
-    public async Task<IActionResult> Create() => View();
+    [HttpGet]
+    public IActionResult Create() => View();
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateServiceDTO createServiceDto, IFormFile file)
@@ -91,19 +91,19 @@ public class ServiceController : Controller
         {
             var serviceResult = await _serviceRepository.GetByName(createServiceDto.Name);
 
-            if (serviceResult is null) throw new NotFoundException("Serviço não encontrado!");
+            if (serviceResult != null) throw new ServiceAlreadyExistsException("Serviço já existe!");
 
-            var imageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
-
+            createServiceDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
+            await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, createServiceDto.ImageUrl);
+            
             var service = _mapper.Map<Service>(createServiceDto);
+            
             await _serviceRepository.Create(service);
-            await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, imageUrl);
-            
             TempData["SuccessMessage"] = "Serviço criado com sucesso!";
-            
+            ModelState.Clear();
             return View();
         }
-        catch (NotFoundException e)
+        catch (ServiceAlreadyExistsException e)
         {
             TempData["ErrorMessage"] = e.Message;
             return View();
