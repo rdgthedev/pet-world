@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.DTOs.Role.Input;
 using PetWorldOficial.Application.DTOs.User.Output;
 using PetWorldOficial.Application.Services.Interfaces.Identity;
-using PetWorldOficial.Infrastructure.IdentityEntities;
+using PetWorldOficial.Identity.IdentityEntities;
 
 namespace PetWorldOficial.Infrastructure.Services;
 

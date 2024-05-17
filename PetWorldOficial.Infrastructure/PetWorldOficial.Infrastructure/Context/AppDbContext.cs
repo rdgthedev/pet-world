@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Infrastructure.IdentityEntities;
 using PetWorldOficial.Infrastructure.Mappings;
 
 namespace PetWorldOficial.Infrastructure.Context;
 
-public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
+public class AppDbContext : DbContext
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
@@ -16,9 +14,9 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
     {
     }
 
-    // protected override void OnModelCreating(ModelBuilder builder)
-    // {
-    //     builder.ApplyConfiguration(new ProductMap());
-    //     builder.ApplyConfiguration(new SupplierMap());
-    // }
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.ApplyConfiguration(new ProductMap());
+        builder.ApplyConfiguration(new SupplierMap());
+    }
 }

@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace PetWorldOficial.Infrastructure.IdentityEntities;
+namespace PetWorldOficial.Identity.IdentityEntities;
 
-public sealed class ApplicationUser : IdentityUser<int>
+public class ApplicationUser : IdentityUser<int>
 {
     public ApplicationUser(
         string name, 
@@ -46,5 +46,5 @@ public sealed class ApplicationUser : IdentityUser<int>
     public string Complement { get; private set; }
     public string PostalCode { get; private set; }
     public string City { get; private set; }
-    public string State { get; private set; }
+    public string State { get; private set; }  
 }

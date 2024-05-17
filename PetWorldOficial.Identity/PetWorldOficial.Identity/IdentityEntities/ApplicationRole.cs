@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace PetWorldOficial.Infrastructure.IdentityEntities;
+namespace PetWorldOficial.Identity.IdentityEntities;
 
 public class ApplicationRole : IdentityRole<int>
 {

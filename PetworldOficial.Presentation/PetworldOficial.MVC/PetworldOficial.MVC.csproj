@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\PetWorldOficial.Infrastructure\PetWorldOficial.Infrastructure\PetWorldOficial.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\PetWorldOficial.Identity\PetWorldOficial.Identity\PetWorldOficial.Identity.csproj" />
   </ItemGroup>
 
   <ItemGroup>

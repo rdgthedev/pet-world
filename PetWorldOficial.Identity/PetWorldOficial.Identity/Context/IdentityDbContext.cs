@@ -1,6 +1,13 @@
-﻿namespace PetWorldOficial.Identity.Context;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using PetWorldOficial.Identity.IdentityEntities;
 
-public class IdentityDbContext
+namespace PetWorldOficial.Identity.Context;
+
+public class IdentityDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
 {
-    
+    public IdentityDbContext(DbContextOptions<IdentityDbContext> options ) : base(options)
+    {
+        
+    }
 }

@@ -1,5 +1,6 @@
 using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Mappers;
 using PetWorldOficial.Application.Services.Implementations;
@@ -7,9 +8,9 @@ using PetWorldOficial.Application.Services.Interfaces.Identity;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
-using PetWorldOficial.Infrastructure.IdentityEntities;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
+using ApplicationUser = PetWorldOficial.Identity.IdentityEntities.ApplicationUser;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +28,8 @@ builder.Services.AddDbContext<AppDbContext>(
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationUser>()
+    .AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(option =>

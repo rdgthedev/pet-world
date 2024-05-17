@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.User.Input;
 using PetWorldOficial.Application.Services.Interfaces.Identity;
 using PetWorldOficial.Domain.Exceptions;
-using PetWorldOficial.Infrastructure.IdentityEntities;
+using PetWorldOficial.Identity.IdentityEntities;
 
 namespace PetworldOficial.MVC.Controllers;
 
