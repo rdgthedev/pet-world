@@ -2,16 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.DTOs.Role.Input;
 using PetWorldOficial.Application.DTOs.User.Output;
-using PetWorldOficial.Application.Services.Interfaces.Identity;
-using PetWorldOficial.Identity.IdentityEntities;
+using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Infrastructure.Services;
 
 public class RoleService : IRoleService
 {
-    private readonly RoleManager<ApplicationRole> _roleManager;
+    private readonly RoleManager<Role> _roleManager;
     
-    public RoleService(RoleManager<ApplicationRole> roleManager)
+    public RoleService(RoleManager<Role> roleManager)
     {
         _roleManager = roleManager;
     }
@@ -33,7 +33,7 @@ public class RoleService : IRoleService
         IdentityResult? result = null;
        
         if(roleResult == null)
-            result = await _roleManager.CreateAsync(new ApplicationRole(role.Name));
+            result = await _roleManager.CreateAsync(new Role(role.Name));
         
         return result!.Succeeded;
     }

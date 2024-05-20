@@ -11,22 +11,22 @@ public class ServiceRepository : IServiceRepository
 
     public ServiceRepository(AppDbContext context) => _context = context;
     
-    public async Task<IEnumerable<Service>> GetAll()
+    public async Task<IEnumerable<Service>> GetAllAsync()
     {
         return await _context.Services.AsNoTracking().ToListAsync();
     }
 
-    public async Task<Service?> GetById(int id)
+    public async Task<Service?> GetByIdAsync(int id)
     {
         return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
     }
     
-    public async Task<Service?> GetByName(string name)
+    public async Task<Service?> GetByNameAsync(string name)
     {
         return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Name == name);
     }
 
-    public async Task Create(Service service)
+    public async Task CreateAsync(Service service)
     {
         await _context.AddAsync(service);
         await _context.SaveChangesAsync();

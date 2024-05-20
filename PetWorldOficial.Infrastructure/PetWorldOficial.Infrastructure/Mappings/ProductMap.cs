@@ -18,26 +18,33 @@ public class ProductMap : IEntityTypeConfiguration<Product>
         builder.Property(product => product.Name)
             .HasColumnName("Name")
             .HasColumnType("VARCHAR")
-            .HasMaxLength(180);
+            .HasMaxLength(180)
+            .IsRequired();
         
         builder.Property(product => product.Description)
             .HasColumnName("Description")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(255);
+            .HasMaxLength(255)
+            .IsRequired();
         
         builder.Property(product => product.Image)
             .HasColumnName("Image")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(255);
+            .HasMaxLength(255)
+            .IsRequired();
 
         builder.Property(product => product.Price)
             .HasColumnName("Price")
-            .HasColumnType("DECIMAL(18,2)");
+            .HasColumnType("MONEY")
+            .IsRequired();
 
         builder.HasOne(product => product.Supplier)
             .WithMany(supplier => supplier.Products)
             .HasForeignKey("SupplierId")
             .HasConstraintName("FK_Product_Supplier")
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasIndex(product => product.Id, "IX_Product_Id")
+            .IsUnique();
     }
 }
