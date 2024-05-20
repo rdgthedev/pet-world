@@ -150,14 +150,14 @@ public class ProductController : Controller
         try
         {
             var productResult = await _productService.GetById(updateProductDto.Id);
-            
-            updateProductDto.ImageUrl = productResult.Image;
 
             if (file != null)
             {
                 updateProductDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
                 await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, updateProductDto.ImageUrl);
             }
+            else
+                updateProductDto.ImageUrl = productResult.Image;
             
             await _productService.Update(updateProductDto);
             TempData["SuccessMessage"] = "Produto alterado com sucesso!";
@@ -184,28 +184,40 @@ public class ProductController : Controller
     [HttpGet]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var product =_mapper.Map<Product>(await _productService.GetById(id));
-        
-        var supplier = await _supplierRepository.GetByIdAsync(product.SupplierId);
-        
-        if (supplier is null) throw new NotFoundException("Fornecedor não encontrado!");
-        
-        return View(new DeleteProductDTO(product, supplier));
-    }
-    
-    [HttpDelete]
-    public async Task<IActionResult> Delete([FromForm] Product product)
-    {
         try
         {
-            await _productService.Delete(product);
-            TempData["SuccessMessage"] = "Produto deletado com sucesso!";
+            var product = _mapper.Map<DeleteProductDTO>(await _productService.GetById(id));
+            
+            var supplier = await _supplierRepository.GetByIdAsync(product.SupplierId);
+        
+            if (supplier is null) throw new NotFoundException("Fornecedor não encontrado!");
+        
+            product.Supplier = supplier;
 
-            return RedirectToAction("GetAll", "Product");
+            return View(product);
         }
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("GetAll", "Product");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("GetAll", "Product");
+        }
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> Delete([FromForm] DeleteProductDTO deleteProductDto)
+    {
+        if (!ModelState.IsValid) return View();
+        
+        try
+        {
+            await _productService.Delete(deleteProductDto);
+            TempData["SuccessMessage"] = "Produto deletado com sucesso!";
+
             return RedirectToAction("GetAll", "Product");
         }
         catch (Exception)

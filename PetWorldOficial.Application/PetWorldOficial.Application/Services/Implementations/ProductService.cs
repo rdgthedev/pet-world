@@ -47,8 +47,9 @@ public class ProductService : IProductService
         await _productRepository.Update(product);
     }
 
-    public async Task Delete(Product product)
+    public async Task Delete(DeleteProductDTO deleteProductDto)
     {
+        var product = _mapper.Map<Product>(deleteProductDto);
         await _productRepository.Delete(product);
     }
 }

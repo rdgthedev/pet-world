@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Service;
+using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
@@ -10,18 +11,18 @@ namespace PetworldOficial.MVC.Controllers;
 
 public class ServiceController : Controller
 {
-    private readonly IServiceRepository _serviceRepository;
+    private readonly IServiceService _serviceService;
     private readonly IImageService _imageService;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IMapper _mapper;
     
     public ServiceController(
-        IServiceRepository serviceRepository,
+        IServiceService serviceService,
         IImageService imageService,
         IWebHostEnvironment webHostEnvironment,
         IMapper mapper)
     {
-        _serviceRepository = serviceRepository;
+        _serviceService = serviceService;
         _imageService = imageService;
         _webHostEnvironment = webHostEnvironment;
         _mapper = mapper;
@@ -32,10 +33,7 @@ public class ServiceController : Controller
     {
         try
         {
-            var services = await _serviceRepository.GetAllAsync();
-
-            if (services is null) throw new NotFoundException("Nenhum serviço encontrado!");
-
+            var services= await _serviceService.GetAll();
             return View(services);
         }
         catch(NotFoundException e)
@@ -55,10 +53,7 @@ public class ServiceController : Controller
     {
         try
         {
-            var service = await _serviceRepository.GetByIdAsync(id);
-
-            if (service is null) throw new NotFoundException("Serviço não encontrado!");
-
+            var service = await _serviceService.GetById(id);
             return View(service);
         }
         catch (NotFoundException e)
@@ -83,24 +78,23 @@ public class ServiceController : Controller
         {
             if(file == null)
                 ModelState.AddModelError(string.Empty, "A imagem é obrigatória!");
-
+            
             return View(createServiceDto);
         }
 
         try
         {
-            var serviceResult = await _serviceRepository.GetByNameAsync(createServiceDto.Name);
-
+            var serviceResult = await _serviceService.GetByName(createServiceDto.Name);
+            
             if (serviceResult != null) throw new ServiceAlreadyExistsException("Serviço já existe!");
 
             createServiceDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
             await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, createServiceDto.ImageUrl);
             
-            var service = _mapper.Map<Service>(createServiceDto);
-            
-            await _serviceRepository.CreateAsync(service);
+            await _serviceService.Create(createServiceDto);
             TempData["SuccessMessage"] = "Serviço criado com sucesso!";
             ModelState.Clear();
+            
             return View();
         }
         catch (ServiceAlreadyExistsException e)
