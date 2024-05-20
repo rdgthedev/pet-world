@@ -2,11 +2,7 @@
 
 namespace PetWorldOficial.Domain.Interfaces.Repositories;
 
-public interface ISupplierRepository
+public interface ISupplierRepository : IBaseRepository<Supplier>
 {
-    Task<IEnumerable<Supplier>> GetAllAsync();
-    Task<Supplier?> GetByIdAsync(int id);
-    Task CreateAsync(Supplier supplierModel);
-    Task Update(Supplier supplierModel);
-    Task Delete(Supplier supplierModel);
+    Task CreateAsync(Supplier product);
 }

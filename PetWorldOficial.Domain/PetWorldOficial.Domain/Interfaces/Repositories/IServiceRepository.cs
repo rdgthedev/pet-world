@@ -2,12 +2,8 @@
 
 namespace PetWorldOficial.Domain.Interfaces.Repositories;
 
-public interface IServiceRepository
+public interface IServiceRepository : IBaseRepository<Service>
 {
-    Task<IEnumerable<Service>> GetAll();
-    Task<Service?> GetById(int id);
-    Task<Service?> GetByName(string name);
-    Task Create(Service service);
-    Task Update(Service service);
-    Task Delete(Service service);
+    Task<Service?> GetByNameAsync(string name);
+    Task CreateAsync(Service product);
 }

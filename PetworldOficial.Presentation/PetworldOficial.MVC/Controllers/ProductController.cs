@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Product;
+using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
@@ -10,20 +11,20 @@ namespace PetworldOficial.MVC.Controllers;
 
 public class ProductController : Controller
 {
-    private readonly IProductRepository _productRepository;
+    private readonly IProductService _productService;
     private readonly ISupplierRepository _supplierRepository;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IImageService _imageService;
     private readonly IMapper _mapper;
     
     public ProductController(
-        IProductRepository productRepository,
+        IProductService productService,
         ISupplierRepository supplierRepository,
         IWebHostEnvironment webHostEnvironment,
         IImageService imageService,
         IMapper mapper)
     {
-        _productRepository = productRepository;
+        _productService = productService;
         _supplierRepository = supplierRepository;
         _webHostEnvironment = webHostEnvironment;
         _imageService = imageService;
@@ -35,10 +36,7 @@ public class ProductController : Controller
     {
         try
         {
-            var products = await _productRepository.GetAllAsync();
-            if (products == null)
-                throw new NotFoundException("Nenhum produto encontrado!");
-            
+            var products = await _productService.GetAll();
             return View(products);
         }
         catch (NotFoundException e)
@@ -58,10 +56,7 @@ public class ProductController : Controller
     {
         try
         {
-            var product = await _productRepository.GetByIdAsync(id);
-
-            if (product == null) throw new NotFoundException("Produto não encontrado");
-
+            var product = await _productService.GetById(id);
             return View();
         }
         catch (NotFoundException ex)
@@ -82,62 +77,58 @@ public class ProductController : Controller
     
     
     [HttpPost]
-    public async Task<IActionResult> Create([FromForm] RegisterProductDTO registerProductModel, IFormFile file)
+    public async Task<IActionResult> Create([FromForm] RegisterProductDTO registerProductDto, IFormFile file)
     {
-        registerProductModel.Suppliers = await _supplierRepository.GetAllAsync();
+        registerProductDto.Suppliers = await _supplierRepository.GetAllAsync();
 
         if (!ModelState.IsValid)
         {
             if(file == null)
                 ModelState.AddModelError(string.Empty, "A imagem é obrigatória!");
             
-            return View(registerProductModel);
+            return View(registerProductDto);
         }
         
         try
         {
-            var supplier = await _supplierRepository.GetByIdAsync(registerProductModel.SupplierId);
+            var supplier = await _supplierRepository.GetByIdAsync(registerProductDto.SupplierId);
 
             if (supplier == null) throw new NotFoundException("Fornecedor não encontrado!");
             
-            registerProductModel.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
-
-            var product = _mapper.Map<Product>(registerProductModel);
+            registerProductDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
             
-            await _productRepository.CreateAsync(product);
-            await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, product.Image);
+            await _productService.Create(registerProductDto);
+            await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, registerProductDto.ImageUrl);
             
             TempData["SuccessMessage"] = "Produto criado com sucesso!";
             ModelState.Clear();
-            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
+            return View(new RegisterProductDTO { Suppliers = registerProductDto.Suppliers });
         }
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
             ModelState.Clear();
-            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
+            return View(new RegisterProductDTO { Suppliers = registerProductDto.Suppliers });
         }
         catch (InvalidExtensionException e)
         {
             TempData["ErrorMessage"] = e.Message;
             ModelState.Clear();
-            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
+            return View(new RegisterProductDTO { Suppliers = registerProductDto.Suppliers });
         }
         catch(Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
             ModelState.Clear();
-            return View(new RegisterProductDTO { Suppliers = registerProductModel.Suppliers });
+            return View(new RegisterProductDTO { Suppliers = registerProductDto.Suppliers });
         }
     }
 
     [HttpGet]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
-        var productResult = await _productRepository.GetByIdAsync(id);
         var suppliers = await _supplierRepository.GetAllAsync();
-        
-        if (productResult is null) throw new NotFoundException("Produto não encontrado!");
+        var productResult = await _productService.GetById(id);
         
         var product = _mapper.Map<UpdateProductDTO>(productResult);
         
@@ -158,10 +149,8 @@ public class ProductController : Controller
         
         try
         {
-            var productResult = await _productRepository.GetByIdAsync(updateProductDto.Id);
-    
-            if (productResult is null) throw new NotFoundException("Produto não encontrado!");
-
+            var productResult = await _productService.GetById(updateProductDto.Id);
+            
             updateProductDto.ImageUrl = productResult.Image;
 
             if (file != null)
@@ -169,11 +158,8 @@ public class ProductController : Controller
                 updateProductDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
                 await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, updateProductDto.ImageUrl);
             }
-
-            var productUpdate = _mapper.Map<Product>(updateProductDto);
             
-            await _productRepository.Update(productUpdate);
-            
+            await _productService.Update(updateProductDto);
             TempData["SuccessMessage"] = "Produto alterado com sucesso!";
             
             return View(updateProductDto);
@@ -198,10 +184,8 @@ public class ProductController : Controller
     [HttpGet]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
-        var product = await _productRepository.GetByIdAsync(id);
-
-        if (product is null) throw new NotFoundException("Produto não encontrado!");
-
+        var product =_mapper.Map<Product>(await _productService.GetById(id));
+        
         var supplier = await _supplierRepository.GetByIdAsync(product.SupplierId);
         
         if (supplier is null) throw new NotFoundException("Fornecedor não encontrado!");
@@ -214,7 +198,7 @@ public class ProductController : Controller
     {
         try
         {
-            await _productRepository.Delete(product);
+            await _productService.Delete(product);
             TempData["SuccessMessage"] = "Produto deletado com sucesso!";
 
             return RedirectToAction("GetAll", "Product");

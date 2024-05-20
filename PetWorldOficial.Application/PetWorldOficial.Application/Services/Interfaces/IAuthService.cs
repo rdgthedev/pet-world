@@ -1,6 +1,6 @@
 ﻿using PetWorldOficial.Application.DTOs.User.Input;
 
-namespace PetWorldOficial.Application.Services.Interfaces.Identity;
+namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IAuthService
 {

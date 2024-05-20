@@ -4,13 +4,16 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Mappers;
 using PetWorldOficial.Application.Services.Implementations;
-using PetWorldOficial.Application.Services.Interfaces.Identity;
+using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
+using PetWorldOficial.Identity.Context;
+using PetWorldOficial.Identity.Services;
 using PetWorldOficial.Infrastructure.Context;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
-using ApplicationUser = PetWorldOficial.Identity.IdentityEntities.ApplicationUser;
+using UserService = PetWorldOficial.Application.Services.Implementations.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +31,14 @@ builder.Services.AddDbContext<AppDbContext>(
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
-builder.Services.AddIdentity<ApplicationUser, ApplicationUser>()
-    .AddEntityFrameworkStores<IdentityDbContext>()
+builder.Services.AddDbContext<AuthDbContext>(
+    options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection"));
+    });
+
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(option =>
@@ -42,6 +51,8 @@ builder.Services.ConfigureApplicationCookie(option =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();

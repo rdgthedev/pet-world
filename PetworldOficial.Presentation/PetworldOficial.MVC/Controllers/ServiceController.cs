@@ -32,7 +32,7 @@ public class ServiceController : Controller
     {
         try
         {
-            var services = await _serviceRepository.GetAll();
+            var services = await _serviceRepository.GetAllAsync();
 
             if (services is null) throw new NotFoundException("Nenhum serviço encontrado!");
 
@@ -55,7 +55,7 @@ public class ServiceController : Controller
     {
         try
         {
-            var service = await _serviceRepository.GetById(id);
+            var service = await _serviceRepository.GetByIdAsync(id);
 
             if (service is null) throw new NotFoundException("Serviço não encontrado!");
 
@@ -89,7 +89,7 @@ public class ServiceController : Controller
 
         try
         {
-            var serviceResult = await _serviceRepository.GetByName(createServiceDto.Name);
+            var serviceResult = await _serviceRepository.GetByNameAsync(createServiceDto.Name);
 
             if (serviceResult != null) throw new ServiceAlreadyExistsException("Serviço já existe!");
 
@@ -98,7 +98,7 @@ public class ServiceController : Controller
             
             var service = _mapper.Map<Service>(createServiceDto);
             
-            await _serviceRepository.Create(service);
+            await _serviceRepository.CreateAsync(service);
             TempData["SuccessMessage"] = "Serviço criado com sucesso!";
             ModelState.Clear();
             return View();

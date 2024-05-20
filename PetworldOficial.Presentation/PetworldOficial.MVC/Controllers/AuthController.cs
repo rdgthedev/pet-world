@@ -1,26 +1,26 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.User.Input;
-using PetWorldOficial.Application.Services.Interfaces.Identity;
+using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
-using PetWorldOficial.Identity.IdentityEntities;
 
 namespace PetworldOficial.MVC.Controllers;
 
 public class AuthController : Controller
 {
     private readonly IAuthService _authService;
-    private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserService _userService;
+    private readonly IMapper _mapper;
 
     public AuthController(
         IAuthService authService, 
         IUserService userService,
-        UserManager<ApplicationUser> userManager)
+        IMapper mapper)
     {
-        _userManager = userManager;
         _authService = authService;
         _userService = userService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -33,6 +33,7 @@ public class AuthController : Controller
         
         try
         {
+            await _userService.GetByUserName(userLoginDTO.UserName);
             await _authService.Login(userLoginDTO);
             return RedirectToAction("Index", "Home");
         }
@@ -47,37 +48,33 @@ public class AuthController : Controller
     public IActionResult Register() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromForm] UserRegisterDTO userRegisterDTO)
+    public async Task<IActionResult> Register([FromForm] UserRegisterDTO registerUserDto)
     {
-        if (!ModelState.IsValid) return View();
+        if (!ModelState.IsValid) return View(registerUserDto);
 
         try
         {
-            var userResult = await _userService.UserExists(
-                userRegisterDTO.UserName,
-                userRegisterDTO.Document,
-                userRegisterDTO.Email,
-                userRegisterDTO.PhoneNumber);
-
-            if (userResult != null)
-                throw new UserAlreadyExistsException("Usuário já existe, verifique os campos: " +
-                                                     "Nome de Usuário, Documento, Email e Número de Telefone");
-
-            if (!await _authService.Register(userRegisterDTO))
-                ModelState.AddModelError(string.Empty, "Não foi possível cadastrar o usuário!");
+            var user = _mapper.Map<User>(registerUserDto);
+            if (await _userService.UserExists(user)) throw new UserAlreadyExistsException("Usuário já existe!");
+            
+            if (!await _authService.Register(registerUserDto))
+            {
+                TempData["ErrorMessage"] = "Não foi possível cadastrar o usuário!";
+                return View();
+            }
 
             TempData["SuccessMessage"] = "Usuário criado com sucesso!";
 
             return View();
         }
-        catch (UserAlreadyExistsException ex)
+        catch (UserAlreadyExistsException e)
         {
-            ModelState.AddModelError(string.Empty, ex.Message);
+            TempData["ErrorMessage"] = e.Message;
             return View("Register");
         }
         catch(Exception)
         {
-            TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o cadastro!";
+            TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o seu cadastro!";
             return RedirectToPage("Error");
         }
     }
