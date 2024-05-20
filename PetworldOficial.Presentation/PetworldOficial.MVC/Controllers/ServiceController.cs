@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Service;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
-using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetworldOficial.MVC.Controllers;
 
