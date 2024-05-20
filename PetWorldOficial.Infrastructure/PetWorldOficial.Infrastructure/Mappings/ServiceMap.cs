@@ -34,6 +34,7 @@ public class ServiceMap : IEntityTypeConfiguration<Service>
             .HasMaxLength(255)
             .IsRequired();
 
-        builder.HasIndex(service => service.Id, "IX_Service_Id");
+        builder.HasIndex(service => service.Id, "IX_Service_Id")
+            .IsUnique();
     }
 }
