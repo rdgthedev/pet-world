@@ -12,11 +12,17 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
 
         builder.HasKey(a => a.Id);
 
-        builder.Property(a => a.Name)
+        builder.Property(a => a.Id)
             .ValueGeneratedOnAdd()
             .UseIdentityColumn()
             .IsRequired();
-
+        
+        builder.Property(a => a.Name)
+            .HasColumnName("Name")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(120)
+            .IsRequired();
+        
         builder.Property(a => a.Species)
             .HasColumnName("Species")
             .HasColumnType("NVARCHAR")
@@ -40,8 +46,8 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
             .HasMaxLength(20);
 
         builder.HasOne(a => a.User)
-            .WithMany()
-            .HasForeignKey(a => a.UserId)
+            .WithMany(u => u.Animals)
+            .HasForeignKey("UserId")
             .HasConstraintName("FK_Animal_UserId")
             .OnDelete(DeleteBehavior.Cascade);
 

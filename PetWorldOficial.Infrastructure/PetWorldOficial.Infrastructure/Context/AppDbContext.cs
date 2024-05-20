@@ -20,5 +20,6 @@ public class AppDbContext : DbContext
         builder.ApplyConfiguration(new ProductMap());
         builder.ApplyConfiguration(new SupplierMap());
         builder.ApplyConfiguration(new ServiceMap());
+        builder.ApplyConfiguration(new AnimalMap());
     }
 }
