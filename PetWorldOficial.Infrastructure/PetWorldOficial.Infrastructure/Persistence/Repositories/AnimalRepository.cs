@@ -30,6 +30,15 @@ public class AnimalRepository : IAnimalRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task<Animal?> GetByOwnerAsync(int id)
+    {
+        return await _context
+            .Animals
+            .AsNoTracking()
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.User.Id == id);
+    }
+
     public async Task Update(Animal entity)
     {
         _context.Animals.Update(entity);

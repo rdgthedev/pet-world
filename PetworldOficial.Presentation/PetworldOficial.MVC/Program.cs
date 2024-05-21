@@ -53,11 +53,14 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IAnimalService, AnimalService>();
+builder.Services.AddTransient<IImageService, ImageService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
-builder.Services.AddTransient<IImageService, ImageService>();
+builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
+
 builder.Services.AddAutoMapper(typeof(UpdateProductDTOToProduct));
 
 var app = builder.Build();

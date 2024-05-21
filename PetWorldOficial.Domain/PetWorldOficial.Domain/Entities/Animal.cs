@@ -12,15 +12,14 @@ public class Animal : Entity
     public EGender Gender { get; private set; }
     public int UserId { get; private set; }
     public User User { get; private set; }
-
+    
     public Animal(
         string name, 
         string species, 
         string race, 
         DateTime? birthDate, 
         EGender gender, 
-        int userId, 
-        User user)
+        int userId)
     {
         Name = name;
         Species = species;
@@ -28,6 +27,5 @@ public class Animal : Entity
         BirthDate = birthDate;
         Gender = gender;
         UserId = userId;
-        User = user;
     }
 }

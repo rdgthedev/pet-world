@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model PetworldOficial.MVC.ViewModels.Schedule.ScheduleRegisterViewModel
+
+@{
+    Layout = null;
+}
+
+<div class="container-fluid text-black py-3">
+    <br>
+    <h2 class="display-6 text-center fw">Agendamento de Serviços</h2>
+    <br>
+</div>
+
+<form asp-controller="Schedulling" asp-action="Schedule" method="post">
+    <input type="hidden">
+    <input asp-for="" class="form-control" type="date">
+    
+    <label asp-for="" class="form-label"></label>
+    <input type="text">
+</form>

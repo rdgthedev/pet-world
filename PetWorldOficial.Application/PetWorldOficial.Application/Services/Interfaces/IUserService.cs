@@ -7,6 +7,6 @@ public interface IUserService
 {
     Task<IEnumerable<OutputUserDto>> GetAll();
     Task<OutputUserDto> GetById(int id);
-    Task<OutputUserDto> GetByUserName(string userName);
+    Task<OutputUserDto?> GetByUserName(string userName);
     Task<bool> UserExists(User user);
 }

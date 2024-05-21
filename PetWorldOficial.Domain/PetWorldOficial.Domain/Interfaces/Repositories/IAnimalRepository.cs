@@ -5,4 +5,5 @@ namespace PetWorldOficial.Domain.Interfaces.Repositories;
 public interface IAnimalRepository : IBaseRepository<Animal>
 {
     Task CreateAsync(Animal entity);
+    Task<Animal?> GetByOwnerAsync(int id);
 }

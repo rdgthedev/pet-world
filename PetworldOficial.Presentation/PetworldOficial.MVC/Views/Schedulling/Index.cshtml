@@ -1,0 +1,30 @@
+﻿@model PetworldOficial.MVC.ViewModels.Schedule.ScheduleServicesViewModel
+
+@{
+    Layout = "_LayoutRegister";
+}
+
+<div class="container-fluid text-black py-3">
+    <br>
+    <h2 class="display-6 text-center fw">Serviços</h2>
+    <br>
+</div>
+
+<div class="container">
+    <div class="row">
+        @foreach (var service in Model.Services)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="/Images/@service.ImageUrl" class="ImagemCard card-img-top" alt="..." style="height: 200px; object-fit: cover; width: 100%">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@service.Name</h5>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" type="button" asp-controller="Schedulling" asp-action="Schedule" asp-route="@service.Id">Agendar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
