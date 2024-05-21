@@ -59,9 +59,14 @@ public class SchedullingController : Controller
                 return RedirectToAction();
             }
             
-            
             var service = _mapper.Map<Service>(await _serviceService.GetById(id));
+            
             return View(new ScheduleRegisterViewModel{ Service = service });
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
         }
         catch (Exception e)
         {
