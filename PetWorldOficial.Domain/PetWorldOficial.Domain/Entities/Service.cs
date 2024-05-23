@@ -7,6 +7,7 @@ public class Service : Entity
     public string Name { get; private set; }
     public double Price { get; private set; }
     public string ImageUrl { get; private set; }
+    public List<Schedule> Schedules { get; private set; }
     
     public Service(
         string name, 

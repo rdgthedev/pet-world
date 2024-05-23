@@ -29,7 +29,12 @@ public class ScheduleRepository : IScheduleRepository
         await _context.Schedules.AddAsync(entity);
         await _context.SaveChangesAsync();
     }
-    
+
+    public async Task<Schedule?> GetByDate(DateTime date)
+    {
+        return await _context.Schedules.AsNoTracking().FirstOrDefaultAsync(d => d.Date == date);
+    }
+
     public async Task Update(Schedule entity)
     {
         _context.Schedules.Update(entity);

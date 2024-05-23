@@ -1,6 +1,4 @@
-using System.Reflection.Metadata;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Mappers;
 using PetWorldOficial.Application.Services.Implementations;
@@ -8,11 +6,10 @@ using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Identity.Context;
-using PetWorldOficial.Identity.Services;
 using PetWorldOficial.Infrastructure.Context;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
+using AuthService = PetWorldOficial.Infrastructure.Services.AuthService;
 using UserService = PetWorldOficial.Application.Services.Implementations.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,14 +28,8 @@ builder.Services.AddDbContext<AppDbContext>(
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
     });
 
-builder.Services.AddDbContext<AuthDbContext>(
-    options =>
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("AuthConnection"));
-    });
-
 builder.Services.AddIdentity<User, Role>()
-    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(option =>
@@ -54,12 +45,15 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddTransient<IImageService, ImageService>();
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
 builder.Services.AddAutoMapper(typeof(UpdateProductDTOToProduct));
 

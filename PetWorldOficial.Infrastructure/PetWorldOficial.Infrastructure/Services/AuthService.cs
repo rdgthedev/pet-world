@@ -6,7 +6,7 @@ using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
-namespace PetWorldOficial.Identity.Services;
+namespace PetWorldOficial.Infrastructure.Services;
 
 public class AuthService : IAuthService
 {

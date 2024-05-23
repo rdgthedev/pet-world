@@ -1,12 +1,13 @@
-﻿using PetWorldOficial.Domain.Enums;
+﻿using AutoMapper.Internal.Mappers;
+using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Application.DTOs.User.Input;
 
-public class UserRegisterDTO
+public class RegisterUserDTO
 {
     public string Name { get; set; }
     public string UserName { get; set; }
-    public EGender Gender { get; set; }
+    public EGender Gender { get; set; } 
     public DateTime BirthDate { get; set; }
     public string Document { get; set; }
     public string Password { get; set; }

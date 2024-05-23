@@ -48,14 +48,14 @@ public class AuthController : Controller
     public IActionResult Register() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromForm] UserRegisterDTO registerUserDto)
+    public async Task<IActionResult> Register([FromForm] RegisterUserDTO registerUserDto)
     {
         if (!ModelState.IsValid) return View(registerUserDto);
 
         try
         {
-            var user = _mapper.Map<User>(registerUserDto);
-            if (await _userService.UserExists(user)) throw new UserAlreadyExistsException("Usuário já existe!");
+            // var user = _mapper.Map<User>(registerUserDto);
+            // // if (await _userService.UserExists(user)) throw new UserAlreadyExistsException("Usuário já existe!");
             
             if (!await _authService.Register(registerUserDto))
             {
@@ -75,7 +75,7 @@ public class AuthController : Controller
         catch(Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o seu cadastro!";
-            return RedirectToPage("Error");
+            return View();
         }
     }
     

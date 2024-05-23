@@ -49,13 +49,10 @@ public class UserService : IUserService
         Task<User?> searchPhoneNumber =  _userRepository.GetByPhoneNumber(user.PhoneNumber);
         Task<User?> searchEmail =  _userRepository.GetByEmail(user.Email);
 
-        await Task.WhenAll(searchUserName, searchDocument, searchPhoneNumber, searchEmail);
-
-        User? foundUser = searchUserName.Result
-                         ?? searchDocument.Result
-                         ?? searchPhoneNumber.Result
-                         ?? searchEmail.Result;
+        var foundUsers = await Task.WhenAll(searchUserName, searchDocument, searchPhoneNumber, searchEmail);
         
-        return foundUser != null;
+        var userExists = foundUsers.Any(u => u != null);
+
+        return userExists;
     }
 }

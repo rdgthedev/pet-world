@@ -5,7 +5,9 @@ namespace PetWorldOficial.Domain.Entities;
 public class Schedule : Entity
 {
     public int AnimalId { get; private set; }
+    public Animal Animal { get; private set; }
     public int ServiceId { get; private set; }
+    public Service Service { get; private set; }
     public DateTime Date { get; private set; }
     public string Observation { get; private set; }
 

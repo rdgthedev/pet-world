@@ -1,4 +1,6 @@
-﻿namespace PetWorldOficial.Application.DTOs.Animal.Output;
+﻿using PetWorldOficial.Domain.Enums;
+
+namespace PetWorldOficial.Application.DTOs.Animal.Output;
 
 public class OutputAnimalDTO
 {

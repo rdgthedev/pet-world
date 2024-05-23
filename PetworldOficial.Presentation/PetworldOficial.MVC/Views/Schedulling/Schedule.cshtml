@@ -2,7 +2,7 @@
 @model PetworldOficial.MVC.ViewModels.Schedule.ScheduleRegisterViewModel
 
 @{
-    Layout = null;
+    Layout = "_LayoutRegister";
 }
 
 <div class="container-fluid text-black py-3">
@@ -11,10 +11,41 @@
     <br>
 </div>
 
+@if (Model.Animal == null)
+{
+    <div class="modal" id="animalModal" tabindex="-1" aria-labelledby="animalModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="animalModalLabel">Informação Importante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Você não possui um pet registrado! Para registrar um pet clique em continuar continuar.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary">Continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var modal = new bootstrap.Modal(document.getElementById('animalModal'));
+            modal.show();
+        });
+    </script>
+}
+
 <form asp-controller="Schedulling" asp-action="Schedule" method="post">
     <input type="hidden">
-    <input asp-for="" class="form-control" type="date">
+    <input asp-for="@Model.Date" class="form-control" type="date">
     
-    <label asp-for="" class="form-label"></label>
-    <input type="text">
+    <label asp-for="@Model.Observation" class="form-label"></label>
+    <input class="form-control" type="text">
 </form>
+
+
+

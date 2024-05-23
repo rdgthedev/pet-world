@@ -12,6 +12,7 @@ public class Animal : Entity
     public EGender Gender { get; private set; }
     public int UserId { get; private set; }
     public User User { get; private set; }
+    public List<Schedule> Schedules { get; private set; }
     
     public Animal(
         string name, 

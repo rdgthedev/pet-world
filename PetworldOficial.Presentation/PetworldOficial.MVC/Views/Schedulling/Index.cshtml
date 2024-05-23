@@ -1,4 +1,4 @@
-﻿@model PetworldOficial.MVC.ViewModels.Schedule.ScheduleServicesViewModel
+﻿@model IEnumerable<Service>
 
 @{
     Layout = "_LayoutRegister";
@@ -12,7 +12,7 @@
 
 <div class="container">
     <div class="row">
-        @foreach (var service in Model.Services)
+        @foreach (var service in Model)
         {
             <div class="col-md-4 mb-4">
                 <div class="card h-100">
@@ -20,7 +20,7 @@
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">@service.Name</h5>
                         <div class="d-grid gap-2">
-                            <button class="btn btn-primary" type="button" asp-controller="Schedulling" asp-action="Schedule" asp-route="@service.Id">Agendar</button>
+                            <a class="btn btn-primary" asp-controller="Schedulling" asp-action="Schedule" asp-route-id="@service.Id">Agendar</a>
                         </div>
                     </div>
                 </div>

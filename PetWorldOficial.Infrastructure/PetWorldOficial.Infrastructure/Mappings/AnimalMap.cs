@@ -45,9 +45,10 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
             .HasColumnType("NVARCHAR")
             .HasMaxLength(20);
 
-        builder.HasOne(a => a.User)
+        builder
+            .HasOne(a => a.User)
             .WithMany(u => u.Animals)
-            .HasForeignKey("UserId")
+            .HasForeignKey(a => a.UserId)
             .HasConstraintName("FK_Animal_UserId")
             .OnDelete(DeleteBehavior.Cascade);
 
