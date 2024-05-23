@@ -17,6 +17,7 @@ O sistema tem as seguintes funcionalidades:
 ### Cliente 🐶
 - **Se cadastrar:** Permite ao cliente se cadastrar no site do Pet Shop.
 - **Compra de Produtos:** Permite ao cliente navegar pelo catálogo de produtos e realizar compras.
+- **Reaizar Agendamentos:** Permite ao cliente realizar agendamentos dos serviços do Pet Shop para seus Pets.
 - **Gerenciamento de Agendamentos:** Permite ao cliente visualizar e gerenciar seus agendamentos com o Pet Shop.
 - **Cadastro de Pets:** Permite ao cliente cadastrar informações sobre seus animais de estimação.
 
@@ -24,8 +25,8 @@ O sistema tem as seguintes funcionalidades:
 
 O sistema segue a arquitetura Clean Architecture, que promove a separação clara das responsabilidades em camadas:
 
-- **Domain Layer (Camada de Domínio):** Define os modelos de domínio e as regras de negócio da aplicação. É independente de qualquer tecnologia ou framework.
-- **Application Layer (Camada de Aplicação):** Contém a lógica de negócios da aplicação. Responsável por orquestrar as operações entre a camada de apresentação e a camada de infraestrutura.
+- **Domain Layer (Camada de Domínio):** Define os modelos de domínio e as regras de negócio da aplicação.
+- **Application Layer (Camada de Aplicação):** Contém a lógica de negócios da aplicação. 
 - **Infrastructure Layer (Camada de Infraestrutura):** Responsável por lidar com detalhes técnicos, como acesso a banco de dados, autenticação e autorização, mapeamento de objetos, etc.
 - **Presentation Layer (Camada de Apresentação):** Utiliza o padrão MVC para fornecer uma interface de usuário amigável. Aqui, os usuários interagem com a aplicação.
 
