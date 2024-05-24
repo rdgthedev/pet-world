@@ -38,9 +38,14 @@ public class ScheduleMap : IEntityTypeConfiguration<Schedule>
             .HasConstraintName("FK_Schedule_Animal_ServiceId")
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(s => s.Id, "IX_Schedule_Id");
-        builder.HasIndex(s => s.AnimalId, "IX_Schedule_AnimalId");
-        builder.HasIndex(s => s.ServiceId, "IX_Schedule_ServiceId");
+        builder.HasIndex(s => s.Id, "IX_Schedule_Id")
+            .IsUnique();
+        
+        builder.HasIndex(s => s.AnimalId, "IX_Schedule_AnimalId")
+            .IsUnique();
+        
+        builder.HasIndex(s => s.ServiceId, "IX_Schedule_ServiceId")
+            .IsUnique();
     }
     
 }

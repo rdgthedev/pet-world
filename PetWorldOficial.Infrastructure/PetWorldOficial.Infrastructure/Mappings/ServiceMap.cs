@@ -36,5 +36,8 @@ public class ServiceMap : IEntityTypeConfiguration<Service>
 
         builder.HasIndex(service => service.Id, "IX_Service_Id")
             .IsUnique();
+        
+        builder.HasIndex(service => service.Name, "IX_Service_Name")
+            .IsUnique();
     }
 }

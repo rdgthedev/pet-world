@@ -37,14 +37,17 @@ public class ProductMap : IEntityTypeConfiguration<Product>
             .HasColumnName("Price")
             .HasColumnType("MONEY")
             .IsRequired();
-
+        
         builder.HasOne(product => product.Supplier)
             .WithMany(supplier => supplier.Products)
-            .HasForeignKey("SupplierId")
-            .HasConstraintName("FK_Product_Supplier")
+            .HasForeignKey(product => product.SupplierId)
+            .HasConstraintName("FK_Product_Supplier_SupplierId")
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(product => product.Id, "IX_Product_Id")
+            .IsUnique();
+        
+        builder.HasIndex(product => product.Name, "IX_Product_Name")
             .IsUnique();
     }
 }

@@ -55,12 +55,11 @@ public class SupplierMap : IEntityTypeConfiguration<Supplier>
             .HasColumnType("NVARCHAR")
             .HasMaxLength(180)
             .IsRequired();
-        
+
         builder.Property(supplier => supplier.Complement)
             .HasColumnName("Complement")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(120)
-            .IsRequired();
+            .HasMaxLength(120);
         
         builder.Property(supplier => supplier.City)
             .HasColumnName("City")

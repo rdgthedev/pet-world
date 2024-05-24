@@ -26,7 +26,7 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
         builder.Property(a => a.Species)
             .HasColumnName("Species")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(120)
+            .HasMaxLength(30)
             .IsRequired();
         
         builder.Property(a => a.Race)
@@ -37,21 +37,21 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
 
         builder.Property(a => a.BirthDate)
             .HasColumnName("BirthDate")
-            .HasColumnType("DATETIME")
-            .IsRequired();
+            .HasColumnType("DATETIME");
 
         builder.Property(a => a.Gender)
             .HasColumnName("Gender")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(20);
+            .HasMaxLength(20)
+            .IsRequired();
 
         builder
             .HasOne(a => a.User)
             .WithMany(u => u.Animals)
             .HasForeignKey(a => a.UserId)
-            .HasConstraintName("FK_Animal_UserId")
+            .HasConstraintName("FK_Animal_User_UserId")
             .OnDelete(DeleteBehavior.Cascade);
-
+        
         builder.HasIndex(a => a.Id, "IX_Animal_Id")
             .IsUnique();
     }
