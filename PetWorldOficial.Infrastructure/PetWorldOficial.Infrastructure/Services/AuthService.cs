@@ -53,12 +53,14 @@ public class AuthService : IAuthService
             model.State);
         
         var createdUser = await _userManager.CreateAsync(user, model.Password);
-        var addedRole = await _userManager.AddToRoleAsync(user, ERole.User.ToString());
 
-        if (createdUser.Equals(addedRole)) return true;
+        if (!createdUser.Succeeded) return false;
         
-        await _userManager.DeleteAsync(user);
-        return false;
+        var addedRole = await _userManager.AddToRoleAsync(user, ERole.User.ToString());
+        
+        if (!createdUser.Equals(addedRole)) await _userManager.DeleteAsync(user);
+        
+        return true;
     }
 
     public async Task Logout() => await _signInManager.SignOutAsync();

@@ -54,8 +54,8 @@ public class AuthController : Controller
 
         try
         {
-            // var user = _mapper.Map<User>(registerUserDto);
-            // // if (await _userService.UserExists(user)) throw new UserAlreadyExistsException("Usuário já existe!");
+            var user = _mapper.Map<User>(registerUserDto);
+            if (await _userService.UserExists(user)) throw new UserAlreadyExistsException("Usuário já existe!");
             
             if (!await _authService.Register(registerUserDto))
             {
@@ -64,13 +64,12 @@ public class AuthController : Controller
             }
 
             TempData["SuccessMessage"] = "Usuário criado com sucesso!";
-
             return View();
         }
         catch (UserAlreadyExistsException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View("Register");
+            return View();
         }
         catch(Exception)
         {
