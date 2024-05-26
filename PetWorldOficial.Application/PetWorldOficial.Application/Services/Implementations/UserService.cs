@@ -43,16 +43,14 @@ public class UserService : IUserService
 
     public async Task<bool> UserExists(User user)
     {
+        var searchTasks = new List<User?>
+        {
+            await _userRepository.GetByUserName(user.UserName!),
+            await _userRepository.GetByDocument(user.Document),
+            await _userRepository.GetByPhoneNumber(user.PhoneNumber!),
+            await _userRepository.GetByEmail(user.Email!)
+        };
         
-        Task<User?> searchUserName =  _userRepository.GetByUserName(user.UserName);
-        Task<User?> searchDocument =  _userRepository.GetByDocument(user.Document);
-        Task<User?> searchPhoneNumber =  _userRepository.GetByPhoneNumber(user.PhoneNumber);
-        Task<User?> searchEmail =  _userRepository.GetByEmail(user.Email);
-
-        var foundUsers = await Task.WhenAll(searchUserName, searchDocument, searchPhoneNumber, searchEmail);
-        
-        var userExists = foundUsers.Any(u => u != null);
-
-        return userExists;
+        return searchTasks.Any(u => u != null);
     }
 }
