@@ -27,7 +27,7 @@ public class ServiceController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> Index()
     {
         try
         {

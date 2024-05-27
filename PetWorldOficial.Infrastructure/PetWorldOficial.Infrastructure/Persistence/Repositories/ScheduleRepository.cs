@@ -30,9 +30,21 @@ public class ScheduleRepository : IScheduleRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Schedule?> GetByDate(DateTime date)
+    public async Task<int> GetCountByDate(DateTime date)
     {
-        return await _context.Schedules.AsNoTracking().FirstOrDefaultAsync(d => d.Date == date);
+        return await _context
+            .Schedules
+            .AsNoTracking()
+            .Where(s => s.Date == date)
+            .CountAsync();
+    }
+
+    public async Task<IEnumerable<Schedule?>> GetAllByAnimalIdAndDate(int id, DateTime date)
+    {
+        return await _context
+            .Schedules
+            .Where(s => s.AnimalId == id && s.Date == date)
+            .ToListAsync();
     }
 
     public async Task Update(Schedule entity)

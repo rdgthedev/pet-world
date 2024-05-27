@@ -27,7 +27,7 @@ public class ProductMap : IEntityTypeConfiguration<Product>
             .HasMaxLength(255)
             .IsRequired();
         
-        builder.Property(product => product.Image)
+        builder.Property(product => product.ImageUrl)
             .HasColumnName("Image")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(255)

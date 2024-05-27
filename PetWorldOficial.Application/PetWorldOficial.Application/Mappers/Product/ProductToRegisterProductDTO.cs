@@ -19,7 +19,7 @@ public class ProductToRegisterProductDTO : Profile
                 {
                     prod.MapFrom(orig => orig.Description);
                 })
-            .ForMember(prodDTO => prodDTO.Image,
+            .ForMember(prodDTO => prodDTO.ImageUrl,
                 prod =>
                 {
                     prod.MapFrom(orig => orig.ImageUrl);

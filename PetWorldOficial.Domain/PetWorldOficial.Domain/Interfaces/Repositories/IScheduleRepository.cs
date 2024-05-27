@@ -5,5 +5,6 @@ namespace PetWorldOficial.Domain.Interfaces.Repositories;
 public interface IScheduleRepository : IBaseRepository<Schedule>
 {
     Task CreateAsync(Schedule schedule);
-    Task<Schedule?> GetByDate(DateTime date);
+    Task<int> GetCountByDate(DateTime date);
+    Task<IEnumerable<Schedule?>> GetAllByAnimalIdAndDate(int id, DateTime date);
 }

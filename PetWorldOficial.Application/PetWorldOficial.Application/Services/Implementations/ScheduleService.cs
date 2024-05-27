@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PetWorldOficial.Application.DTOs.Schedule.Input;
 using PetWorldOficial.Application.DTOs.Schedule.Output;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
@@ -34,10 +35,16 @@ public class ScheduleService : IScheduleService
         return schedule;
     }
 
-    public async Task<bool> DateExists(DateTime date)
+    public async Task<bool> BusySchedule(DateTime date)
     {
-        var schedule = await _scheduleRepository.GetByDate(date);
-        return schedule != null;
+        var countByDate = await _scheduleRepository.GetCountByDate(date);
+        return countByDate >= 5;
+    }
+    
+    public async Task<bool> MaximumBookingsPerAnimalExceeded(int animalId, DateTime date, TimeSpan time)
+    {
+        var schedules = await _scheduleRepository.GetAllByAnimalIdAndDate(animalId, date);
+        return schedules.Any(schedule => time.Subtract(schedule!.Time).TotalHours < 1);
     }
 
     public async Task Update(Schedule entity)
@@ -50,8 +57,9 @@ public class ScheduleService : IScheduleService
         await _scheduleRepository.Delete(entity);
     }
 
-    public async Task CreateAsync(Schedule entity)
+    public async Task CreateAsync(RegisterScheduleDTO registerScheduleDtoscheduleDto)
     {
-        await _scheduleRepository.CreateAsync(entity);
+        var schedule = _mapper.Map<Schedule>(registerScheduleDtoscheduleDto);
+        await _scheduleRepository.CreateAsync(schedule);
     }
 }

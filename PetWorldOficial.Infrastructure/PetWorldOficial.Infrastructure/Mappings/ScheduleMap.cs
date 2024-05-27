@@ -21,6 +21,11 @@ public class ScheduleMap : IEntityTypeConfiguration<Schedule>
             .HasColumnName("Date")
             .HasColumnType("DATETIME")
             .IsRequired();
+        
+        builder.Property(s => s.Time)
+            .HasColumnName("Time")
+            .HasColumnType("TIME")
+            .IsRequired();
 
         builder.Property(s => s.Observation)
             .HasColumnName("Observation")
@@ -40,12 +45,10 @@ public class ScheduleMap : IEntityTypeConfiguration<Schedule>
 
         builder.HasIndex(s => s.Id, "IX_Schedule_Id")
             .IsUnique();
-        
-        builder.HasIndex(s => s.AnimalId, "IX_Schedule_AnimalId")
-            .IsUnique();
-        
-        builder.HasIndex(s => s.ServiceId, "IX_Schedule_ServiceId")
-            .IsUnique();
+
+        builder.HasIndex(s => s.AnimalId, "IX_Schedule_AnimalId");
+
+        builder.HasIndex(s => s.ServiceId, "IX_Schedule_ServiceId");
     }
     
 }

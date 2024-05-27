@@ -4,10 +4,10 @@ using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Mappers;
 
-public class ProductToOutputProductDTO : Profile
+public class DomainToDTOsProfiles : Profile
 {
-    public ProductToOutputProductDTO()
+    public DomainToDTOsProfiles()
     {
-        CreateMap<Product, OutputProductDTO>().ReverseMap();
+        CreateMap<Product, OutputProductDTO>();
     }
 }

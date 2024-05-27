@@ -22,7 +22,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product?> GetByIdAsync(int id)
     {
-        return await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id)!;  
+        return await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);  
     }
 
     public async Task CreateAsync(Product product)

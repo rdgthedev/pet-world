@@ -24,7 +24,7 @@ public class UpdateProductDTOToProduct : Profile
                 {
                     prodDto.MapFrom(orig => orig.Description);
                 })
-            .ForMember(prod => prod.Image,
+            .ForMember(prod => prod.ImageUrl,
                 prodDto=>
                 {
                     prodDto.MapFrom(orig => orig.ImageUrl);

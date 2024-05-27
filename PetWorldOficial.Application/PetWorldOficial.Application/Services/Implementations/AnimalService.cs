@@ -47,12 +47,14 @@ public class AnimalService : IAnimalService
 
     public async Task Create(RegisterAnimalDTO animalDto)
     {
-        await _animalRepository.CreateAsync(_mapper.Map<Animal>(animalDto));
+        var animal = _mapper.Map<Animal>(animalDto);
+        await _animalRepository.CreateAsync(animal);
     }
 
-    public async Task<OutputAnimalDTO?> GetByOwner(int id)
+    public async Task<IEnumerable<OutputAnimalDTO?>> GetByOwner(int id)
     {
-         var animal = _mapper.Map<OutputAnimalDTO>(await _animalRepository.GetByOwnerAsync(id));
-         return animal;
+         var animals = _mapper.Map<IEnumerable<OutputAnimalDTO>>(await _animalRepository.GetByOwnerAsync(id));
+         if (animals == null) throw new NotFoundException("Nenhum animal encontrado!");
+         return animals;
     }
 }

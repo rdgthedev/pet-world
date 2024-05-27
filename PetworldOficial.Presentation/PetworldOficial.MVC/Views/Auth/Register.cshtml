@@ -2,7 +2,7 @@
 @model RegisterUserDTO
 
 @{
-    Layout = "_LayoutRegister";
+    Layout = "_LayoutCRUD";
 }
 
 <div class="container-fluid text-black py-3">
@@ -21,35 +21,35 @@
 
         <div class="col-md-9">
             <label asp-for="Name" class="form-label">Nome <span style="color: red;">*</span></label>
-            <input asp-for="Name" type="text" class="form-control shadow-none" placeholder="Nome">
+            <input asp-for="Name" type="text" class="form-control shadow-none" placeholder="Nome" required>
         </div>
         <div class="col-md-3">
             <label asp-for="Gender" class="form-label">Gênero <span style="color: red;">*</span></label>
-            <select class="form-select shadow-none" asp-for="Gender" asp-items="Html.GetEnumSelectList<EGender>()"></select>
+            <select class="form-select shadow-none" asp-for="Gender" asp-items="Html.GetEnumSelectList<EGender>()" required></select>
         </div>
         <div class="col-md-12">
             <label asp-for="UserName" class="form-label">Nome de Usuário <span style="color: red;">*</span></label>
-            <input asp-for="UserName" type="text" class="form-control shadow-none" placeholder="Nome de Usuário">
+            <input asp-for="UserName" type="text" class="form-control shadow-none" placeholder="Nome de Usuário" required>
         </div>
         <div class="col-md-9">
             <label asp-for="Document" class="form-label">CPF <span style="color: red;">*</span></label>
-            <input asp-for="Document" type="text" class="form-control shadow-none">
+            <input asp-for="Document" type="text" class="form-control shadow-none" required>
         </div>
         <div class="col-md-3">
             <label asp-for="BirthDate" class="form-label">Nascimento <span style="color: red;">*</span></label>
-            <input asp-for="BirthDate" type="date" class="form-control shadow-none">
+            <input asp-for="BirthDate" type="date" class="form-control shadow-none" required>
         </div>
         <div class="col-12">
             <label asp-for="Password" class="form-label">Senha <span style="color: red;">*</span></label>
-            <input asp-for="Password" type="password" class="form-control shadow-none" placeholder="Senha">
+            <input asp-for="Password" type="password" class="form-control shadow-none" placeholder="Senha" required>
         </div>
         <div class="col-12">
             <label asp-for="Email" class="form-label">E-mail <span style="color: red;">*</span></label>
-            <input asp-for="Email" type="email" class="form-control shadow-none" placeholder="email@exemplo.com">
+            <input asp-for="Email" type="email" class="form-control shadow-none" placeholder="email@exemplo.com" required> 
         </div>
         <div class="col-md-12">
             <label asp-for="PhoneNumber" class="form-label">Telefone <span style="color: red;">*</span></label>
-            <input asp-for="PhoneNumber" type="tel" class="form-control shadow-none">
+            <input asp-for="PhoneNumber" type="tel" class="form-control shadow-none" required>
         </div>
         <div>
             <label>
@@ -60,31 +60,31 @@
     
         <div class="col-md-10">
             <label asp-for="Street" class="form-label">Rua <span style="color: red;">*</span></label>
-            <input asp-for="Street" type="text" class="form-control shadow-none">
+            <input asp-for="Street" type="text" class="form-control shadow-none" required>
         </div>    
         <div class="col-md-2">
             <label asp-for="Number" class="form-label">Número <span style="color: red;">*</span></label>
-            <input asp-for="Number" type="number" class="form-control shadow-none">
+            <input asp-for="Number" type="number" class="form-control shadow-none" required>
         </div>    
         <div class="col-md-12">
             <label asp-for="Complement" class="form-label">Complemento</label>
-            <input asp-for="Complement" type="text" class="form-control shadow-none">
+            <input asp-for="Complement" type="text" class="form-control shadow-none" required>
         </div>    
         <div class="col-md-6">
             <label asp-for="PostalCode" class="form-label">Cep <span style="color: red;">*</span></label>
-            <input asp-for="PostalCode" type="text" class="form-control shadow-none">
+            <input asp-for="PostalCode" type="text" class="form-control shadow-none" required>
         </div>    
         <div class="col-md-6">
             <label asp-for="Neighborhood"class="form-label">Bairro <span style="color: red;">*</span></label>
-            <input asp-for="Neighborhood" type="text" class="form-control shadow-none">
+            <input asp-for="Neighborhood" type="text" class="form-control shadow-none" required>
         </div>    
         <div class="col-md-6">
             <label asp-for="City" class="form-label shadow-none">Cidade <span style="color: red;">*</span></label>
-            <input asp-for="City" type="text" class="form-control shadow-none">
+            <input asp-for="City" type="text" class="form-control shadow-none" required>
         </div>    
         <div class="col-md-6">
             <label asp-for="State" class="form-label">Estado <span style="color: red;">*</span></label>
-            <input asp-for="State" type="text" class="form-control shadow-none">
+            <input asp-for="State" type="text" class="form-control shadow-none" required>
             <br>
         </div>
         <footer>

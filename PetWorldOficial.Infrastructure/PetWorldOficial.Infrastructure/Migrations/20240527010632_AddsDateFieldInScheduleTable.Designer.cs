@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PetWorldOficial.Infrastructure.Context;
 
@@ -11,9 +12,11 @@ using PetWorldOficial.Infrastructure.Context;
 namespace PetWorldOficial.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240527010632_AddsDateFieldInScheduleTable")]
+    partial class AddsDateFieldInScheduleTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -279,12 +282,14 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "AnimalId" }, "IX_Schedule_AnimalId");
+                    b.HasIndex(new[] { "AnimalId" }, "IX_Schedule_AnimalId")
+                        .IsUnique();
 
                     b.HasIndex(new[] { "Id" }, "IX_Schedule_Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "ServiceId" }, "IX_Schedule_ServiceId");
+                    b.HasIndex(new[] { "ServiceId" }, "IX_Schedule_ServiceId")
+                        .IsUnique();
 
                     b.ToTable("Schedule", (string)null);
                 });

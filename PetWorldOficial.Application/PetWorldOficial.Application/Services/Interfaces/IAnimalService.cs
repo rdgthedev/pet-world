@@ -15,5 +15,5 @@ public interface IAnimalService
 
     public Task Create(RegisterAnimalDTO animalDto);
 
-    public Task<OutputAnimalDTO?> GetByOwner(int id);
+    public Task<IEnumerable<OutputAnimalDTO?>> GetByOwner(int id);
 }

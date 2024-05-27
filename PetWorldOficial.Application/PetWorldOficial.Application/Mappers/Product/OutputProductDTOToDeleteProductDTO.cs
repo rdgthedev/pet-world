@@ -4,9 +4,9 @@ using PetWorldOficial.Application.DTOs.Product.Output;
 
 namespace PetWorldOficial.Application.Mappers;
 
-public class OutputUserDTOToDeleteProductDTO : Profile
+public class OutputProductDTOToDeleteProductDTO : Profile
 {
-    public OutputUserDTOToDeleteProductDTO()
+    public OutputProductDTOToDeleteProductDTO()
     {
         CreateMap<DeleteProductDTO, OutputProductDTO>().ReverseMap();
     }

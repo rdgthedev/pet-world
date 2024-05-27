@@ -6,6 +6,7 @@ using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
+using PetworldOficial.MVC.Models.Product;
 
 namespace PetworldOficial.MVC.Controllers;
 
@@ -127,41 +128,63 @@ public class ProductController : Controller
     [HttpGet]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
-        var suppliers = await _supplierRepository.GetAllAsync();
-        var productResult = await _productService.GetById(id);
+        try
+        {
+            var suppliers = await _supplierRepository.GetAllAsync();
+            var productResult = await _productService.GetById(id);
         
-        var product = _mapper.Map<UpdateProductDTO>(productResult);
-        
-        product.Suppliers = suppliers;
-        
-        return View(product);
+            return View(new UpdateProductViewModel{
+                Id = productResult.Id, 
+                Name= productResult.Name, 
+                Description = productResult.Description,
+                ImageUrl = productResult.ImageUrl,
+                Price = productResult.Price,
+                SupplierId = productResult.SupplierId,
+                Suppliers = suppliers});
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return View();
+        }
     }
     
     [HttpPost]
     public async Task<IActionResult> Update(
-        [FromForm] UpdateProductDTO updateProductDto, 
+        [FromForm] UpdateProductViewModel updateProductDto, 
         IFormFile? file)
     {
-        updateProductDto.Suppliers = await _supplierRepository.GetAllAsync();
-        
         if (!ModelState.IsValid) 
             return View(updateProductDto);
         
         try
         {
+            updateProductDto.Suppliers = await _supplierRepository.GetAllAsync();
             var productResult = await _productService.GetById(updateProductDto.Id);
 
-            if (file != null)
+            switch (file)
             {
-                updateProductDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
-                await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, updateProductDto.ImageUrl);
+                case not null:
+                        updateProductDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
+                        await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, updateProductDto.ImageUrl);
+                    break;
+                default: updateProductDto.ImageUrl = productResult.ImageUrl; break;
             }
-            else
-                updateProductDto.ImageUrl = productResult.Image;
             
-            await _productService.Update(updateProductDto);
+            await _productService.Update(new UpdateProductDTO(
+                updateProductDto.Id,
+                updateProductDto.Name,
+                updateProductDto.Description,
+                updateProductDto.ImageUrl,
+                updateProductDto.Price,
+                updateProductDto.SupplierId));
+            
             TempData["SuccessMessage"] = "Produto alterado com sucesso!";
-            
             return View(updateProductDto);
         }
         catch (NotFoundException e)

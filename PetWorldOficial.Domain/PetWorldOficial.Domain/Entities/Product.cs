@@ -9,19 +9,19 @@ public class Product : Entity
         string name,
         string description, 
         double price, 
-        string image,
+        string imageUrl,
         int supplierId)
     {
         Name = name;
         Description = description;
         Price = price;
-        Image = image;
+        ImageUrl = imageUrl;
         SupplierId = supplierId;
     }
     
     public string Name { get; private set; }
     public string Description { get; private set; } 
-    public string Image { get; private set; } 
+    public string ImageUrl { get; private set; } 
     public double Price { get; private set; }
     public int SupplierId { get; private set; }
     public Supplier Supplier { get; private set; }

@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using PetWorldOficial.Application.DTOs.Animal.Output;
-using PetWorldOficial.Application.DTOs.Schedule.Output;
+using PetWorldOficial.Application.DTOs.Schedule.Input;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
-using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetworldOficial.MVC.ViewModels.Schedule;
+using PetworldOficial.MVC.Models.Schedule;
 
 namespace PetworldOficial.MVC.Controllers;
 
-public class SchedullingController : Controller
+public class ScheduleController : Controller
 {
     private readonly IServiceService _serviceService;
     private readonly IAnimalService _animalService;
@@ -18,7 +16,7 @@ public class SchedullingController : Controller
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     
-    public SchedullingController(
+    public ScheduleController(
         IServiceService serviceService,
         IAnimalService animalService,
         IUserService userService,
@@ -57,11 +55,13 @@ public class SchedullingController : Controller
         try
         {
             var user = await _userService.GetByUserName(User.Identity?.Name!);
-            var animal = await _animalService.GetByOwner(user!.Id);
-            
+            var animals = await _animalService.GetByOwner(user!.Id);
             var service = _mapper.Map<Service>(await _serviceService.GetById(id));
-            
-            return View(new ScheduleRegisterViewModel{ Animal = _mapper.Map<Animal>(animal), Service = service });
+            return View(new RegisterScheduleViewModel
+            { 
+                Animals = _mapper.Map<IEnumerable<Animal>>(animals), 
+                Service = service 
+            });
         }
         catch (NotFoundException e)
         {
@@ -76,33 +76,48 @@ public class SchedullingController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> Schedule(ScheduleRegisterViewModel scheduleRegisterViewModel)
+    public async Task<IActionResult> Schedule(RegisterScheduleViewModel model)
     {
-        if (!ModelState.IsValid) return View();
+        if (!ModelState.IsValid) return View(model);
         
         try
         {
-            if (!await _scheduleService.DateExists(scheduleRegisterViewModel.Date))
-                throw new DateAlreadyExistsException("Data já preenchida, escolha outra data!");
-
-            // await _scheduleService.CreateAsync();
+            if (await _scheduleService.BusySchedule(model.Date))
+                throw new BusyScheduleException("Agenda lotada para esta data!");
             
-            return View();
+            if (await _scheduleService.MaximumBookingsPerAnimalExceeded(model.AnimalId, model.Date, model.Time))
+                throw new MaximumBookingsPerAnimalExceededException("Verifique sua agenda seus serviços agendados devem " +
+                                                                    "ter pelo menos a diferença de uma hora de um para o outro!");
+                
+            await _scheduleService.CreateAsync(new RegisterScheduleDTO(
+                model.AnimalId,
+                model.ServiceId,
+                model.Date,
+                model.Time,
+                model.Observation));
+            
+            TempData["SuccessMessage"] = "Agendamento realizado com sucesso!";
+            return RedirectToAction("Index");
         }
-        catch (DateAlreadyExistsException e)
+        catch (BusyScheduleException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
+            return View("Index");
+        }
+        catch (MaximumBookingsPerAnimalExceededException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View("Index");
         }
         catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
+            return View("Index");
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return View();
+            return View("Index");
         }
     }
 }
