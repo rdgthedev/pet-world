@@ -35,10 +35,6 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
             .HasMaxLength(120)
             .IsRequired();
 
-        builder.Property(a => a.BirthDate)
-            .HasColumnName("BirthDate")
-            .HasColumnType("DATETIME");
-
         builder.Property(a => a.Gender)
             .HasColumnName("Gender")
             .HasColumnType("NVARCHAR")

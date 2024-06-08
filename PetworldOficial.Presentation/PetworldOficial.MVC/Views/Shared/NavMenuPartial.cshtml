@@ -1,26 +1,55 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+﻿@using PetWorldOficial.Domain.Enums
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="#">
-            <img src="/Images/PetWorldLogo.png" style="width: 160px; margin-bottom: 10px" alt="aqui">
+        <a asp-controller="Home" asp-action="Index" class="navbar-brand">
+            <img src="/Images/PetWorldLogo2.png" style="width: 160px; margin-bottom: 10px" alt="aqui">
         </a>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                @* <li class="nav-item"> *@
+                @*     <a class="nav-link active" asp-controller="Home" asp-action="Index">Página Inicial</a> *@
+                @* </li> *@
+                @* <li class="nav-item "> *@
+                @*     <a class="nav-link active" asp-controller="Product" asp-action="Index">Produtos</a> *@
+                @* </li> *@
+
+                @if (!User.IsInRole(ERole.Admin.ToString()))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-controller="Service" asp-action="Index">Serviços</a>
+                    </li>
+                }
+
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Página Inicial</a>
+                    <a class="nav-link active" asp-controller="Animal" asp-action="Register">Cadastrar Pet</a>
                 </li>
-                <li class="nav-item ">
-                    <a class="nav-link active" href="#">Produtos</a>
-                </li>
+
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Serviços</a>
+                    @if (User.IsInRole(ERole.Admin.ToString()))
+                    {
+                        <a class="nav-link active" asp-controller="Animal" asp-action="Index">Lista de Pets</a>
+                    }
+                    else
+                    {
+                        <a class="nav-link active" asp-controller="Animal" asp-action="Index">Meus Pets</a>
+                    }
                 </li>
-                <li class="nav-item ">
-                    <a class="nav-link active" href="#">Produtos</a>
-                </li>
+                @if (User.IsInRole(ERole.Admin.ToString()))
+                {
+                    @* <li class="nav-item"> *@
+                    @*     <a class="nav-link active" asp-controller="Animal" asp-action="Index">Lista de Pets</a> *@
+                    @* </li> *@
+
+
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-controller="User" asp-action="Index">Lista de Usuários</a>
+                    </li>
+                }
             </ul>
+
             @if (User.Identity != null && !User.Identity.IsAuthenticated)
             {
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -34,26 +63,42 @@
             }
             else
             {
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="cursor: pointer">
                     <li class="nav-item text-light" style="margin-top: 14px; padding-right: 7px">
-                        <p style="font-weight: 400">Olá, @User.Identity.Name</p>
+                        <p style="font-weight: 400">Olá, @User.Identity!.Name</p>
                     </li>
                     <li style="margin-top: 10px; padding-right: 10px">
                         <div class="d-flex">
                             <div class="dropdown me-1">
-                                <a class="dropdown-toggle text-decoration-none text-white" data-bs-toggle="dropdown" aria-expanded="false" data-bs-offset="10,20" href="#">
+                                <a class="dropdown-toggle text-decoration-none text-white" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <img src="/Images/UserSvg.svg" alt="User" style="width: 35px;">
-                                    
+
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="#">Minha conta</a></li>
-                                    <li><a asp-controller="Auth" asp-action="Logout" class="dropdown-item">Sair</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="#">Minha conta</a>
+                                    </li>
+                                    @if (!User.IsInRole(ERole.Admin.ToString()))
+                                    {
+                                        <li>
+                                            <a asp-controller="Schedule" asp-action="Index" class="dropdown-item">Meus agendamentos</a>
+                                        </li>
+
+                                        <li>
+                                            <a asp-controller="Animal" asp-action="Index" class="dropdown-item">Meus Pets</a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a asp-controller="Auth" asp-action="Logout" class="dropdown-item">Sair</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                     </li>
-                    <li style="margin-top: 12px; padding-right: 20px" >
-                        <a href=""><img src="/Images/CartSvg.svg" alt="" style="width: 35px;"></a>
+                    <li style="margin-top: 12px; padding-right: 20px">
+                        <a href="">
+                            <img src="/Images/CartSvg.svg" alt="" style="width: 35px;">
+                        </a>
                     </li>
                 </ul>
             }

@@ -1,0 +1,48 @@
+﻿@model DeleteScheduleViewModel
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid text-black py-3">
+    <br>
+    <h2 class="display-6 text-center fw">Dados do Agendamento</h2>
+    <br>
+</div>
+
+<div class="container">
+    <br>
+    <form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="Schedule" asp-action="Delete" method="post">
+        <input type="hidden" asp-for="@Model.Id">
+        <input type="hidden" asp-for="@Model.AnimalId">
+        <input type="hidden" asp-for="@Model.ServiceId">
+
+        <div class="col-md-8">
+            <label asp-for="@Model.Animal!.Name" class="form-label">Pet</label>
+            <input asp-for="@Model.Animal!.Name" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.Service!.Name" class="form-label">Serviço</label>
+            <input asp-for="@Model.Service!.Name" type="text" class="form-control shadow-none" placeholder="Descrição" readonly>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.Date" class="form-label">Data</label>
+            <input asp-for="@Model.Date" type="text" class="form-control shadow-none" placeholder="Descrição" readonly value="@Model.Date?.ToString("dd/MM/yyyy")">
+        </div>
+        
+        <div class="col-md-8">
+            <label asp-for="@Model.Time" class="form-label">Horário</label>
+            <input asp-for="@Model.Time" type="text" class="form-control shadow-none" placeholder="Descrição" readonly>
+        </div>
+        
+        <div class="d-grid gap-2 col-4 mx-auto col-md-5">
+            <br>
+            <button type="submit" class="btn btn-dark btn-lg">Cancelar</button>
+        </div>
+    </form>
+
+    <footer>
+
+    </footer>
+</div>

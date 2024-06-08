@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Domain.Entities;
 
@@ -35,7 +36,7 @@ public sealed class User : IdentityUser<int>
         State = state;
     }
 
-    public string Name { get; private set; } 
+    public string Name { get; set; } 
     public string Gender { get; private set; }
     public DateTime BirthDate { get; private set; }
     public string Document { get; private set; }

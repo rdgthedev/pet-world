@@ -133,10 +133,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("BirthDate")
-                        .HasColumnType("DATETIME")
-                        .HasColumnName("BirthDate");
-
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -266,7 +262,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("Date");
 
                     b.Property<string>("Observation")
-                        .IsRequired()
                         .HasColumnType("VARCHAR(255)")
                         .HasColumnName("Observation");
 
@@ -279,12 +274,12 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "AnimalId" }, "IX_Schedule_AnimalId");
+                    b.HasIndex("AnimalId");
+
+                    b.HasIndex("ServiceId");
 
                     b.HasIndex(new[] { "Id" }, "IX_Schedule_Id")
                         .IsUnique();
-
-                    b.HasIndex(new[] { "ServiceId" }, "IX_Schedule_ServiceId");
 
                     b.ToTable("Schedule", (string)null);
                 });
@@ -595,7 +590,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.HasOne("PetWorldOficial.Domain.Entities.Service", "Service")
                         .WithMany("Schedules")
-                        .HasForeignKey("AnimalId")
+                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_Schedule_Animal_ServiceId");

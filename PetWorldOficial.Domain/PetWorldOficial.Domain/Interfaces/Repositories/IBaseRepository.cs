@@ -6,6 +6,6 @@ public interface IBaseRepository<TEntity> where TEntity : class
 {
     Task<IEnumerable<TEntity>> GetAllAsync();
     Task<TEntity?> GetByIdAsync(int id);
-    Task Update(TEntity entity);
-    Task Delete(TEntity entity);
+    Task UpdateAsync(TEntity entity);
+    Task DeleteAsync(TEntity entity);
 }

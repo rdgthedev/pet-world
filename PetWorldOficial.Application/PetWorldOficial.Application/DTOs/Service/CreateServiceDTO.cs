@@ -2,9 +2,4 @@
 
 namespace PetWorldOficial.Application.DTOs.Service;
 
-public class CreateServiceDTO
-{
-    public string Name { get; set; }
-    public double Price { get; set; }
-    public string? ImageUrl { get; set; }
-}
+public record CreateServiceDTO(string Name, double Price, string? ImageUrl);

@@ -5,51 +5,29 @@ using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(UserManager<User> _userManager) : IUserRepository
 {
-    private readonly UserManager<User> _userManager;
-    
-    public UserRepository(UserManager<User> userManager)
-    {
-        _userManager = userManager;
-    }
-    
     public async Task<IEnumerable<User>> GetAllAsync()
-    {
-        return await _userManager.Users.AsNoTracking().ToListAsync();
-    }
+        => await _userManager.Users.AsNoTracking().ToListAsync();
 
     public async Task<User?> GetByIdAsync(int id)
-    {
-        return await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Id == id);
-    }
-    
-    public async Task<User?> GetByUserName(string userName)
-    {
-        return await _userManager.FindByNameAsync(userName);
-    }
+        => await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Id == id);
 
-    public async Task<User?> GetByEmail(string email)
-    {
-        return await _userManager.FindByEmailAsync(email);
-    }
+    public async Task<User?> GetByUserNameAsync(string userName)
+        => await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.UserName == userName);
 
-    public async Task<User?> GetByPhoneNumber(string phoneNumber)
-    {
-        return await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.PhoneNumber == phoneNumber);
-    }
+    public async Task<User?> GetByEmailAsync(string email)
+        => await _userManager.FindByEmailAsync(email);
 
-    public async Task<User?> GetByDocument(string document)
-    {
-        return await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Document == document);
-    }
-    public async Task Update(User entity)
-    {
-        await _userManager.UpdateAsync(entity);
-    }
+    public async Task<User?> GetByPhoneNumberAsync(string phoneNumber)
+        => await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.PhoneNumber == phoneNumber);
 
-    public async Task Delete(User entity)
-    {
-        await _userManager.DeleteAsync(entity);
-    }
+    public async Task<User?> GetByDocumentAsync(string document)
+        => await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Document == document);
+
+    public async Task UpdateAsync(User entity)
+        => await _userManager.UpdateAsync(entity);
+
+    public async Task DeleteAsync(User entity)
+        => await _userManager.DeleteAsync(entity);
 }

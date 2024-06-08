@@ -10,14 +10,14 @@ public class Schedule : Entity
     public Service Service { get; private set; }
     public DateTime Date { get; private set; }
     public TimeSpan Time { get; private set; }
-    public string Observation { get; private set; }
+    public string? Observation { get; private set; }
 
     public Schedule(
         int animalId, 
         int serviceId,
         DateTime date,
         TimeSpan time,
-        string observation)
+        string? observation)
     {
         AnimalId = animalId;
         ServiceId = serviceId;

@@ -1,19 +1,22 @@
 ﻿using PetWorldOficial.Application.DTOs.Animal.Input;
 using PetWorldOficial.Application.DTOs.Animal.Output;
+using PetWorldOficial.Application.ViewModels.Animal;
+using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IAnimalService
 {
-    public Task<IEnumerable<OutputAnimalDTO>> GetAll();
+    public Task<IEnumerable<AnimalDetailsViewModel>> GetAll();
 
-    public Task<OutputAnimalDTO?> GetById(int id);
+    public Task<AnimalDetailsViewModel?> GetById(int id);
 
-    public Task Update(RegisterAnimalDTO animalDto);
+    public Task Update(UpdateAnimalViewModel animalDto);
 
-    public Task Delete(RegisterAnimalDTO animalDto);
+    public Task Delete(DeleteAnimalViewModel animalDto);
 
-    public Task Create(RegisterAnimalDTO animalDto);
+    public Task Create(CreateAnimalViewModel animalDto);
 
-    public Task<IEnumerable<OutputAnimalDTO?>> GetByOwner(int id);
+    public Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserId(int id);
+    public Task<IEnumerable<AnimalDetailsViewModel?>> GetWithUser();
 }

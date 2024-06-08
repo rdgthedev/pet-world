@@ -1,11 +1,10 @@
-﻿namespace PetWorldOficial.Application.DTOs.Animal.Input;
+﻿using System.Runtime.InteropServices.JavaScript;
 
-public class RegisterAnimalDTO
-{
-    public string Name { get; set; }
-    public string Species { get; set; }
-    public string Race { get; set; }
-    public DateTime? BirthDate { get; set; }
-    public string Gender { get; set; }
-    public int UserId { get; set; }
-}
+namespace PetWorldOficial.Application.DTOs.Animal.Input;
+
+public record RegisterAnimalDTO(
+    string Name,
+    string Species,
+    string Race,
+    string Gender,
+    int UserId);

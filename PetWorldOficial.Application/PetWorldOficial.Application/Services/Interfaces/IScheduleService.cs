@@ -1,16 +1,17 @@
-﻿using PetWorldOficial.Application.DTOs.Schedule.Input;
-using PetWorldOficial.Application.DTOs.Schedule.Output;
-using PetWorldOficial.Domain.Entities;
+﻿using PetWorldOficial.Application.ViewModels.Schedule;
 
 namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IScheduleService
 {
-    public Task<IEnumerable<OutputScheduleDTO>> GetAll();
-    public Task<OutputScheduleDTO?> GetById(int id);
-    public Task<bool> BusySchedule(DateTime date);
-    public Task<bool> MaximumBookingsPerAnimalExceeded(int animalId, DateTime date, TimeSpan time);
-    public Task Update(Schedule entity);
-    public Task Delete(Schedule entity);
-    public Task CreateAsync(RegisterScheduleDTO schedule);
+    Task<IEnumerable<ScheduleDatailsViewModel>> GetAll();
+    Task<ScheduleDatailsViewModel?> GetById(int id);
+    Task<ScheduleDatailsViewModel?> GetByIdWithAnimalAndService(int id);
+    Task<IEnumerable<ScheduleDatailsViewModel?>> GetAllByAnimalsIds(IEnumerable<int> id);
+    Task<bool> BusySchedule(DateTime date);
+    Task<bool> IsMaximumBookingsExceeded(DateTime date, TimeSpan time);
+    Task<bool> IsMaximumServiceBookingsPerAnimalExceededAsync(CreateScheduleViewModel model);
+    Task Update(UpdateScheduleViewModel model);
+    Task Delete(DeleteScheduleViewModel model);
+    Task Create(CreateScheduleViewModel model);
 }

@@ -1,60 +1,31 @@
 ﻿using AutoMapper;
-using PetWorldOficial.Application.DTOs.Animal.Input;
-using PetWorldOficial.Application.DTOs.Animal.Output;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Application.Services.Implementations;
 
-public class AnimalService : IAnimalService
+public class AnimalService(IAnimalRepository animalRepository, IMapper mapper) : IAnimalService
 {
-    private readonly IAnimalRepository _animalRepository;
-    private readonly IMapper _mapper;
+    public async Task<IEnumerable<AnimalDetailsViewModel>> GetAll()
+        => mapper.Map<IEnumerable<AnimalDetailsViewModel>>(await animalRepository.GetAllAsync());
+
+    public async Task<AnimalDetailsViewModel?> GetById(int id)
+        => mapper.Map<AnimalDetailsViewModel>(await animalRepository.GetByIdAsync(id));
     
-    public AnimalService(
-        IAnimalRepository animalRepository,
-        IMapper mapper)
-    {
-        _animalRepository = animalRepository;
-        _mapper = mapper;
-    }
+    public async Task Update(UpdateAnimalViewModel animalDto)
+        => await animalRepository.UpdateAsync(mapper.Map<Animal>(animalDto));
     
-    public async Task<IEnumerable<OutputAnimalDTO>> GetAll()
-    {
-         var animals = _mapper.Map<IEnumerable<OutputAnimalDTO>>(await _animalRepository.GetAllAsync());
-         if (animals == null) throw new NotFoundException("Nenhum animal encontrado!");
-         return animals;
-    }
+    public async Task Delete(DeleteAnimalViewModel animalDto)
+        => await animalRepository.DeleteAsync(mapper.Map<Animal>(animalDto));
+    
+    public async Task Create(CreateAnimalViewModel animalDto)
+        => await animalRepository.CreateAsync(mapper.Map<Animal>(animalDto));
 
-    public async Task<OutputAnimalDTO?> GetById(int id)
-    {
-        var animal = _mapper.Map<OutputAnimalDTO>(await _animalRepository.GetByIdAsync(id));
-        if (animal == null) throw new NotFoundException("Animal não encontrado!");
-        return animal;
-    }
+    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserId(int id)
+        => mapper.Map<IEnumerable<AnimalDetailsViewModel>>(await animalRepository.GetByUserIdAsync(id));
 
-    public async Task Update(RegisterAnimalDTO animalDto)
-    {
-        await _animalRepository.Update(_mapper.Map<Animal>(animalDto));
-    }
-
-    public async Task Delete(RegisterAnimalDTO animalDto)
-    {
-        await _animalRepository.Delete(_mapper.Map<Animal>(animalDto));
-    }
-
-    public async Task Create(RegisterAnimalDTO animalDto)
-    {
-        var animal = _mapper.Map<Animal>(animalDto);
-        await _animalRepository.CreateAsync(animal);
-    }
-
-    public async Task<IEnumerable<OutputAnimalDTO?>> GetByOwner(int id)
-    {
-         var animals = _mapper.Map<IEnumerable<OutputAnimalDTO>>(await _animalRepository.GetByOwnerAsync(id));
-         if (animals == null) throw new NotFoundException("Nenhum animal encontrado!");
-         return animals;
-    }
+    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetWithUser()
+    => mapper.Map<IEnumerable<AnimalDetailsViewModel>>(await animalRepository.GetWithUser());
 }

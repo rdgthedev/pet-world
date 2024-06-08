@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Service;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
+using PetworldOficial.MVC.ViewModels.Service;
 
 namespace PetworldOficial.MVC.Controllers;
 
@@ -13,7 +15,7 @@ public class ServiceController : Controller
     private readonly IImageService _imageService;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IMapper _mapper;
-    
+
     public ServiceController(
         IServiceService serviceService,
         IImageService imageService,
@@ -27,14 +29,15 @@ public class ServiceController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         try
         {
-            var services= await _serviceService.GetAll();
+            var services = await _serviceService.GetAll();
             return View(services);
         }
-        catch(NotFoundException e)
+        catch (NotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
             return View();
@@ -47,6 +50,7 @@ public class ServiceController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "User, Admin")]
     public async Task<IActionResult> GetById(int id)
     {
         try
@@ -67,32 +71,27 @@ public class ServiceController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles="Admin")]
     public IActionResult Create() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateServiceDTO createServiceDto, IFormFile file)
+    public async Task<IActionResult> Create(CreateServiceViewModel model)
     {
-        if (!ModelState.IsValid)
-        {
-            if(file == null)
-                ModelState.AddModelError(string.Empty, "A imagem é obrigatória!");
-            
-            return View(createServiceDto);
-        }
+        if (!ModelState.IsValid) return View(model);
 
         try
         {
-            var serviceResult = await _serviceService.GetByName(createServiceDto.Name);
-            
-            if (serviceResult != null) throw new ServiceAlreadyExistsException("Serviço já existe!");
+            var serviceResult = await _serviceService.GetByName(model.Name);
 
-            createServiceDto.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
-            await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, createServiceDto.ImageUrl);
-            
-            await _serviceService.Create(createServiceDto);
-            TempData["SuccessMessage"] = "Serviço criado com sucesso!";
-            ModelState.Clear();
-            
+            if (serviceResult != null) 
+                throw new ServiceAlreadyExistsException("Serviço já existe!");
+
+            var imageUrl = _imageService.GenerateImageName(model.File, _webHostEnvironment.WebRootPath);
+            await _imageService.SaveImage(model.File, _webHostEnvironment.WebRootPath, imageUrl);
+
+            await _serviceService.Create(new CreateServiceDTO(model.Name, (double)model.Price!, imageUrl));
+            TempData["SuccessMessage"] = "Serviço cadastrado com sucesso!";
+
             return View();
         }
         catch (ServiceAlreadyExistsException e)

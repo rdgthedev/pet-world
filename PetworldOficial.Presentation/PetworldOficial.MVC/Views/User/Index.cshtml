@@ -1,16 +1,54 @@
-﻿@* $1$ @{ #1# *@
-@* $1$     Layout = null; #1# *@
-@* $1$ } #1# *@
-@* $1$ #1# *@
-@* $1$ <!DOCTYPE html> #1# *@
-@* $1$ #1# *@
-@* $1$ <html> #1# *@
-@* $1$ <head> #1# *@
-@* $1$     <title></title> #1# *@
-@* $1$ </head> #1# *@
-@* $1$ <body> #1# *@
-@* $1$ <div> #1# *@
-@* $1$      #1# *@
-@* $1$ </div> #1# *@
-@* $1$ </body> #1# *@
-@* </html> *@
+﻿@model IEnumerable<UserDetailsViewModel>
+
+@{
+    Layout = "_Layout";
+}
+
+@if (Model.Any())
+{
+    <div class="container-fluid text-black py-3 d-flex justify-content-center align-items-center">
+        <h1 class="display-6 text-center fw-normal">
+            <img src="/Images/ListaDeUsuarios.png" alt="">
+        </h1>
+    </div>
+    <table class="table-dark table table-hover">
+        <thead>
+        <tr>
+            <th style="text-align: center;">Id</th>
+            <th style="text-align: center;">Nome</th>
+            <th style="text-align: center;">Nome de Usuário</th>
+            <th style="text-align: center;">Email</th>
+            <th style="text-align: center;">Gênero</th>
+            <th style="text-align: center;">Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td style="text-align: center;">@user.Id</td>
+                <td style="text-align: center;">@user.Name</td>
+                <td style="text-align: center;">@user.UserName</td>
+                <td style="text-align: center;">@user.Gender</td>
+                <td style="text-align: center;">@user.Email</td>
+                <td style="text-align: center;">
+
+                    @* <a class="text-decoration-none" asp-controller="User" asp-action="Update" asp-route-id="@user.Id"> *@
+                    @*     <img style="width: 45px; cursor: pointer" src="\Images/Edit.svg" alt="Edit"> *@
+                    @* </a> *@
+                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Delete" asp-route-id="@user.Id">
+                        <img style="width: 35px; cursor: pointer" src="\Images/trash2.svg" alt="Delete">
+                    </a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="display-6 text-center fw">@TempData["UserNotFoundMessage"]</h2>
+    </div>
+}

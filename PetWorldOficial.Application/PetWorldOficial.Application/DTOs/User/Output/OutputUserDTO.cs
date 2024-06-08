@@ -1,3 +1,5 @@
+using PetWorldOficial.Domain.Enums;
+
 namespace PetWorldOficial.Application.DTOs.User.Output;
 
 public class OutputUserDto

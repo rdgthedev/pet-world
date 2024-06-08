@@ -1,30 +1,46 @@
-﻿@model UserLoginDTO
+﻿@model PetWorldOficial.Application.ViewModels.User.UserLoginViewModel
 
 @{
     Layout = "_LayoutLogin";
 }
+
 <div class="container">
     <form class="w-50 mx-auto py-5 shadow p-4" asp-controller="Auth" asp-action="Login">
         <div class="d-flex justify-content-center align-items-center">
-            <img  src="/Images/PetWorldLogo.png" style="width: 250px" alt="">
+            <img src="/Images/PetWorldLogo.png" style="width: 250px" alt="">
         </div>
+
         <br>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="col-md-10 alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            </div>
+        }
         <br>
+
         <div class="d-flex justify-content-center align-items-center flex-column">
             <div class="mb-3 col-md-10">
                 <label asp-for="UserName" class="form-label">Nome de Usuário</label>
-                <input asp-for="UserName" type="text" class="form-control" placeholder="UserXpto" required>
+                <input asp-for="UserName" type="text" class="form-control" placeholder="UserXpto">
+                <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
+
             <div class="mb-3 col-md-10">
                 <label asp-for="Password" class="form-label">Senha</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Digite sua senha" required>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Digite sua senha">
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-                
+
             <div class="d-grid gap-1 col-md-10">
                 <a class="d-flex justify-content-end align-content-end text-white" href="">Esqueceu a senha?</a>
                 <button class="btn btn-dark" type="submit">Entrar</button>
             </div>
             <br>
+        </div>
+        <div>
             <a class="d-flex justify-content-center align-content-center text-white" asp-controller="Auth" asp-action="Register">Cadastrar-se</a>
         </div>
     </form>

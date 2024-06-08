@@ -1,66 +1,43 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using PetWorldOficial.Application.DTOs.User.Input;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
-using PetWorldOficial.Domain.Exceptions;
 
 namespace PetWorldOficial.Infrastructure.Services;
 
-public class AuthService : IAuthService
+public class AuthService(
+    IUserService _userService,
+    UserManager<User> _userManager,
+    SignInManager<User> _signInManager,
+    RoleManager<Role> _roleManager,
+    IMapper _mapper)
+    : IAuthService
 {
-    private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    
-    public AuthService(UserManager<User> userManager, SignInManager<User> signInManager)
+    public async Task<bool> Login(User user, string password)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
-    }
-    
-    public async Task Login(UserLoginDTO user)
-    {
-        var userResult = await _userManager.
-            Users.
-            AsNoTracking().
-            FirstOrDefaultAsync(u => u.UserName == user.UserName);
+        if (!await _userManager.CheckPasswordAsync(user, password))
+            return false;
         
-        if(userResult is null) throw new LoginInvalidException("Usuário ou Senha inválidos!");
+        await _signInManager.SignInAsync(user, false);
+        return true;
+    }
 
-        if (!await _userManager.CheckPasswordAsync(userResult, user.Password))
-            throw new LoginInvalidException("Usuário ou Senha inválidos!"); 
-        
-        await _signInManager.SignInAsync(userResult, false);
-    }
-    
-    public async Task<bool> Register(RegisterUserDTO model)
+    public async Task<User?> Register(RegisterUserViewModel model)
     {
-        var user = new User(
-            model.Name,
-            model.UserName,
-            model.Gender.ToString(),
-            model.BirthDate,
-            model.Document,
-            model.Email,
-            model.PhoneNumber,
-            model.Street,
-            model.Number,
-            model.PostalCode,
-            model.Neighborhood,
-            model.Complement,
-            model.City,
-            model.State);
-        
+        var user = _mapper.Map<User>(model);
         var createdUser = await _userManager.CreateAsync(user, model.Password);
 
-        if (!createdUser.Succeeded) return false;
-        
+        if (!createdUser.Succeeded)
+            return user;
+
         var addedRole = await _userManager.AddToRoleAsync(user, ERole.User.ToString());
-        
-        if (!createdUser.Equals(addedRole)) await _userManager.DeleteAsync(user);
-        
-        return true;
+
+        if (!createdUser.Succeeded.Equals(addedRole.Succeeded))
+            await _userManager.DeleteAsync(user);
+
+        return user;
     }
 
     public async Task Logout() => await _signInManager.SignOutAsync();

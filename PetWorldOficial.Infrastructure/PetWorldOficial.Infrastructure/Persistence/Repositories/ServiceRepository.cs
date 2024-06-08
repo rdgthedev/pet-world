@@ -32,13 +32,13 @@ public class ServiceRepository : IServiceRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task Update(Service service)
+    public async Task UpdateAsync(Service service)
     {
         _context.Update(service);
         await _context.SaveChangesAsync();
     }
 
-    public async Task Delete(Service service)
+    public async Task DeleteAsync(Service service)
     {
         _context.Remove(service);
         await _context.SaveChangesAsync();

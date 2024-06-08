@@ -4,8 +4,8 @@ namespace PetWorldOficial.Domain.Interfaces.Repositories;
 
 public interface IUserRepository : IBaseRepository<User>
 {
-    Task<User?> GetByUserName(string userName);
-    Task<User?> GetByEmail(string email);
-    Task<User?> GetByPhoneNumber(string phoneNumber);
-    Task<User?> GetByDocument(string document);
+    Task<User?> GetByUserNameAsync(string userName);
+    Task<User?> GetByEmailAsync(string email);
+    Task<User?> GetByPhoneNumberAsync(string phoneNumber);
+    Task<User?> GetByDocumentAsync(string document);
 }

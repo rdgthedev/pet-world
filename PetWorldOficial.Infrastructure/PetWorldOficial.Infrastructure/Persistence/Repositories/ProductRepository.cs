@@ -31,13 +31,13 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task Update(Product product)
+    public async Task UpdateAsync(Product product)
     {
         _context.Products.Update(product);
         await _context.SaveChangesAsync();
     }
 
-    public async Task Delete(Product product)
+    public async Task DeleteAsync(Product product)
     {
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();

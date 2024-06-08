@@ -30,13 +30,13 @@ public class SupplierRepository : ISupplierRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task Update(Supplier supplierModel)
+    public async Task UpdateAsync(Supplier supplierModel)
     {
         _context.Update(supplierModel);
         await _context.SaveChangesAsync();
     }
 
-    public async Task Delete(Supplier supplierModel)
+    public async Task DeleteAsync(Supplier supplierModel)
     {
         _context.Remove(supplierModel);
         await _context.SaveChangesAsync();

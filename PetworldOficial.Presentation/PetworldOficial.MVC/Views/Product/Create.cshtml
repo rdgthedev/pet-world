@@ -33,7 +33,7 @@
             <label asp-for="@Model.SupplierId" class="form-label">Fornecedor<span style="color: red;">*</span></label>
             <select asp-for="@Model.SupplierId" class="form-select shadow-none" required>
                 <option value="" selected disabled>Selecione um fornecedor</option>
-                @foreach (var supplier in Model.Suppliers)
+                @foreach (var supplier in Model.Suppliers!)
                 {
                     <option value="@supplier.Id">@supplier.Company</option>
                 }

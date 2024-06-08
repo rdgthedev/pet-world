@@ -1,8 +1,8 @@
-﻿@model CreateServiceDTO
+﻿@model PetworldOficial.MVC.ViewModels.Service.CreateServiceViewModel
 
 @{
-    Layout = "_LayoutCRUD";
-    ViewData["Title"] = "Criar Serviço"; 
+    Layout = "_Layout";
+    ViewData["Title"] = "Cadastrar Serviço"; 
 }
 
 <div class="container-fluid text-black py-3">
@@ -11,22 +11,45 @@
     <br>
 </div>
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-8 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+else if(TempData["SuccessMessage"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-8 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+
 <div class="container">
     <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Service" asp-action="Create" method="post">
             
         <div class="col-md-8">
             <label asp-for="@Model.Name" class="form-label">Nome<span style="color: red;">*</span></label>
-            <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Digite o nome" required>
+            <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Digite o nome">
+            <span asp-validation-for="@Model.Name" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
             <label asp-for="@Model.Price" class="form-label">Preço<span style="color: red;">*</span></label>
-            <input asp-for="@Model.Price" type="text" class="form-control shadow-none" placeholder="Digite o preço" required>
+            <input asp-for="@Model.Price" type="text" class="form-control shadow-none" placeholder="Digite o preço">
+            <span asp-validation-for="@Model.Price" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
             <label class="form-label">Imagem<span style="color: red;">*</span></label>
-            <input type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem" required>
+            <input type="file" asp-for="@Model.File" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
+            <span asp-validation-for="@Model.File" class="text-danger"></span>
         </div>
         <div class="d-grid gap-2 col-4 mx-auto col-md-5">
             <br>

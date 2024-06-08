@@ -1,83 +1,90 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using PetWorldOficial.Application.DTOs.User.Input;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
 
-public class AuthController : Controller
+public class AuthController(
+    IAuthService _authService,
+    IUserService _userService,
+    IMapper _mapper)
+    : Controller
 {
-    private readonly IAuthService _authService;
-    private readonly IUserService _userService;
-    private readonly IMapper _mapper;
-
-    public AuthController(
-        IAuthService authService, 
-        IUserService userService,
-        IMapper mapper)
-    {
-        _authService = authService;
-        _userService = userService;
-        _mapper = mapper;
-    }
-
     [HttpGet]
     public IActionResult Login() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromForm] UserLoginDTO userLoginDTO)
+    public async Task<IActionResult> Login([FromForm] UserLoginViewModel model)
     {
-        if (!ModelState.IsValid) return View("Login");
-        
+        if (!ModelState.IsValid)
+            return View(model);
+
         try
         {
-            await _userService.GetByUserName(userLoginDTO.UserName);
-            await _authService.Login(userLoginDTO);
+            var user = await _userService.GetByUserName(model.UserName);
+
+            if (user is null)
+                throw new LoginInvalidException("Login ou senha inválidos!");
+
+            if (!await _authService.Login(_mapper.Map<User>(user), model.Password))
+                throw new LoginInvalidException("Login ou senha inválidos!");
+
             return RedirectToAction("Index", "Home");
         }
-        catch (LoginInvalidException ex)
+        catch (LoginInvalidException e)
         {
-            ModelState.AddModelError(string.Empty, ex.Message);
-            return View("Login");
+            TempData["ErrorMessage"] = e.Message;
         }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+        }
+        
+        return View(model);
     }
-    
+
     [HttpGet]
     public IActionResult Register() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromForm] RegisterUserDTO registerUserDto)
+    public async Task<IActionResult> Register([FromForm] RegisterUserViewModel model)
     {
-        if (!ModelState.IsValid) return View(registerUserDto);
+        if (!ModelState.IsValid)
+            return View(model);
 
         try
         {
-            var user = _mapper.Map<User>(registerUserDto);
-            if (await _userService.UserExists(user)) throw new UserAlreadyExistsException("Usuário já existe!");
-            
-            if (!await _authService.Register(registerUserDto))
-            {
-                TempData["ErrorMessage"] = "Não foi possível cadastrar o usuário!";
-                return View();
-            }
+            if (await _userService.UserExists(_mapper.Map<User>(model)))
+                throw new UserAlreadyExistsException("Usuário já existe!");
 
-            TempData["SuccessMessage"] = "Usuário criado com sucesso!";
-            return View();
+            var user = await _authService.Register(model);
+
+            if (user is null)
+                throw new UnableToRegisterUserException("Não foi possível registrar o usuário!");
+            
+            
+            await _authService.Login(user, model.Password);
+            return RedirectToAction("Index", "Home");
         }
         catch (UserAlreadyExistsException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
         }
-        catch(Exception)
+        catch (UnableToRegisterUserException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o seu cadastro!";
-            return View();
         }
+
+        return View(model);
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> Logout()
     {
@@ -91,5 +98,5 @@ public class AuthController : Controller
             TempData["ErrorMessage"] = "Occoreu um erro interno!";
             return RedirectToPage("Error");
         }
-    }  
+    }
 }

@@ -16,12 +16,15 @@
     <_ContentIncludedByDefault Remove="wwwroot\Media\PetWorld__3_-removebg-preview.png" />
     <_ContentIncludedByDefault Remove="wwwroot\Media\user-circle-svgrepo-com (1).svg" />
     <_ContentIncludedByDefault Remove="wwwroot\Media\user-circle-svgrepo-com (2).svg" />
+    <_ContentIncludedByDefault Remove="Views\Partials\EditDeleteFormAnimalPartial.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Partials\NavMenuPartial.cshtml" />
   </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>wwwroot\Images\faviconPaw.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ScheduleDatailsViewModel>
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid text-black py-3">
+    <br>
+    <h1 class="display-6 text-center fw-normal">Meus Agendamentos</h1>
+    <br>
+</div>
+
+@if (Model.Any())
+{
+    <table class="table-dark table table-hover">
+        <thead>
+        <tr>
+            <th style="text-align: center;">Pet</th>
+            <th style="text-align: center;">Serviço</th>
+            <th style="text-align: center;">Data</th>
+            <th style="text-align: center;">Horário</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th style="text-align: center;">Ações</th>
+            }
+            <th style="text-align: center;">Ação</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var schedule in Model)
+        {
+            <tr>
+                <td style="text-align: center;">@schedule.Animal.Name</td>
+                <td style="text-align: center;">@schedule.Service.Name</td>
+                <td style="text-align: center;">@schedule.Date.ToString("dd-MM-yyyy")</td>
+                <td style="text-align: center;">@schedule.Time</td>
+                <td style="text-align: center;">
+                    <a class="btn btn-warning mx-2" asp-controller="Schedule" asp-action="Update" asp-route-id="@schedule.Id"><i class="bi bi-pencil-square"></i>Editar</a>
+                    <a class="btn btn-danger mx-2" asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id"><i class="bi bi-trash3-fill"></i>Cancelar</a>
+                </td>
+            </tr>
+        }
+        </tbody >
+    </table>
+}
+else
+{
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="display-6 text-center fw">Você não possuí nenhum agendamento!</h2>
+    </div>
+}

@@ -1,18 +1,121 @@
-﻿@* @model TModel *@
-@* *@
-@* @{ *@
-@*     Layout = null; *@
-@* } *@
-@* *@
-@* <!DOCTYPE html> *@
-@* *@
-@* <html> *@
-@* <head> *@
-@*     <title>title</title> *@
-@* </head> *@
-@* <body> *@
-@* <div> *@
-@*        *@
-@* </div> *@
-@* </body> *@
-@* </html> *@
+﻿@using PetWorldOficial.Domain.Enums
+@model IEnumerable<AnimalDetailsViewModel>
+
+@{
+    if (User.IsInRole("Admin"))
+    {
+        ViewData["Title"] = "Lista de Pets";
+    }
+    else
+    {
+        ViewData["Title"] = "Meus Pets";
+    }
+
+    Layout = "_Layout";
+}
+
+<div class="container-fluid text-black py-3 d-flex justify-content-center align-items-center">
+    <br>
+    @if (User.IsInRole(ERole.Admin.ToString()))
+    {
+        <h1 class="display-6 text-center fw-normal">
+            <img src="/Images/ListaDePets.png" alt="">
+        </h1>
+    }
+    else
+    {
+        <h1 class="display-6 fw-normal">
+            <img src="/Images/MeusPets.png" alt="">
+        </h1>
+    }
+    <br>
+</div>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+else if (TempData["SuccessMessage"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (Model.Any())
+{
+    <div class="container">
+        <div class="pb-2">
+            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
+                <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
+            </a>
+        </div>
+
+        <div class="row">
+            @foreach (var animal in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img style="width: 100%; max-height: 300px"src="/Images/078521a9-722b-4da7-9cde-cda288534b9a.jpg" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            @if (animal.Gender.Equals(EGender.Female.ToString()))
+                            {
+                                <h5 class="card-title">
+                                    <img style="width: 20px" src="/Images/female-svgrepo-com.svg" alt=""> @animal.Name
+                                </h5>
+                            }
+                            else
+                            {
+                                <h5 class="card-title">
+                                    <img style="width: 20px" src="/Images/male-svgrepo-com.svg" alt=""> @animal.Name
+                                </h5>
+                            }
+                            <br>
+
+                            @if (User.IsInRole(ERole.Admin.ToString()))
+                            {
+                                <p>
+                                    <b>Dono:</b> @animal.User!.Name
+                                </p>
+                            }
+                            <p>
+                                <b>Espécie:</b> @animal.Species
+                            </p>
+
+                            <p>
+                                <b>Raça:</b> @animal.Race
+                            </p>
+                            <br>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div style="padding-right: 15px">
+                                    <a style="width: 100px;" class="btn btn-dark me-2 shadow-none" asp-controller="Animal" asp-action="Update" asp-route-id="@animal.Id">Editar</a>
+                                </div>
+                                <div style="padding-left: 15px">
+                                    <a style="width: 100px" class="btn btn-danger shadow-none"
+                                       asp-controller="Animal" asp-action="Delete" asp-route-id="@animal.Id">
+                                        Excluir
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="display-6 text-center fw">@TempData["NotFoundPetMessage"]</h2>
+    </div>
+}

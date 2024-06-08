@@ -1,123 +1,285 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PetWorldOficial.Application.DTOs.Schedule.Input;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
-using PetworldOficial.MVC.Models.Schedule;
 
 namespace PetworldOficial.MVC.Controllers;
 
-public class ScheduleController : Controller
+public class ScheduleController(
+    IServiceService _serviceService,
+    IAnimalService _animalService,
+    IUserService _userService,
+    IScheduleService _scheduleService,
+    IMapper _mapper) : Controller
 {
-    private readonly IServiceService _serviceService;
-    private readonly IAnimalService _animalService;
-    private readonly IScheduleService _scheduleService;
-    private readonly IUserService _userService;
-    private readonly IMapper _mapper;
-    
-    public ScheduleController(
-        IServiceService serviceService,
-        IAnimalService animalService,
-        IUserService userService,
-        IScheduleService scheduleService,
-        IMapper mapper)
-    {
-        _serviceService = serviceService;
-        _animalService = animalService;
-        _userService = userService;
-        _scheduleService = scheduleService;
-        _mapper = mapper;
-    }
-    
     [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Index()
     {
+        IEnumerable<ScheduleDatailsViewModel?> schedules = null!;
+
         try
         {
-            return View(_mapper.Map<IEnumerable<Service>>(await _serviceService.GetAll()));
+            var user = await _userService.GetByUserName(User.Identity?.Name!);
+
+            if (user is null)
+                throw new UserNotFoundException("Usuário não encontrado!");
+
+            if (!User.IsInRole(ERole.Admin.ToString()))
+                schedules = await _scheduleService.GetAllByAnimalsIds(
+                    (await _animalService.GetByUserId(user.Id)).Select(s => s!.Id));
+            else
+                schedules = await _scheduleService.GetAll();
+
+            return View(schedules ?? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!"));
         }
-        catch (NotFoundException e)
+        catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar identificar o usuário," +
+                                       $" tente fazer o login novamente no site.";
+            return View(schedules);
+        }
+        catch (ScheduleNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
+            return View(schedules);
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return View();
+            TempData["ErrorMessage"] = "Ocorreu um erro interno. Desculpe, não foi possível mostrar os agendamentos!";
+            return View(schedules);
         }
     }
 
     [HttpGet]
-    public async Task<IActionResult> Schedule(int id)
+    [Authorize(Roles = "Admin, User")]
+    public async Task<IActionResult> Create(int id)
     {
         try
         {
             var user = await _userService.GetByUserName(User.Identity?.Name!);
-            var animals = await _animalService.GetByOwner(user!.Id);
+
+            if (user is null)
+                throw new UserNotFoundException("Usuário não encontrado!");
+
+            var animals = await _animalService.GetByUserId(user.Id);
+
+            if (animals is null)
+                throw new AnimalNotFoundException("Nenhum pet encontrado!");
+
             var service = _mapper.Map<Service>(await _serviceService.GetById(id));
-            return View(new RegisterScheduleViewModel
-            { 
-                Animals = _mapper.Map<IEnumerable<Animal>>(animals), 
-                Service = service 
+
+            if (service is null)
+                throw new ServiceNotFoundException("Nenhum serviço encontrado!");
+
+            return View(new CreateScheduleViewModel
+            {
+                Animals = _mapper.Map<IEnumerable<Animal>>(animals),
+                Service = service,
+                UserId = user.Id
             });
         }
-        catch (NotFoundException e)
+        catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar identificar o usuário," +
+                                       $" tente fazer o login novamente no site.";
+        }
+        catch (AnimalNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Antes de agendar, cadastre o seu pet!";
+        }
+        catch (ServiceNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar ao identificar o serviço" +
+                                       $", tente agendar novamente!";
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível completar seu agendamento!";
+        }
+
+        return RedirectToAction("Index", "Service");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateScheduleViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId));
+            model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId));
+            return View(model);
+        }
+
+        try
+        {
+            if (await _scheduleService.BusySchedule((DateTime)model.Date!))
+                throw new BusyScheduleException("Agenda lotada para esta data!");
+
+            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!))
+                throw new MaximumBookingsPerAnimalExceededException("Horário não disponível!");
+
+            await _scheduleService.Create(model);
+            TempData["SuccessMessage"] = "Agendamento realizado com sucesso!";
+            return RedirectToAction("Index", "Service");
+        }
+        catch (BusyScheduleException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
+        }
+        catch (MaximumBookingsPerAnimalExceededException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar identificar o usuário," +
+                                       $" tente fazer o login novamente no site.";
+        }
+        catch (ServiceNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar ao identificar o serviço" +
+                                       $", tente agendar novamente!";
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return View();
         }
+
+        model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId));
+        model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId));
+        return View(model);
     }
-    
-    [HttpPost]
-    public async Task<IActionResult> Schedule(RegisterScheduleViewModel model)
+
+    [HttpGet]
+    [Authorize(Roles = "Admin, User")]
+    public async Task<IActionResult> Update(int id)
     {
-        if (!ModelState.IsValid) return View(model);
-        
         try
         {
-            if (await _scheduleService.BusySchedule(model.Date))
+            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id);
+
+            if (schedule is null)
+                throw new ScheduleNotFoundException("Agendamento não encontrado!");
+
+            return View(new UpdateScheduleViewModel
+            {
+                Id = schedule.Id,
+                Date = schedule.Date,
+                Time = schedule.Time,
+                Observation = schedule.Observation,
+                Animal = schedule.Animal,
+                Service = schedule.Service
+            });
+        }
+        catch (ScheduleNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar ao identificar o agendamento" +
+                                       $", tente agendar novamente!";
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível completar seu agendamento!";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Update(UpdateScheduleViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var schedule = await _scheduleService.GetByIdWithAnimalAndService(model.Id);
+            model.Service = schedule!.Service;
+            model.Animal = schedule.Animal;
+            return View(model);
+        }
+
+        try
+        {
+            if (await _scheduleService.BusySchedule((DateTime)model.Date!))
                 throw new BusyScheduleException("Agenda lotada para esta data!");
-            
-            if (await _scheduleService.MaximumBookingsPerAnimalExceeded(model.AnimalId, model.Date, model.Time))
-                throw new MaximumBookingsPerAnimalExceededException("Verifique sua agenda seus serviços agendados devem " +
-                                                                    "ter pelo menos a diferença de uma hora de um para o outro!");
-                
-            await _scheduleService.CreateAsync(new RegisterScheduleDTO(
-                model.AnimalId,
-                model.ServiceId,
-                model.Date,
-                model.Time,
-                model.Observation));
-            
-            TempData["SuccessMessage"] = "Agendamento realizado com sucesso!";
+
+            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!))
+                throw new MaximumBookingsPerAnimalExceededException("Horário não disponível!");
+
+            await _scheduleService.Update(model);
+            TempData["SuccessMessage"] = "Agendamento alterado com sucesso!";
             return RedirectToAction("Index");
         }
         catch (BusyScheduleException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View("Index");
         }
         catch (MaximumBookingsPerAnimalExceededException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View("Index");
         }
-        catch (NotFoundException e)
+        catch (Exception)
         {
-            TempData["ErrorMessage"] = e.Message;
-            return View("Index");
+            TempData["ErrorMessage"] = "Ocorreu um erro interno";
+            return RedirectToAction("Index");
+        }
+
+        var scheduleDetails = await _scheduleService.GetByIdWithAnimalAndService(model.Id);
+        model.Service = scheduleDetails!.Service;
+        model.Animal = scheduleDetails.Animal;
+        return View(model);
+    }
+
+
+    [HttpGet]
+    [Authorize(Roles = "Admin, User")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        try
+        {
+            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id);
+
+            if (schedule is null)
+                throw new ScheduleNotFoundException("Agendamento não encontrado!");
+
+            return View(new DeleteScheduleViewModel
+            {
+                Id = schedule.Id,
+                AnimalId = schedule.Animal.Id,
+                ServiceId = schedule.Service.Id,
+                Service = schedule.Service,
+                Animal = schedule.Animal,
+                Date = schedule.Date,
+                Time = schedule.Time
+            });
+        }
+        catch (ScheduleNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar identificar o agendamento!";
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return View("Index");
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete([FromForm] DeleteScheduleViewModel model)
+    {
+        try
+        {
+            await _scheduleService.Delete(model);
+            TempData["SuccessMessage"] = "Agendamento cancelado com sucesso!";
+            return RedirectToAction("Index");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno";
+            return RedirectToAction("Index");
         }
     }
 }
