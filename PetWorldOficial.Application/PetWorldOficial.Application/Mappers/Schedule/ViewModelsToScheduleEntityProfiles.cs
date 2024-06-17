@@ -10,7 +10,7 @@ public class ViewModelsToScheduleEntityProfiles : Profile
         CreateMap<CreateScheduleViewModel, Domain.Entities.Schedule>()
             .ConstructUsing(vm =>
                 new Domain.Entities.Schedule(
-                    vm.AnimalId,
+                    (int)vm.AnimalId!,
                     vm.ServiceId,
                     (DateTime)vm.Date!,
                     (TimeSpan)vm.Time!,

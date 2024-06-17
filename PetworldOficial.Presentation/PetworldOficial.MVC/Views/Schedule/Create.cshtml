@@ -2,6 +2,7 @@
 @model PetWorldOficial.Application.ViewModels.Schedule.CreateScheduleViewModel
 
 @{
+    ViewData["Title"] = "Agendar";
     Layout = "_Layout";
 }
 
@@ -81,7 +82,7 @@ else if (TempData["SuccessMessage"] != null)
                 <option value="" selected disabled>Selecione um pet</option>
                 @foreach (var animal in Model.Animals!)
                 {
-                    <option value="@animal!.Id">@animal.Name</option>
+                    <option value="@animal.Id">@animal.Name</option>
                 }
             </select>
             <span asp-validation-for="@Model.AnimalId" class="text-danger"></span>

@@ -35,8 +35,23 @@ public class UserService(
         return searchTasks.Any(u => u != null);
     }
 
-    public async Task Update(User model)
+    public async Task Update(UpdateUserViewModel model)
     {
-        await _userRepository.UpdateAsync(model);
+        var existingUser = await _userRepository.GetByIdAsync(model.Id);
+
+        if (existingUser is null)
+            throw new UserNotFoundException("Usuário não encontrado!");
+
+        await _userRepository.UpdateAsync(_mapper.Map(model, existingUser));
+    }
+
+    public async Task Delete(DeleteUserViewModel model)
+    {
+        var existingUser = await _userRepository.GetByIdAsync(model.Id);
+
+        if (existingUser is null)
+            throw new UserNotFoundException("Usuário não encontrado!");
+
+        await _userRepository.DeleteAsync(_mapper.Map(model, existingUser));
     }
 }

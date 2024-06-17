@@ -2,6 +2,7 @@
 using PetWorldOficial.Application.DTOs.Service;
 using PetWorldOficial.Application.DTOs.Service.Output;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
@@ -12,7 +13,7 @@ public class ServiceService : IServiceService
 {
     private readonly IServiceRepository _serviceRepository;
     private readonly IMapper _mapper;
-    
+
     public ServiceService(
         IServiceRepository serviceRepository,
         IMapper mapper)
@@ -20,7 +21,7 @@ public class ServiceService : IServiceService
         _serviceRepository = serviceRepository;
         _mapper = mapper;
     }
-    
+
     public async Task<IEnumerable<OutputServiceDTO>> GetAll()
     {
         var services = _mapper.Map<IEnumerable<OutputServiceDTO>>(await _serviceRepository.GetAllAsync());
@@ -47,13 +48,23 @@ public class ServiceService : IServiceService
         await _serviceRepository.CreateAsync(service);
     }
 
-    public Task Update(CreateServiceDTO createServiceDto)
+    public async Task Update(UpdateServiceViewModel model)
     {
-        throw new NotImplementedException();
+        var service = await _serviceRepository.GetByIdAsync(model.Id);
+
+        if (service is null)
+            throw new ServiceNotFoundException("Serviço não encontrado!");
+
+        await _serviceRepository.UpdateAsync(_mapper.Map(model, service));
     }
 
-    public Task Delete(CreateServiceDTO createServiceDto)
+    public async Task Delete(DeleteServiceViewModel model)
     {
-        throw new NotImplementedException();
+        var service = await _serviceRepository.GetByIdAsync(model.Id);
+
+        if (service is null)
+            throw new ServiceNotFoundException("Serviço não encontrado!");
+        
+        await _serviceRepository.DeleteAsync(_mapper.Map(model, service));
     }
 }

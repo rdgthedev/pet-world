@@ -9,12 +9,10 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
 {
     public async Task<IEnumerable<Animal>> GetAllAsync()
         => await _context.Animals.AsNoTracking().ToListAsync();
-
-
+    
     public async Task<Animal?> GetByIdAsync(int id)
         => await _context.Animals.AsNoTracking().FirstOrDefaultAsync(animal => animal.Id == id);
-
-
+    
     public async Task CreateAsync(Animal entity)
     {
         await _context.Animals.AddAsync(entity);

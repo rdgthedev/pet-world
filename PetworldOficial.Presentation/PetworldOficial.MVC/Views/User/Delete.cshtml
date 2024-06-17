@@ -1,18 +1,56 @@
-﻿@* @model TModel *@
-@* *@
-@* @{ *@
-@*     Layout = null; *@
-@* } *@
-@* *@
-@* <!DOCTYPE html> *@
-@* *@
-@* <html> *@
-@* <head> *@
-@*     <title>title</title> *@
-@* </head> *@
-@* <body> *@
-@* <div> *@
-@* *@
-@* </div> *@
-@* </body> *@
-@* </html> *@
+﻿@model DeleteUserViewModel
+
+@{
+    ViewData["Title"] = "Deletar Usuário";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid text-black py-3">
+    <br>
+    <h2 class="display-6 text-center fw">
+        <img src="/Images/DadosDoUsuario.png" alt="">
+    </h2>
+    <br>
+</div>
+
+<form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="User" asp-action="Delete" method="post">
+
+    <input type="hidden" asp-for="Id">
+
+    <div class="col-md-7">
+        <label asp-for="Name" class="form-label">Nome</label>
+        <input asp-for="Name" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-3">
+        <label asp-for="BirthDate" class="form-label">Nascimento</label>
+        <input asp-for="BirthDate" type="date" class="form-control shadow-none" readonly>
+        <span asp-validation-for="BirthDate" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-10">
+        <label asp-for="UserName" class="form-label">Nome de Usuário</label>
+        <input asp-for="UserName" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-10">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+
+    <div class="col-md-10">
+        <label asp-for="PhoneNumber" class="form-label">Telefone</label>
+        <input asp-for="PhoneNumber" type="tel" class="form-control shadow-none" readonly>
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="d-grid col-3 " style="padding-left: 20px">
+            <button class="btn btn-dark btn-lg" type="submit">Deletar</button>
+        </div>
+    </div>
+</form>

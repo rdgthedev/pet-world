@@ -10,6 +10,6 @@ public class ScheduleDatailsViewModel
     public DateTime Date { get; set; }
     public TimeSpan Time { get; set; }
     public string? Observation { get; set; }
-    public Service Service { get; set; }
+    public Domain.Entities.Service Service { get; set; }
     public Domain.Entities.Animal Animal { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
@@ -14,6 +15,7 @@ public class AuthController(
     : Controller
 {
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult Login() => View();
 
     [HttpPost]
@@ -47,6 +49,7 @@ public class AuthController(
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult Register() => View();
 
     [HttpPost]
@@ -86,6 +89,7 @@ public class AuthController(
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Logout()
     {
         try

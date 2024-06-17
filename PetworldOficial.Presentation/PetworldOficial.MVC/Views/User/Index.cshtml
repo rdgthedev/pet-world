@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<UserDetailsViewModel>
 
 @{
+    ViewData["Title"] = "Usuários";
     Layout = "_Layout";
 }
 
@@ -11,6 +12,22 @@
             <img src="/Images/ListaDeUsuarios.png" alt="">
         </h1>
     </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    else if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <table class="table-dark table table-hover">
         <thead>
         <tr>
@@ -29,14 +46,14 @@
                 <td style="text-align: center;">@user.Id</td>
                 <td style="text-align: center;">@user.Name</td>
                 <td style="text-align: center;">@user.UserName</td>
-                <td style="text-align: center;">@user.Gender</td>
                 <td style="text-align: center;">@user.Email</td>
+                <td style="text-align: center;">@user.Gender</td>
                 <td style="text-align: center;">
 
-                    @* <a class="text-decoration-none" asp-controller="User" asp-action="Update" asp-route-id="@user.Id"> *@
-                    @*     <img style="width: 45px; cursor: pointer" src="\Images/Edit.svg" alt="Edit"> *@
-                    @* </a> *@
-                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Delete" asp-route-id="@user.Id">
+                    <a class="text-decoration-none" asp-controller="User" asp-action="Update" asp-route-id="@user.Id">
+                        <img style="width: 45px; cursor: pointer" src="\Images/Edit.svg" alt="Edit">
+                    </a>
+                    <a class="text-decoration-none" asp-controller="User" asp-action="Delete" asp-route-id="@user.Id">
                         <img style="width: 35px; cursor: pointer" src="\Images/trash2.svg" alt="Delete">
                     </a>
                 </td>

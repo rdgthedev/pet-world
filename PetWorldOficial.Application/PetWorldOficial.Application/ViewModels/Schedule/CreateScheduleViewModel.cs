@@ -5,8 +5,8 @@ namespace PetWorldOficial.Application.ViewModels.Schedule;
 
 public class CreateScheduleViewModel
 {
-    [Required]
-    public int AnimalId { get; set; }
+    [Required(ErrorMessage = "O pet é obrigatório!")]
+    public int? AnimalId { get; set; }
 
     [Required] 
     public int ServiceId { get; set; }

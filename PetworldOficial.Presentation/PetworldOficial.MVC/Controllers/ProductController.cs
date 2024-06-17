@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Product;
 using PetWorldOficial.Application.Services.Interfaces;
@@ -111,6 +112,7 @@ public class ProductController(
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update([FromRoute] int id)
     {
         try

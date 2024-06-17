@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.DTOs.Service;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetworldOficial.MVC.ViewModels.Service;
@@ -71,7 +72,7 @@ public class ServiceController : Controller
     }
 
     [HttpGet]
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin")]
     public IActionResult Create() => View();
 
     [HttpPost]
@@ -83,7 +84,7 @@ public class ServiceController : Controller
         {
             var serviceResult = await _serviceService.GetByName(model.Name);
 
-            if (serviceResult != null) 
+            if (serviceResult != null)
                 throw new ServiceAlreadyExistsException("Serviço já existe!");
 
             var imageUrl = _imageService.GenerateImageName(model.File, _webHostEnvironment.WebRootPath);
@@ -92,22 +93,167 @@ public class ServiceController : Controller
             await _serviceService.Create(new CreateServiceDTO(model.Name, (double)model.Price!, imageUrl));
             TempData["SuccessMessage"] = "Serviço cadastrado com sucesso!";
 
-            return View();
+            return RedirectToAction("Index");
         }
         catch (ServiceAlreadyExistsException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
         }
         catch (InvalidExtensionException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
         }
         catch (Exception e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return View();
         }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Update(int id)
+    {
+        try
+        {
+            var service = await _serviceService.GetById(id);
+
+            if (service is null)
+                throw new ServiceNotFoundException("Serviço não encontrado!");
+
+
+            return View(new UpdateServiceViewModel
+            {
+                Name = service.Name,
+                Price = service.Price,
+                ImageUrl = service.ImageUrl
+            });
+        }
+        catch (ServiceNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro!";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Update(
+        UpdateServiceViewModel model,
+        IFormFile? file)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        try
+        {
+            var service = await _serviceService.GetById(model.Id);
+
+            if (service is null)
+                throw new ServiceNotFoundException("Serviço não encontrado!");
+
+            switch (file)
+            {
+                case not null:
+                    model.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
+                    await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, model.ImageUrl);
+                    break;
+                default:
+                    model.ImageUrl = service.ImageUrl;
+                    break;
+            }
+
+            await _serviceService.Update(model);
+            TempData["SuccessMessage"] = "Serviço alterado com sucesso!";
+            return RedirectToAction("Index");
+        }
+        catch (ServiceNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro!";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            var service = await _serviceService.GetById(id);
+
+            if (service is null)
+                throw new ServiceNotFoundException("Serviço não encontrado!");
+
+
+            return View(new DeleteServiceViewModel
+            {
+                Name = service.Name,
+                Price = service.Price,
+                ImageUrl = service.ImageUrl
+            });
+        }
+        catch (ServiceNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro!";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(
+        DeleteServiceViewModel model,
+        IFormFile? file)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        try
+        {
+            var service = await _serviceService.GetById(model.Id);
+
+            if (service is null)
+                throw new ServiceNotFoundException("Serviço não encontrado!");
+
+            switch (file)
+            {
+                case not null:
+                    model.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
+                    await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, model.ImageUrl);
+                    break;
+                default:
+                    model.ImageUrl = service.ImageUrl;
+                    break;
+            }
+
+            await _serviceService.Delete(model);
+            TempData["SuccessMessage"] = "Serviço deletado com sucesso!";
+            return RedirectToAction("Index");
+        }
+        catch (ServiceNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro!";
+        }
+
+        return RedirectToAction("Index");
     }
 }

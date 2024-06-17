@@ -11,7 +11,7 @@ public class UserRepository(UserManager<User> _userManager) : IUserRepository
         => await _userManager.Users.AsNoTracking().ToListAsync();
 
     public async Task<User?> GetByIdAsync(int id)
-        => await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.Id == id);
+        => await _userManager.Users.FirstOrDefaultAsync(user => user.Id == id);
 
     public async Task<User?> GetByUserNameAsync(string userName)
         => await _userManager.Users.AsNoTracking().FirstOrDefaultAsync(user => user.UserName == userName);

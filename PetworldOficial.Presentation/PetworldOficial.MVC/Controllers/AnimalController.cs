@@ -28,7 +28,7 @@ public class AnimalController(
                 throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
             var role = User.IsInRole(ERole.Admin.ToString()) ? ERole.Admin : ERole.User;
-            
+
             animals = role switch
             {
                 ERole.Admin => await _animalService.GetWithUser(),
@@ -59,6 +59,7 @@ public class AnimalController(
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Register()
     {
         try
@@ -125,6 +126,7 @@ public class AnimalController(
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Update(int id)
     {
         try
@@ -182,6 +184,7 @@ public class AnimalController(
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Delete(int id)
     {
         try

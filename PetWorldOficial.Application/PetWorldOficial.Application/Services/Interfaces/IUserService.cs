@@ -9,5 +9,6 @@ public interface IUserService
     Task<User?> GetById(int id);
     Task<UserDetailsViewModel?> GetByUserName(string userName);
     Task<bool> UserExists(User user);
-    Task Update(User model);
+    Task Update(UpdateUserViewModel model);
+    Task Delete(DeleteUserViewModel model);
 }

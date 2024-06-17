@@ -2,12 +2,13 @@
 @model PetWorldOficial.Application.ViewModels.User.RegisterUserViewModel
 
 @{
+    ViewData["Title"] = "Registrar Usuário";
     Layout = "_LayoutCRUD";
 }
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw">Dados do Cadastro</h2>
+    <h2 class="display-6 text-center fw"><img src="/Images/DadosDoCadastro.png" alt=""></h2>
     <br>
 </div>
 @if (TempData["ErrorMessage"] != null)

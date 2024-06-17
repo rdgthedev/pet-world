@@ -8,6 +8,6 @@ public class ServiceToOutputServiceDTO : Profile
 {
     public ServiceToOutputServiceDTO()
     {
-        CreateMap<OutputServiceDTO, Service>().ReverseMap();
+        CreateMap<OutputServiceDTO, Domain.Entities.Service>().ReverseMap();
     }
 }
