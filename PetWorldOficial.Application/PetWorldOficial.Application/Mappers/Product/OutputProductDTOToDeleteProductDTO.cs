@@ -2,7 +2,7 @@
 using PetWorldOficial.Application.DTOs.Product;
 using PetWorldOficial.Application.DTOs.Product.Output;
 
-namespace PetWorldOficial.Application.Mappers;
+namespace PetWorldOficial.Application.Mappers.Product;
 
 public class OutputProductDTOToDeleteProductDTO : Profile
 {

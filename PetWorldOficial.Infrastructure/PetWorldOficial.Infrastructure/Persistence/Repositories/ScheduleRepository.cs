@@ -8,50 +8,57 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
 public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
 {
-    public async Task<IEnumerable<Schedule>> GetAllAsync()
+    public async Task<IEnumerable<Schedule>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Schedules.AsNoTracking().ToListAsync();
+        return await _context
+            .Schedules
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<Schedule?> GetByIdAsync(int id)
+    public async Task<Schedule?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Schedules.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
-    }
-    
-    public async Task CreateAsync(Schedule entity)
-    {
-        await _context.Schedules.AddAsync(entity);
-        await _context.SaveChangesAsync();
+        return await _context
+            .Schedules
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async Task<int> GetCountByDateAsync(DateTime date)
+    public async Task CreateAsync(Schedule entity, CancellationToken cancellationToken)
+    {
+        await _context.Schedules.AddAsync(entity, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<int> GetCountByDateAsync(DateTime date, CancellationToken cancellationToken)
     {
         return await _context
             .Schedules
             .Where(s => s.Date == date)
-            .CountAsync();
+            .CountAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Schedule?>> GetAllByServiceIdAsync(int serviceId)
+    public async Task<IEnumerable<Schedule?>> GetAllByServiceIdAsync(int serviceId, CancellationToken cancellationToken)
     {
         return await _context
             .Schedules
             .AsNoTracking()
             .Where(s => s.ServiceId == serviceId)
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<Schedule?> GetByIdWithAnimalAndService(int id)
+    public async Task<Schedule?> GetByIdWithAnimalAndService(int id, CancellationToken cancellationToken)
     {
         return await _context
             .Schedules
             .AsNoTracking()
             .Include(s => s.Animal)
             .Include(s => s.Service)
-            .FirstOrDefaultAsync(s => s.Id == id);
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Schedule?>> GetAllByAnimalsIds(IEnumerable<int> animalsIds)
+    public async Task<IEnumerable<Schedule?>> GetAllByAnimalsIds(IEnumerable<int> animalsIds,
+        CancellationToken cancellationToken)
     {
         return await _context
             .Schedules
@@ -59,18 +66,18 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Include(schedule => schedule.Service)
             .Include(schedule => schedule.Animal)
             .Where(schedule => animalsIds.Contains(schedule.AnimalId))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Schedule entity)
+    public async Task UpdateAsync(Schedule entity, CancellationToken cancellationToken)
     {
         _context.Schedules.Update(entity);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Schedule entity)
+    public async Task DeleteAsync(Schedule entity, CancellationToken cancellationToken)
     {
         _context.Schedules.Remove(entity);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

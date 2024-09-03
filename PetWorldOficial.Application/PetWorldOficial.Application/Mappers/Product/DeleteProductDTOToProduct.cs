@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.DTOs.Product;
-using PetWorldOficial.Domain.Entities;
 
-namespace PetWorldOficial.Application.Mappers;
+namespace PetWorldOficial.Application.Mappers.Product;
 
 public class DeleteProductDTOToProduct : Profile
 {
     public DeleteProductDTOToProduct()
     {
-        CreateMap<Product, DeleteProductDTO>().ReverseMap();
+        CreateMap<Domain.Entities.Product, DeleteProductDTO>().ReverseMap();
     }
 }

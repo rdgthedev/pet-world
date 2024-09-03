@@ -1,14 +1,22 @@
-﻿using PetWorldOficial.Application.ViewModels.User;
-using PetWorldOficial.Domain.Entities;
+﻿using PetWorldOficial.Application.Commands.User;
+using PetWorldOficial.Application.DTOs.User.Output;
+using PetWorldOficial.Application.ViewModels.User;
 
 namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<IEnumerable<UserDetailsViewModel>> GetAll();
-    Task<User?> GetById(int id);
-    Task<UserDetailsViewModel?> GetByUserName(string userName);
-    Task<bool> UserExists(User user);
-    Task Update(UpdateUserViewModel model);
-    Task Delete(DeleteUserViewModel model);
+    Task<IEnumerable<UserDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken);
+    Task<UserDetailsViewModel> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task<UserDetailsViewModel?> GetByUserNameAsync(string userName, CancellationToken cancellationToken);
+
+    Task<OutputUserExistsDTO> UserExistsAsync(
+        string? userName,
+        string? cpf,
+        string? phoneNumber,
+        string? email,
+        CancellationToken cancellationToken);
+
+    Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken);
+    Task DeleteAsync(DeleteUserCommand command, CancellationToken cancellationToken);
 }

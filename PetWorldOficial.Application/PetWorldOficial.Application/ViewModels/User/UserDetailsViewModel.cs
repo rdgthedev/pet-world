@@ -3,20 +3,20 @@
 public class UserDetailsViewModel
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public string UserName { get; set; }
-    public string Gender { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string UserName { get; set; } = string.Empty;
+    public string Gender { get; set; } = string.Empty;
     public DateTime? BirthDate { get; set; }
-    public string Document { get; set; }
-    public string PasswordHash { get; set; }
-    public string SecurityStamp { get; set; }
-    public string Email { get; set; }
-    public string PhoneNumber { get; set; }
-    public string Street { get; set; }
+    public string Document { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public string SecurityStamp { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string PhoneNumber { get; set; } = string.Empty;
+    public string Street { get; set; } = string.Empty;
     public int? Number { get; set; }
-    public string PostalCode { get; set; }
-    public string Neighborhood { get; set; }
-    public string Complement { get; set; }
-    public string City { get; set; }
-    public string State { get; set; }
+    public string PostalCode { get; set; } = string.Empty;
+    public string Neighborhood { get; set; } = string.Empty;
+    public string Complement { get; set; } = string.Empty;
+    public string City { get; set; } = string.Empty;
+    public string State { get; set; } = string.Empty;
 }

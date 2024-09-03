@@ -6,10 +6,10 @@ namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IServiceService
 {
-    Task<IEnumerable<OutputServiceDTO>> GetAll();
-    Task<OutputServiceDTO> GetById(int id);
-    Task<OutputServiceDTO> GetByName(string name);
-    Task Create(CreateServiceDTO createServiceDto);
-    Task Update(UpdateServiceViewModel model);
-    Task Delete(DeleteServiceViewModel createServiceDto);
+    Task<IEnumerable<OutputServiceDTO>> GetAll(CancellationToken cancellationToken);
+    Task<OutputServiceDTO> GetById(int id, CancellationToken cancellationToken);
+    Task<OutputServiceDTO> GetByName(string name, CancellationToken cancellationToken);
+    Task Create(CreateServiceDTO createServiceDto, CancellationToken cancellationToken);
+    Task Update(UpdateServiceViewModel model, CancellationToken cancellationToken);
+    Task Delete(DeleteServiceViewModel createServiceDto, CancellationToken cancellationToken);
 }

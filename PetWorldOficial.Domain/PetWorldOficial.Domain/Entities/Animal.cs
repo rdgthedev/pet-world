@@ -25,5 +25,7 @@ public class Animal : Entity
         Race = race;
         Gender = gender;
         UserId = userId;
+
+        Schedules = [];
     }
 }

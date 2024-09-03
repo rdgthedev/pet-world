@@ -2,10 +2,14 @@
 
 namespace PetWorldOficial.Domain.Interfaces.Repositories;
 
-public interface IUserRepository : IBaseRepository<User>
+public interface IUserRepository
 {
-    Task<User?> GetByUserNameAsync(string userName);
+    Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken);
     Task<User?> GetByEmailAsync(string email);
-    Task<User?> GetByPhoneNumberAsync(string phoneNumber);
-    Task<User?> GetByDocumentAsync(string document);
+    Task<User?> GetByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
+    Task<User?> GetByCpfAsync(string cpf, CancellationToken cancellationToken);
+    Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken);
+    Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task UpdateAsync(User user);
+    Task DeleteAsync(User user);
 }

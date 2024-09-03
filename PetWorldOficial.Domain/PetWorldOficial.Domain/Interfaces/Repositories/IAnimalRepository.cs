@@ -2,9 +2,13 @@
 
 namespace PetWorldOficial.Domain.Interfaces.Repositories;
 
-public interface IAnimalRepository : IBaseRepository<Animal>
+public interface IAnimalRepository
 {
-    Task CreateAsync(Animal entity);
-    Task<IEnumerable<Animal?>> GetByUserIdAsync(int id);
-    public Task<IEnumerable<Animal?>> GetWithUser();
+    Task<IEnumerable<Animal?>> GetAllAsync(CancellationToken cancellationToken);
+    Task<Animal?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task UpdateAsync(Animal animal, CancellationToken cancellationToken);
+    Task DeleteAsync(Animal animal, CancellationToken cancellationToken);
+    Task CreateAsync(Animal animal, CancellationToken cancellationToken);
+    Task<IEnumerable<Animal?>> GetByUserIdAsync(int id, CancellationToken cancellationToken);
+    public Task<IEnumerable<Animal?>> GetWithUser(CancellationToken cancellationToken);
 }

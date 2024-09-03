@@ -21,35 +21,35 @@ public class ProductService : IProductService
         _mapper = mapper;
     }
     
-    public async Task<IEnumerable<OutputProductDTO>> GetAll()
+    public async Task<IEnumerable<OutputProductDTO>> GetAll(CancellationToken cancellationToken)
     {
-        var products = _mapper.Map<IEnumerable<OutputProductDTO>>(await _productRepository.GetAllAsync());
+        var products = _mapper.Map<IEnumerable<OutputProductDTO>>(await _productRepository.GetAllAsync(cancellationToken));
         if (products == null) throw new NotFoundException("Nenhum produto encontrado!");
         return products;
     }
 
-    public async Task<OutputProductDTO> GetById(int id)
+    public async Task<OutputProductDTO> GetById(int id, CancellationToken cancellationToken)
     {
-        var product = _mapper.Map<OutputProductDTO>(await _productRepository.GetByIdAsync(id));
+        var product = _mapper.Map<OutputProductDTO>(await _productRepository.GetByIdAsync(id, cancellationToken));
         if (product == null) throw new NotFoundException("Produto não encontrado");
         return product;
     }
 
-    public async Task Create(RegisterProductDTO productRegisterDto)
+    public async Task Create(RegisterProductDTO productRegisterDto, CancellationToken cancellationToken)
     {
         var product = _mapper.Map<Product>(productRegisterDto);
-        await _productRepository.CreateAsync(product);
+        await _productRepository.CreateAsync(product, cancellationToken);
     }
 
-    public async Task Update(UpdateProductDTO updateProductDto)
+    public async Task Update(UpdateProductDTO updateProductDto, CancellationToken cancellationToken)
     {
         var product = _mapper.Map<Product>(updateProductDto);
-        await _productRepository.UpdateAsync(product);
+        await _productRepository.UpdateAsync(product, cancellationToken);
     }
 
-    public async Task Delete(DeleteProductDTO deleteProductDto)
+    public async Task Delete(DeleteProductDTO deleteProductDto, CancellationToken cancellationToken)
     {
         var product = _mapper.Map<Product>(deleteProductDto);
-        await _productRepository.DeleteAsync(product);
+        await _productRepository.DeleteAsync(product, cancellationToken);
     }
 }

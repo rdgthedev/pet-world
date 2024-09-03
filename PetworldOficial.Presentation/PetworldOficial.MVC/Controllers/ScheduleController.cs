@@ -18,22 +18,22 @@ public class ScheduleController(
 {
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         IEnumerable<ScheduleDatailsViewModel?> schedules = null!;
 
         try
         {
-            var user = await _userService.GetByUserName(User.Identity?.Name!);
+            var user = await _userService.GetByUserNameAsync(User.Identity?.Name!, cancellationToken);
 
             if (user is null)
                 throw new UserNotFoundException("Usuário não encontrado!");
 
-            if (!User.IsInRole(ERole.Admin.ToString()))
-                schedules = await _scheduleService.GetAllByAnimalsIds(
-                    (await _animalService.GetByUserId(user.Id)).Select(s => s!.Id));
-            else
-                schedules = await _scheduleService.GetAll();
+            // if (!User.IsInRole(ERole.Admin.ToString()))
+            //     schedules = await _scheduleService.GetAllByAnimalsIds(
+            //         (await _animalService.GetByUserId(user.Id)).Select(s => s!.Id));
+            // else
+            //     schedules = await _scheduleService.GetAll(cancellationToken);
 
             return View(schedules ?? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!"));
         }
@@ -57,21 +57,21 @@ public class ScheduleController(
 
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Create(int id)
+    public async Task<IActionResult> Create(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userService.GetByUserName(User.Identity?.Name!);
+            var user = await _userService.GetByUserNameAsync(User.Identity?.Name!, cancellationToken);
 
             if (user is null)
                 throw new UserNotFoundException("Usuário não encontrado!");
 
-            var animals = await _animalService.GetByUserId(user.Id);
+            var animals = await _animalService.GetByUserId(user.Id, cancellationToken);
 
             if (animals is null)
                 throw new AnimalNotFoundException("Nenhum pet encontrado!");
 
-            var service = _mapper.Map<Service>(await _serviceService.GetById(id));
+            var service = _mapper.Map<Service>(await _serviceService.GetById(id, cancellationToken));
 
             if (service is null)
                 throw new ServiceNotFoundException("Nenhum serviço encontrado!");
@@ -106,24 +106,24 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateScheduleViewModel model)
+    public async Task<IActionResult> Create(CreateScheduleViewModel model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
-            model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId));
-            model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId));
+            model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId, cancellationToken));
+            model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId, cancellationToken));
             return View(model);
         }
 
         try
         {
-            if (await _scheduleService.BusySchedule((DateTime)model.Date!))
+            if (await _scheduleService.BusySchedule((DateTime)model.Date!, cancellationToken))
                 throw new BusyScheduleException("Agenda lotada para esta data!");
 
-            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!))
+            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!, cancellationToken))
                 throw new MaximumBookingsPerAnimalExceededException("Horário não disponível!");
 
-            await _scheduleService.Create(model);
+            await _scheduleService.Create(model, cancellationToken);
             TempData["SuccessMessage"] = "Agendamento realizado com sucesso!";
             return RedirectToAction("Index", "Service");
         }
@@ -150,18 +150,18 @@ public class ScheduleController(
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
         }
 
-        model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId));
-        model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId));
+        model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId, cancellationToken));
+        model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId, cancellationToken));
         return View(model);
     }
 
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Update(int id)
+    public async Task<IActionResult> Update(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id);
+            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id, cancellationToken);
 
             if (schedule is null)
                 throw new ScheduleNotFoundException("Agendamento não encontrado!");
@@ -190,11 +190,11 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update(UpdateScheduleViewModel model)
+    public async Task<IActionResult> Update(UpdateScheduleViewModel model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
-            var schedule = await _scheduleService.GetByIdWithAnimalAndService(model.Id);
+            var schedule = await _scheduleService.GetByIdWithAnimalAndService(model.Id, cancellationToken);
             model.Service = schedule!.Service;
             model.Animal = schedule.Animal;
             return View(model);
@@ -202,13 +202,13 @@ public class ScheduleController(
 
         try
         {
-            if (await _scheduleService.BusySchedule((DateTime)model.Date!))
+            if (await _scheduleService.BusySchedule((DateTime)model.Date!, cancellationToken))
                 throw new BusyScheduleException("Agenda lotada para esta data!");
 
-            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!))
+            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!, cancellationToken))
                 throw new MaximumBookingsPerAnimalExceededException("Horário não disponível!");
 
-            await _scheduleService.Update(model);
+            await _scheduleService.Update(model, cancellationToken);
             TempData["SuccessMessage"] = "Agendamento alterado com sucesso!";
             return RedirectToAction("Index");
         }
@@ -226,7 +226,7 @@ public class ScheduleController(
             return RedirectToAction("Index");
         }
 
-        var scheduleDetails = await _scheduleService.GetByIdWithAnimalAndService(model.Id);
+        var scheduleDetails = await _scheduleService.GetByIdWithAnimalAndService(model.Id, cancellationToken);
         model.Service = scheduleDetails!.Service;
         model.Animal = scheduleDetails.Animal;
         return View(model);
@@ -235,11 +235,11 @@ public class ScheduleController(
 
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
     {
         try
         {
-            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id);
+            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id, cancellationToken);
 
             if (schedule is null)
                 throw new ScheduleNotFoundException("Agendamento não encontrado!");
@@ -268,11 +268,11 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete([FromForm] DeleteScheduleViewModel model)
+    public async Task<IActionResult> Delete([FromForm] DeleteScheduleViewModel model, CancellationToken cancellationToken)
     {
         try
         {
-            await _scheduleService.Delete(model);
+            await _scheduleService.Delete(model, cancellationToken);
             TempData["SuccessMessage"] = "Agendamento cancelado com sucesso!";
             return RedirectToAction("Index");
         }

@@ -5,8 +5,6 @@ using PetWorldOficial.Application.DTOs.Service;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Exceptions;
-using PetWorldOficial.Domain.Interfaces.ApplicationServices;
-using PetworldOficial.MVC.ViewModels.Service;
 
 namespace PetworldOficial.MVC.Controllers;
 
@@ -28,14 +26,14 @@ public class ServiceController : Controller
         _webHostEnvironment = webHostEnvironment;
         _mapper = mapper;
     }
-
+    
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         try
         {
-            var services = await _serviceService.GetAll();
+            var services = await _serviceService.GetAll(cancellationToken);
             return View(services);
         }
         catch (NotFoundException e)
@@ -52,11 +50,11 @@ public class ServiceController : Controller
 
     [HttpGet]
     [Authorize(Roles = "User, Admin")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var service = await _serviceService.GetById(id);
+            var service = await _serviceService.GetById(id, cancellationToken);
             return View(service);
         }
         catch (NotFoundException e)
@@ -76,13 +74,13 @@ public class ServiceController : Controller
     public IActionResult Create() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateServiceViewModel model)
+    public async Task<IActionResult> Create(CreateServiceViewModel model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return View(model);
 
         try
         {
-            var serviceResult = await _serviceService.GetByName(model.Name);
+            var serviceResult = await _serviceService.GetByName(model.Name, cancellationToken);
 
             if (serviceResult != null)
                 throw new ServiceAlreadyExistsException("Serviço já existe!");
@@ -90,7 +88,7 @@ public class ServiceController : Controller
             var imageUrl = _imageService.GenerateImageName(model.File, _webHostEnvironment.WebRootPath);
             await _imageService.SaveImage(model.File, _webHostEnvironment.WebRootPath, imageUrl);
 
-            await _serviceService.Create(new CreateServiceDTO(model.Name, (double)model.Price!, imageUrl));
+            await _serviceService.Create(new CreateServiceDTO(model.Name, (double)model.Price!, imageUrl), cancellationToken);
             TempData["SuccessMessage"] = "Serviço cadastrado com sucesso!";
 
             return RedirectToAction("Index");
@@ -113,11 +111,11 @@ public class ServiceController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Update(int id)
+    public async Task<IActionResult> Update(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var service = await _serviceService.GetById(id);
+            var service = await _serviceService.GetById(id, cancellationToken);
 
             if (service is null)
                 throw new ServiceNotFoundException("Serviço não encontrado!");
@@ -145,14 +143,15 @@ public class ServiceController : Controller
     [HttpPost]
     public async Task<IActionResult> Update(
         UpdateServiceViewModel model,
-        IFormFile? file)
+        IFormFile? file,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return View(model);
 
         try
         {
-            var service = await _serviceService.GetById(model.Id);
+            var service = await _serviceService.GetById(model.Id, cancellationToken);
 
             if (service is null)
                 throw new ServiceNotFoundException("Serviço não encontrado!");
@@ -168,7 +167,7 @@ public class ServiceController : Controller
                     break;
             }
 
-            await _serviceService.Update(model);
+            await _serviceService.Update(model, cancellationToken);
             TempData["SuccessMessage"] = "Serviço alterado com sucesso!";
             return RedirectToAction("Index");
         }
@@ -186,11 +185,11 @@ public class ServiceController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var service = await _serviceService.GetById(id);
+            var service = await _serviceService.GetById(id, cancellationToken);
 
             if (service is null)
                 throw new ServiceNotFoundException("Serviço não encontrado!");
@@ -218,14 +217,15 @@ public class ServiceController : Controller
     [HttpPost]
     public async Task<IActionResult> Delete(
         DeleteServiceViewModel model,
-        IFormFile? file)
+        IFormFile? file,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return View(model);
 
         try
         {
-            var service = await _serviceService.GetById(model.Id);
+            var service = await _serviceService.GetById(model.Id, cancellationToken);
 
             if (service is null)
                 throw new ServiceNotFoundException("Serviço não encontrado!");
@@ -241,7 +241,7 @@ public class ServiceController : Controller
                     break;
             }
 
-            await _serviceService.Delete(model);
+            await _serviceService.Delete(model, cancellationToken);
             TempData["SuccessMessage"] = "Serviço deletado com sucesso!";
             return RedirectToAction("Index");
         }

@@ -1,7 +1,6 @@
-﻿using PetWorldOficial.Application.DTOs.Product;
-using PetWorldOficial.Domain.Entities;
+﻿using PetWorldOficial.Domain.Entities;
 
-namespace PetworldOficial.MVC.Models.Product;
+namespace PetWorldOficial.Application.ViewModels.Product;
 
 public class UpdateProductViewModel
 {

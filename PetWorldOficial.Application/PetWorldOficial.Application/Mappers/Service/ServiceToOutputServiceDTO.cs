@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.DTOs.Service.Output;
-using PetWorldOficial.Domain.Entities;
 
-namespace PetWorldOficial.Application.Mappers;
+namespace PetWorldOficial.Application.Mappers.Service;
 
 public class ServiceToOutputServiceDTO : Profile
 {

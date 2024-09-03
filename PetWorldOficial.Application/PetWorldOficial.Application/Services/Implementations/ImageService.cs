@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Http;
+using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
-using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 
 namespace PetWorldOficial.Application.Services.Implementations;
 

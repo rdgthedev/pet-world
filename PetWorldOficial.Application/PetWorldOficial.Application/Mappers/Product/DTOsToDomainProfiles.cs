@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.DTOs.Product.Output;
-using PetWorldOficial.Domain.Entities;
 
-namespace PetWorldOficial.Application.Mappers;
+namespace PetWorldOficial.Application.Mappers.Product;
 
 public class DTOsToDomainProfiles : Profile
 {
     public DTOsToDomainProfiles()
     {
-        CreateMap<OutputProductDTO, Product>();
+        CreateMap<OutputProductDTO, Domain.Entities.Product>();
     }
 }

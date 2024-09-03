@@ -2,10 +2,6 @@
 
 namespace PetWorldOficial.Domain.Entities;
 
-public class Role : IdentityRole<int>
+public class Role(string name) : IdentityRole<int>(name)
 {
-    public Role(string name) : base(name)
-    {
-        
-    }
 }

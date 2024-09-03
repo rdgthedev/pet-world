@@ -2,7 +2,7 @@
 using PetWorldOficial.Application.DTOs.Schedule;
 using PetWorldOficial.Application.DTOs.Schedule.Output;
 
-namespace PetWorldOficial.Application.Mappers;
+namespace PetWorldOficial.Application.Mappers.Schedule;
 
 public class DTOsToDTOs : Profile
 {

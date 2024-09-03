@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Mappers;
+using PetWorldOficial.Application.Mappers.Product;
 using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
@@ -14,10 +15,8 @@ using UserService = PetWorldOficial.Application.Services.Implementations.UserSer
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews()
-    .ConfigureApiBehaviorOptions(
-        options => { options.SuppressModelStateInvalidFilter = true; });
+    .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 
 builder.Services.AddDbContext<AppDbContext>(
     options => { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });
@@ -28,7 +27,7 @@ builder.Services.AddIdentity<User, Role>()
 
 builder.Services.ConfigureApplicationCookie(option =>
 {
-    option.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    option.ExpireTimeSpan = TimeSpan.FromHours(8);
     option.LoginPath = "/Auth/Login";
     option.AccessDeniedPath = "/Auth/Login";
 });
@@ -50,6 +49,7 @@ builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
 builder.Services.AddAutoMapper(typeof(UpdateProductDTOToProduct));
+builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(UpdateAnimalCommand).Assembly));
 
 var app = builder.Build();
 

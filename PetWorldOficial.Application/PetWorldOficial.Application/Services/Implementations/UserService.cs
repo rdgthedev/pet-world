@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using PetWorldOficial.Application.Commands.User;
+using PetWorldOficial.Application.DTOs.User.Output;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
@@ -8,50 +10,88 @@ using PetWorldOficial.Domain.Interfaces.Repositories;
 namespace PetWorldOficial.Application.Services.Implementations;
 
 public class UserService(
-    IUserRepository _userRepository,
-    IMapper _mapper) : IUserService
+    IUserRepository userRepository,
+    IMapper mapper) : IUserService
 {
-    public async Task<IEnumerable<UserDetailsViewModel>> GetAll()
-        => _mapper.Map<IEnumerable<UserDetailsViewModel>>(await _userRepository.GetAllAsync());
+    public async Task<IEnumerable<UserDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken)
+        => mapper.Map<IEnumerable<UserDetailsViewModel>>(await userRepository.GetAllAsync(cancellationToken));
 
-    public async Task<User?> GetById(int id)
-        => await _userRepository.GetByIdAsync(id);
-
-    public async Task<UserDetailsViewModel?> GetByUserName(string? userName)
-        => userName is null
-            ? null
-            : _mapper.Map<UserDetailsViewModel>(await _userRepository.GetByUserNameAsync(userName));
-
-    public async Task<bool> UserExists(User user)
+    public async Task<UserDetailsViewModel> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var searchTasks = new List<User?>
+        var user = await userRepository.GetByIdAsync(id, cancellationToken);
+        
+        if(user is null)
+            throw new UserNotFoundException("Usuário não encontrado!");
+        
+        return mapper.Map<UserDetailsViewModel>(user);
+    }
+
+    public async Task<UserDetailsViewModel?> GetByUserNameAsync(string? userName, CancellationToken cancellationToken)
+    {
+        return mapper.Map<UserDetailsViewModel>(await userRepository.GetByUserNameAsync(userName!, cancellationToken));
+    }
+
+    public async Task<OutputUserExistsDTO> UserExistsAsync(
+        string? userName,
+        string? cpf,
+        string? phoneNumber,
+        string? email,
+        CancellationToken cancellationToken)
+    {
+        User? user;
+
+        if (!string.IsNullOrEmpty(userName))
         {
-            await _userRepository.GetByUserNameAsync(user.UserName!),
-            await _userRepository.GetByDocumentAsync(user.Document),
-            await _userRepository.GetByPhoneNumberAsync(user.PhoneNumber!),
-            await _userRepository.GetByEmailAsync(user.Email!)
-        };
+            user = await userRepository.GetByUserNameAsync(userName, cancellationToken);
 
-        return searchTasks.Any(u => u != null);
+            if (user != null)
+                return new OutputUserExistsDTO(true, "Username já cadastrado!");
+        }
+
+        if (!string.IsNullOrEmpty(cpf))
+        {
+            user = await userRepository.GetByCpfAsync(cpf, cancellationToken);
+
+            if (user != null)
+                return new OutputUserExistsDTO(true, "Cpf já cadastrado!");
+        }
+
+        if (!string.IsNullOrEmpty(phoneNumber))
+        {
+            user = await userRepository.GetByPhoneNumberAsync(phoneNumber, cancellationToken);
+
+            if (user != null)
+                return new OutputUserExistsDTO(true, "Telefone já cadastrado!");
+        }
+
+        if (!string.IsNullOrEmpty(email))
+        {
+            user = await userRepository.GetByEmailAsync(email);
+
+            if (user != null)
+                return new OutputUserExistsDTO(true, "Email já cadastrado!");
+        }
+
+        return new OutputUserExistsDTO(false, null!);
     }
 
-    public async Task Update(UpdateUserViewModel model)
+    public async Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken)
     {
-        var existingUser = await _userRepository.GetByIdAsync(model.Id);
+        var user = await userRepository.GetByIdAsync(command.Id, cancellationToken);
 
-        if (existingUser is null)
+        if (user is null)
             throw new UserNotFoundException("Usuário não encontrado!");
 
-        await _userRepository.UpdateAsync(_mapper.Map(model, existingUser));
+        await userRepository.UpdateAsync(user);
     }
 
-    public async Task Delete(DeleteUserViewModel model)
+    public async Task DeleteAsync(DeleteUserCommand command, CancellationToken cancellationToken)
     {
-        var existingUser = await _userRepository.GetByIdAsync(model.Id);
+        var user = await userRepository.GetByIdAsync(command.Id, cancellationToken);
 
-        if (existingUser is null)
+        if (user is null)
             throw new UserNotFoundException("Usuário não encontrado!");
 
-        await _userRepository.DeleteAsync(_mapper.Map(model, existingUser));
+        await userRepository.DeleteAsync(user);
     }
 }

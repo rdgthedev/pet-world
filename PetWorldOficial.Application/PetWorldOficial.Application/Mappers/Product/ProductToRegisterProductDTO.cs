@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.DTOs.Product;
-using PetWorldOficial.Domain.Entities;
 
-namespace PetWorldOficial.Application.Mappers;
+namespace PetWorldOficial.Application.Mappers.Product;
 
 public class ProductToRegisterProductDTO : Profile
 {
     public ProductToRegisterProductDTO()
     {
-        CreateMap<RegisterProductDTO, Product>()
+        CreateMap<RegisterProductDTO, Domain.Entities.Product>()
             .ForMember(prodDTO => prodDTO.Name,
                 prod =>
                 {

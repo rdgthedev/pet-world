@@ -1,44 +1,40 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Infrastructure.Services;
 
 public class AuthService(
-    IUserService _userService,
-    UserManager<User> _userManager,
-    SignInManager<User> _signInManager,
-    RoleManager<Role> _roleManager,
-    IMapper _mapper)
-    : IAuthService
+    UserManager<User> userManager,
+    SignInManager<User> signInManager) : IAuthService
 {
     public async Task<bool> Login(User user, string password)
     {
-        if (!await _userManager.CheckPasswordAsync(user, password))
+        if (!await userManager.CheckPasswordAsync(user, password))
             return false;
-        
-        await _signInManager.SignInAsync(user, false);
+
+        await signInManager.SignInAsync(user, false);
         return true;
     }
 
-    public async Task<User?> Register(RegisterUserViewModel model)
+    public async Task<bool> Register(User user, string password)
     {
-        var user = _mapper.Map<User>(model);
-        var createdUser = await _userManager.CreateAsync(user, model.Password);
+        var result = await userManager.CreateAsync(user, password);
 
-        if (!createdUser.Succeeded)
-            return user;
+        if (!result.Succeeded)
+            return false;
 
-        var addedRole = await _userManager.AddToRoleAsync(user, ERole.User.ToString());
+        await userManager.AddToRoleAsync(user, ERole.Admin.ToString());
 
-        if (!createdUser.Succeeded.Equals(addedRole.Succeeded))
-            await _userManager.DeleteAsync(user);
+        if (!result.Succeeded)
+        {
+            await userManager.DeleteAsync(user);
+            return false;
+        }
 
-        return user;
+        return true;
     }
 
-    public async Task Logout() => await _signInManager.SignOutAsync();
+    public async Task Logout() => await signInManager.SignOutAsync();
 }

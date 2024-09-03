@@ -11,36 +11,45 @@ public class ServiceRepository : IServiceRepository
 
     public ServiceRepository(AppDbContext context) => _context = context;
     
-    public async Task<IEnumerable<Service>> GetAllAsync()
+    public async Task<IEnumerable<Service>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Services.AsNoTracking().ToListAsync();
+        return await _context
+            .Services
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<Service?> GetByIdAsync(int id)
+    public async Task<Service?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+        return await _context
+            .Services
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
     
-    public async Task<Service?> GetByNameAsync(string name)
+    public async Task<Service?> GetByNameAsync(string name, CancellationToken cancellationToken)
     {
-        return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Name == name);
+        return await _context
+            .Services
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
     }
 
-    public async Task CreateAsync(Service service)
+    public async Task CreateAsync(Service service, CancellationToken cancellationToken)
     {
-        await _context.AddAsync(service);
-        await _context.SaveChangesAsync();
+        await _context.AddAsync(service, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Service service)
+    public async Task UpdateAsync(Service service, CancellationToken cancellationToken)
     {
         _context.Update(service);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Service service)
+    public async Task DeleteAsync(Service service, CancellationToken cancellationToken)
     {
         _context.Remove(service);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

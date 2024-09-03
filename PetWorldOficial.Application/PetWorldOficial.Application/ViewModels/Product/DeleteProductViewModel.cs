@@ -1,6 +1,6 @@
 ﻿using PetWorldOficial.Domain.Entities;
 
-namespace PetworldOficial.MVC.Models.Product;
+namespace PetWorldOficial.Application.ViewModels.Product;
 
 public class DeleteProductViewModel
 {
