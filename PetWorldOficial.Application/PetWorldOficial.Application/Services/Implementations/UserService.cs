@@ -19,10 +19,10 @@ public class UserService(
     public async Task<UserDetailsViewModel> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         var user = await userRepository.GetByIdAsync(id, cancellationToken);
-        
-        if(user is null)
+
+        if (user is null)
             throw new UserNotFoundException("Usuário não encontrado!");
-        
+
         return mapper.Map<UserDetailsViewModel>(user);
     }
 
@@ -82,7 +82,9 @@ public class UserService(
         if (user is null)
             throw new UserNotFoundException("Usuário não encontrado!");
 
-        await userRepository.UpdateAsync(user);
+        var userUpdated = mapper.Map(command, user);
+
+        await userRepository.UpdateAsync(userUpdated);
     }
 
     public async Task DeleteAsync(DeleteUserCommand command, CancellationToken cancellationToken)
