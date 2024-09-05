@@ -10,6 +10,7 @@ using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
+using System.Linq.Expressions;
 using AuthService = PetWorldOficial.Infrastructure.Services.AuthService;
 using UserService = PetWorldOficial.Application.Services.Implementations.UserService;
 
@@ -28,6 +29,8 @@ builder.Services.AddIdentity<User, Role>()
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.ExpireTimeSpan = TimeSpan.FromHours(8);
+    option.SlidingExpiration = true;
+    option.Cookie.HttpOnly = true;
     option.LoginPath = "/Auth/Login";
     option.AccessDeniedPath = "/Auth/Login";
 });

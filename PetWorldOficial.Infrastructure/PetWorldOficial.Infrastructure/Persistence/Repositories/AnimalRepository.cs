@@ -27,12 +27,14 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
 
     public async Task<IEnumerable<Animal?>> GetByUserIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context
-            .Animals
-            .AsNoTracking()
-            .Include(a => a.User)
-            .Where(a => a.User.Id == id)
-            .ToListAsync(cancellationToken);
+        var animals = await _context
+             .Animals
+             .AsNoTracking()
+             .Include(a => a.User)
+             .Where(animal => animal.User.Id == id)
+             .ToListAsync(cancellationToken);
+
+        return animals;
     }
 
     public async Task<IEnumerable<Animal?>> GetWithUser(CancellationToken cancellationToken)

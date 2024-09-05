@@ -14,13 +14,13 @@ public class RegisterAnimalCommandHandler(
     {
         try
         {
-            var user = await userService.GetByUserNameAsync(request.UserPrincipal.Identity?.Name!, cancellationToken);
+            var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!, cancellationToken);
 
             if (user is null)
                 throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
 
-            if (request.UserPrincipal.IsInRole(ERole.Admin.ToString()) && !request.Users.Any())
+            if (request.UserPrincipal!.IsInRole(ERole.Admin.ToString()) && request.Name is null)
             {
                 request.Users = await userService.GetAllAsync(cancellationToken);
                 return request;
@@ -32,11 +32,7 @@ public class RegisterAnimalCommandHandler(
                 return request;
             }
 
-            var animals = await animalService.GetByUserId(user.Id, cancellationToken);
-
-            await (animals.Any(a => a!.Name == request.Name)
-                ? throw new AnimalAlreadyExistsException("Este pet já está cadastrado!")
-                : animalService.Create(request, cancellationToken));
+            await animalService.Create(request, cancellationToken);
 
             request.Message = "Pet cadastrado com sucesso!";
             return request;
