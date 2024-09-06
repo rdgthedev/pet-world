@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PetWorldOficial.Application.Commands.Service;
 using PetWorldOficial.Application.DTOs.Service;
+using PetWorldOficial.Application.Queries.Service;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Exceptions;
@@ -14,26 +17,29 @@ public class ServiceController : Controller
     private readonly IImageService _imageService;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
     public ServiceController(
         IServiceService serviceService,
         IImageService imageService,
         IWebHostEnvironment webHostEnvironment,
-        IMapper mapper)
+        IMapper mapper,
+        IMediator mediator)
     {
         _serviceService = serviceService;
         _imageService = imageService;
         _webHostEnvironment = webHostEnvironment;
         _mapper = mapper;
+        _mediator = mediator;
     }
-    
+
     [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         try
         {
-            var services = await _serviceService.GetAll(cancellationToken);
+            var services = await _mediator.Send(new GetAllServicesQuery(), cancellationToken);
             return View(services);
         }
         catch (NotFoundException e)
@@ -54,8 +60,9 @@ public class ServiceController : Controller
     {
         try
         {
-            var service = await _serviceService.GetById(id, cancellationToken);
-            return View(service);
+            var result = await _mediator.Send(new GetServiceByIdQuery(id), cancellationToken);
+
+            return View(result);
         }
         catch (NotFoundException e)
         {
@@ -74,22 +81,16 @@ public class ServiceController : Controller
     public IActionResult Create() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateServiceViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(CreateServiceCommand command, CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid) return View(model);
+        if (!ModelState.IsValid)
+            return View(command);
 
         try
         {
-            var serviceResult = await _serviceService.GetByName(model.Name, cancellationToken);
+            var result = await _mediator.Send(command, cancellationToken);
 
-            if (serviceResult != null)
-                throw new ServiceAlreadyExistsException("Serviço já existe!");
-
-            var imageUrl = _imageService.GenerateImageName(model.File, _webHostEnvironment.WebRootPath);
-            await _imageService.SaveImage(model.File, _webHostEnvironment.WebRootPath, imageUrl);
-
-            await _serviceService.Create(new CreateServiceDTO(model.Name, (double)model.Price!, imageUrl), cancellationToken);
-            TempData["SuccessMessage"] = "Serviço cadastrado com sucesso!";
+            TempData["SuccessMessage"] = result.Message;
 
             return RedirectToAction("Index");
         }
@@ -115,24 +116,15 @@ public class ServiceController : Controller
     {
         try
         {
-            var service = await _serviceService.GetById(id, cancellationToken);
+            var result = await _mediator.Send(new UpdateServiceCommand { Id = id }, cancellationToken);
 
-            if (service is null)
-                throw new ServiceNotFoundException("Serviço não encontrado!");
-
-
-            return View(new UpdateServiceViewModel
-            {
-                Name = service.Name,
-                Price = service.Price,
-                ImageUrl = service.ImageUrl
-            });
+            return View(result);
         }
         catch (ServiceNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro!";
         }
@@ -142,33 +134,21 @@ public class ServiceController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Update(
-        UpdateServiceViewModel model,
+        UpdateServiceCommand command,
         IFormFile? file,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View(command);
 
         try
         {
-            var service = await _serviceService.GetById(model.Id, cancellationToken);
+            command.File = file!;
+            command.RootPath = _webHostEnvironment.WebRootPath;
 
-            if (service is null)
-                throw new ServiceNotFoundException("Serviço não encontrado!");
+            var result = await _mediator.Send(command, cancellationToken);
 
-            switch (file)
-            {
-                case not null:
-                    model.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
-                    await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, model.ImageUrl);
-                    break;
-                default:
-                    model.ImageUrl = service.ImageUrl;
-                    break;
-            }
-
-            await _serviceService.Update(model, cancellationToken);
-            TempData["SuccessMessage"] = "Serviço alterado com sucesso!";
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
         }
         catch (ServiceNotFoundException e)
@@ -189,18 +169,10 @@ public class ServiceController : Controller
     {
         try
         {
-            var service = await _serviceService.GetById(id, cancellationToken);
-
-            if (service is null)
-                throw new ServiceNotFoundException("Serviço não encontrado!");
+            var result = await _mediator.Send(new GetServiceByIdQuery(id), cancellationToken);
 
 
-            return View(new DeleteServiceViewModel
-            {
-                Name = service.Name,
-                Price = service.Price,
-                ImageUrl = service.ImageUrl
-            });
+            return View(result);
         }
         catch (ServiceNotFoundException e)
         {
@@ -216,32 +188,16 @@ public class ServiceController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Delete(
-        DeleteServiceViewModel model,
+        DeleteServiceCommand command,
         IFormFile? file,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View(command);
 
         try
         {
-            var service = await _serviceService.GetById(model.Id, cancellationToken);
-
-            if (service is null)
-                throw new ServiceNotFoundException("Serviço não encontrado!");
-
-            switch (file)
-            {
-                case not null:
-                    model.ImageUrl = _imageService.GenerateImageName(file, _webHostEnvironment.WebRootPath);
-                    await _imageService.SaveImage(file, _webHostEnvironment.WebRootPath, model.ImageUrl);
-                    break;
-                default:
-                    model.ImageUrl = service.ImageUrl;
-                    break;
-            }
-
-            await _serviceService.Delete(model, cancellationToken);
+            var result = await _mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = "Serviço deletado com sucesso!";
             return RedirectToAction("Index");
         }

@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Commands.Animal;
+using PetWorldOficial.Application.Commands.Service;
 using PetWorldOficial.Application.Mappers;
 using PetWorldOficial.Application.Mappers.Product;
 using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
@@ -52,7 +54,7 @@ builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
 builder.Services.AddAutoMapper(typeof(UpdateProductDTOToProduct));
-builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(UpdateAnimalCommand).Assembly));
+builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateServiceCommand).Assembly));
 
 var app = builder.Build();
 
