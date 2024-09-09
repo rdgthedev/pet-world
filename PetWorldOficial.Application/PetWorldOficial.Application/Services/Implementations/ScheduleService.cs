@@ -85,4 +85,9 @@ public class ScheduleService(
     {
         await _scheduleRepository.CreateAsync(_mapper.Map<Schedule>(command), cancellationToken);
     }
+
+    public async Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken)
+    {
+        return await _scheduleRepository.CountSchedulesAsync(scheduleDate, time, cancellationToken);
+    }
 }

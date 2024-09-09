@@ -37,10 +37,10 @@ public class ServiceService : IServiceService
         return service;
     }
 
-    public async Task<OutputServiceDTO> GetByName(string name, CancellationToken cancellationToken)
+    public async Task<ServiceDetailsViewModel> GetByName(string name, CancellationToken cancellationToken)
     {
         var serviceResult = await _serviceRepository.GetByNameAsync(name, cancellationToken);
-        var service = _mapper.Map<OutputServiceDTO>(serviceResult);
+        var service = _mapper.Map<ServiceDetailsViewModel>(serviceResult);
         return service;
     }
 

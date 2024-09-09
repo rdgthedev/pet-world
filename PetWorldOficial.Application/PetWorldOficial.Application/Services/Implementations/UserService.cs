@@ -4,6 +4,7 @@ using PetWorldOficial.Application.DTOs.User.Output;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
@@ -95,5 +96,12 @@ public class UserService(
             throw new UserNotFoundException("Usuário não encontrado!");
 
         await userRepository.DeleteAsync(user);
+    }
+
+    public async Task<int> CountUsersByRoleAsync(ERole roleName)
+    {
+        var users = await userRepository.GetUsersByRoleAsync(roleName);
+
+        return users.Count();
     }
 }

@@ -27,6 +27,8 @@ public interface IScheduleService
         CreateScheduleCommand command,
         CancellationToken cancellationToken);
 
+    Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan hour, CancellationToken cancellationToken);
+
     Task Update(UpdateScheduleViewModel model, CancellationToken cancellationToken);
     Task Delete(DeleteScheduleViewModel model, CancellationToken cancellationToken);
     Task Create(CreateScheduleCommand command, CancellationToken cancellationToken);

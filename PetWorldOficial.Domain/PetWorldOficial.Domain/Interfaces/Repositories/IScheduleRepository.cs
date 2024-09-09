@@ -24,4 +24,5 @@ public interface IScheduleRepository
 
     Task<IEnumerable<Schedule?>> GetAllWithEmployeeAndAnimalAndService(CancellationToken cancellationToken);
     Task<IEnumerable<Schedule?>> GetSchedulesByUsersIds(IEnumerable<int> usersIds, CancellationToken cancellationToken);
+    Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken);
 }

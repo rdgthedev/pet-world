@@ -19,7 +19,7 @@ public class UserRepository(UserManager<User> _userManager) : IUserRepository
             .Users
             .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
 
-    public async Task<IEnumerable<User?>> GetUsersByRoleAsync(ERole roleName, CancellationToken cancellationToken)
+    public async Task<IEnumerable<User?>> GetUsersByRoleAsync(ERole roleName)
     {
         return await _userManager.GetUsersInRoleAsync(roleName.ToString());
     }

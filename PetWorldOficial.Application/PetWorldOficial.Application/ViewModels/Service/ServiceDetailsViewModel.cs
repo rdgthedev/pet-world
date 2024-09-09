@@ -11,4 +11,5 @@ public record ServiceDetailsViewModel
     public double Price { get; set; }
 
     public string ImageUrl { get; set; } = string.Empty;
+    public int DurationInMinutes { get; set; }
 }

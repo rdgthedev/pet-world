@@ -112,4 +112,9 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
         _context.Schedules.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken)
+    {
+        return await _context.Schedules.Where(s => s.Date == scheduleDate && s.Time == time).CountAsync(cancellationToken);
+    }
 }

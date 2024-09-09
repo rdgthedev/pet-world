@@ -1,11 +1,13 @@
 ﻿using System.Reflection.Metadata;
 using MediatR;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Settings;
 using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Application.ViewModels.Schedule;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
@@ -52,12 +54,15 @@ public class CreateScheduleCommanHandler(
                 return request;
             }
 
-            if (request.Time < openingHours.Value.Open || request.Time > openingHours.Value.Close)
+            //Busca serviço por nome
+            var serviceVm = await serviceService.GetByName(request.ServiceName, cancellationToken);
+
+            if (serviceVm is null)
                 throw new Exception();
 
+            //Verifica tipo de serviço e define o perfil do funcionário (Higiene ou Veterinário).
             ERole roleName;
 
-            //Verifica tipo de serviço e define o perfil do funcionário (Higiene ou Veterinário).
             if (request.ServiceName == "Banho"
                 || request.ServiceName == "Tosa"
                 || request.ServiceName == "Banho & Tosa")
@@ -67,26 +72,42 @@ public class CreateScheduleCommanHandler(
             else
                 roleName = ERole.Veterinary;
 
-            List<ScheduleDetailsViewModel?> schedules = null!;
 
             //Conta o número de funcionários de um determinado perfil.
-            var usersIds = (await userRepository.GetUsersByRoleAsync(roleName, cancellationToken))
-                .ToList()
-                .Select(u => u!.Id)
-                .ToList()
-                .Count;
+            var countEmployeesInRole = await userService.CountUsersByRoleAsync(roleName);
+
+            if (countEmployeesInRole == 0)
+                throw new Exception("Nenhum funcionário encontrado para esse tipo de serviço!");
+
 
             //Conta o número de agendamentos filtrando por data e horário.
-            
+            var countSchedulesByDateAndTime = (await scheduleService.GetAll(cancellationToken))
+                .Where(s => s.Date == request.Date
+                && s.Time > request.Time!.Value
+                && request.Time.Value.Add(TimeSpan.FromMinutes(serviceVm.DurationInMinutes)) <= s.Time)
+                .Count();
 
-            //!Verifica disponibilidade para agendamento (agendamentos < funcionários)
-                //throw new FalhaNoAgendamento
+            //!Verifica disponibilidade para agendamento (agendamentos >= funcionários)
+            //throw new FalhaNoAgendamento
 
+            int standardTime = 30;
 
-            //Realiza o agendamento.
+            var timesServiceFits = serviceVm.DurationInMinutes / standardTime;
 
+            if (countSchedulesByDateAndTime >= countEmployeesInRole
+                || countSchedulesByDateAndTime < timesServiceFits)
+                throw new Exception("Não há horário disponível!");
 
+            if (timesServiceFits >= 2)
+            {
+                //Segrega o serviço em dois.
+                //Realiza o agendamento
+                //Envia e-mail ou SMS.
+            }
+
+            //Realiza agendamento.
             //Envia email ou SMS.
+
             return request;
         }
         catch (Exception)

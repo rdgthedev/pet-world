@@ -7,7 +7,6 @@ public class Schedule() : Entity
     public Schedule(
         int animalId,
         int serviceId,
-        int employeeId,
         DateTime date,
         TimeSpan time,
         string? observation) : this()
@@ -17,7 +16,6 @@ public class Schedule() : Entity
         Date = date;
         Time = time;
         Observation = observation;
-        EmployeeId = employeeId;
     }
 
     public int AnimalId { get; private set; }
@@ -27,7 +25,5 @@ public class Schedule() : Entity
     public DateTime Date { get; private set; }
     public TimeSpan Time { get; private set; }
     public string? Observation { get; private set; }
-    public int EmployeeId { get; set; }
-    public User Employee { get; set; } = null!;
     public int DurationInMinutes { get; set; }
 }
