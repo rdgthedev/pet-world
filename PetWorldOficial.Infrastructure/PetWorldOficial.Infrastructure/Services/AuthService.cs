@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
@@ -32,6 +33,10 @@ public class AuthService(
             await userManager.DeleteAsync(user);
             return false;
         }
+
+        var name = user.Name.Split(' ');
+        
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, name[0]));
 
         return true;
     }

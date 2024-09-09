@@ -42,9 +42,9 @@ public class ServiceController : Controller
             var services = await _mediator.Send(new GetAllServicesQuery(), cancellationToken);
             return View(services);
         }
-        catch (NotFoundException e)
+        catch (ServiceNotFoundException e)
         {
-            TempData["ErrorMessage"] = e.Message;
+            TempData["NotFoundService"] = e.Message;
             return View();
         }
         catch (Exception)
@@ -169,9 +169,7 @@ public class ServiceController : Controller
     {
         try
         {
-            var result = await _mediator.Send(new GetServiceByIdQuery(id), cancellationToken);
-
-
+            var result = await _mediator.Send(new DeleteServiceCommand { Id = id }, cancellationToken);
             return View(result);
         }
         catch (ServiceNotFoundException e)

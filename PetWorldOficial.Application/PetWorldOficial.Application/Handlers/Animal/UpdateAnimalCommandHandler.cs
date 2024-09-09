@@ -15,7 +15,8 @@ public class UpdateAnimalCommandHandler(
         {
             if (string.IsNullOrEmpty(request.Name))
             {
-                var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!, cancellationToken);
+                var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!,
+                    cancellationToken);
 
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
@@ -35,7 +36,9 @@ public class UpdateAnimalCommandHandler(
             }
 
             await animalService.Update(request, cancellationToken);
+
             request.Message = "Pet alterado com sucesso!";
+
             return request;
         }
         catch (Exception)

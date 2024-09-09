@@ -7,8 +7,8 @@ public class ScheduleEntityToViewModelsProfiles : Profile
 {
     public ScheduleEntityToViewModelsProfiles()
     {
-        CreateMap<Domain.Entities.Schedule, ScheduleDatailsViewModel>()
-            .ConstructUsing(s => new ScheduleDatailsViewModel
+        CreateMap<Domain.Entities.Schedule, ScheduleDetailsViewModel>()
+            .ConstructUsing(s => new ScheduleDetailsViewModel
             {
                 Id = s.Id,
                 AnimalId = s.AnimalId,

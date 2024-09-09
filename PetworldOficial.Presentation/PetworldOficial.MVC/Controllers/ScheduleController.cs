@@ -1,11 +1,17 @@
-﻿using AutoMapper;
+﻿using System.Text;
+using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Application.ViewModels.Schedule;
-using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Domain.Enums;
+using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Exceptions;
+using PetworldOficial.MVC.Utils;
 
 namespace PetworldOficial.MVC.Controllers;
 
@@ -14,34 +20,25 @@ public class ScheduleController(
     IAnimalService _animalService,
     IUserService _userService,
     IScheduleService _scheduleService,
-    IMapper _mapper) : Controller
+    IMapper _mapper,
+    IMediator mediator) : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        IEnumerable<ScheduleDatailsViewModel?> schedules = null!;
+        IEnumerable<ScheduleDetailsViewModel?> schedules = null!;
 
         try
         {
-            var user = await _userService.GetByUserNameAsync(User.Identity?.Name!, cancellationToken);
-
-            if (user is null)
-                throw new UserNotFoundException("Usuário não encontrado!");
-
-            // if (!User.IsInRole(ERole.Admin.ToString()))
-            //     schedules = await _scheduleService.GetAllByAnimalsIds(
-            //         (await _animalService.GetByUserId(user.Id)).Select(s => s!.Id));
-            // else
-            //     schedules = await _scheduleService.GetAll(cancellationToken);
-
-            return View(schedules ?? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!"));
+            schedules = await mediator.Send(new GetAllSchedulesQuery(User), cancellationToken);
+            return View(schedules);
         }
         catch (UserNotFoundException e)
         {
-            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar identificar o usuário," +
-                                       $" tente fazer o login novamente no site.";
-            return View(schedules);
+            TempData["ErrorMessage"] = e.Message;
+
+            return RedirectToAction("Login", "Auth");
         }
         catch (ScheduleNotFoundException e)
         {
@@ -61,41 +58,21 @@ public class ScheduleController(
     {
         try
         {
-            var user = await _userService.GetByUserNameAsync(User.Identity?.Name!, cancellationToken);
-
-            if (user is null)
-                throw new UserNotFoundException("Usuário não encontrado!");
-
-            var animals = await _animalService.GetByUserId(user.Id, cancellationToken);
-
-            if (animals is null)
-                throw new AnimalNotFoundException("Nenhum pet encontrado!");
-
-            var service = _mapper.Map<Service>(await _serviceService.GetById(id, cancellationToken));
-
-            if (service is null)
-                throw new ServiceNotFoundException("Nenhum serviço encontrado!");
-
-            return View(new CreateScheduleViewModel
-            {
-                Animals = _mapper.Map<IEnumerable<Animal>>(animals),
-                Service = service,
-                UserId = user.Id
-            });
+            var result = await mediator.Send(new CreateScheduleCommand(User) { ServiceId = id }, cancellationToken);
+            TempData["Animals"] = result.Animals!.SerializeObject();
+            return View(result);
         }
         catch (UserNotFoundException e)
         {
-            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar identificar o usuário," +
-                                       $" tente fazer o login novamente no site.";
+            TempData["ErrorMessage"] = e.Message;
         }
         catch (AnimalNotFoundException e)
         {
-            TempData["ErrorMessage"] = $"{e.Message} Antes de agendar, cadastre o seu pet!";
+            TempData["ErrorMessage"] = e.Message;
         }
         catch (ServiceNotFoundException e)
         {
-            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar ao identificar o serviço" +
-                                       $", tente agendar novamente!";
+            TempData["ErrorMessage"] = e.Message;
         }
         catch (Exception)
         {
@@ -106,53 +83,46 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateScheduleViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(
+        CreateScheduleCommand command,
+        CancellationToken cancellationToken)
     {
+        var animalsJson = TempData["Animals"] as string;
+        command.Animals = JsonConvert.DeserializeObject<List<AnimalDetailsViewModel>>(animalsJson!);
+
         if (!ModelState.IsValid)
-        {
-            model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId, cancellationToken));
-            model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId, cancellationToken));
-            return View(model);
-        }
+            return View(command);
 
         try
         {
-            if (await _scheduleService.BusySchedule((DateTime)model.Date!, cancellationToken))
-                throw new BusyScheduleException("Agenda lotada para esta data!");
-
-            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!, cancellationToken))
-                throw new MaximumBookingsPerAnimalExceededException("Horário não disponível!");
-
-            await _scheduleService.Create(model, cancellationToken);
-            TempData["SuccessMessage"] = "Agendamento realizado com sucesso!";
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index", "Service");
         }
         catch (BusyScheduleException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            return View(command);
         }
         catch (MaximumBookingsPerAnimalExceededException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            return View(command);
         }
         catch (UserNotFoundException e)
         {
-            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar identificar o usuário," +
-                                       $" tente fazer o login novamente no site.";
+            TempData["ErrorMessage"] = e.Message;
         }
         catch (ServiceNotFoundException e)
         {
-            TempData["ErrorMessage"] = $"{e.Message} Ocorreu um erro ao tentar ao identificar o serviço" +
-                                       $", tente agendar novamente!";
+            TempData["ErrorMessage"] = e.Message;
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
         }
 
-        model.Animals = _mapper.Map<IEnumerable<Animal>>(await _animalService.GetByUserId(model.UserId, cancellationToken));
-        model.Service = _mapper.Map<Service>(await _serviceService.GetById(model.ServiceId, cancellationToken));
-        return View(model);
+        return RedirectToAction("Index", "Service");
     }
 
     [HttpGet]
@@ -205,7 +175,8 @@ public class ScheduleController(
             if (await _scheduleService.BusySchedule((DateTime)model.Date!, cancellationToken))
                 throw new BusyScheduleException("Agenda lotada para esta data!");
 
-            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!, cancellationToken))
+            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!,
+                    cancellationToken))
                 throw new MaximumBookingsPerAnimalExceededException("Horário não disponível!");
 
             await _scheduleService.Update(model, cancellationToken);
@@ -268,7 +239,8 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete([FromForm] DeleteScheduleViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([FromForm] DeleteScheduleViewModel model,
+        CancellationToken cancellationToken)
     {
         try
         {

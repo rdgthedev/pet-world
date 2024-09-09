@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
@@ -17,6 +18,11 @@ public class UserRepository(UserManager<User> _userManager) : IUserRepository
         => await _userManager
             .Users
             .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
+
+    public async Task<IEnumerable<User?>> GetUsersByRoleAsync(ERole roleName, CancellationToken cancellationToken)
+    {
+        return await _userManager.GetUsersInRoleAsync(roleName.ToString());
+    }
 
     public async Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken)
         => await _userManager

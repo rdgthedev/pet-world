@@ -35,7 +35,7 @@ namespace PetWorldOficial.Application.Handlers.Service
 
                 await serviceService.Create(request, cancellationToken);
 
-                request.Message = "Pet cadastrado com sucesso!";
+                request.Message = "Serviço cadastrado com sucesso!";
 
                 return request;
             }

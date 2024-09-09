@@ -9,21 +9,27 @@ namespace PetWorldOficial.Application.Handlers.Service;
 public class GetAllServicesQueryHandler(
     IServiceService serviceService) : IRequestHandler<GetAllServicesQuery, IEnumerable<ServiceDetailsViewModel>>
 {
-    public async Task<IEnumerable<ServiceDetailsViewModel>> Handle(GetAllServicesQuery request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<ServiceDetailsViewModel>> Handle(GetAllServicesQuery request,
+        CancellationToken cancellationToken)
     {
-		try
-		{
-			var services = await serviceService.GetAll(cancellationToken);
+        try
+        {
+            var services = await serviceService.GetAll(cancellationToken);
 
-			if (!services.Any() || services is null)
-				throw new ServiceNotFoundException("Nenhum serviço encontrado!");
+            var serviceDetailsViewModels = services as ServiceDetailsViewModel[] ?? services.ToArray();
 
-			return services;
-		}
-		catch (Exception)
-		{
+            if (!serviceDetailsViewModels.Any() || services is null)
+                throw new ServiceNotFoundException("Nenhum serviço encontrado!");
 
-			throw;
-		}
+            return serviceDetailsViewModels;
+        }
+        catch (ServiceNotFoundException)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

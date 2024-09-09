@@ -13,5 +13,15 @@ public interface IScheduleRepository
     Task<int> GetCountByDateAsync(DateTime date, CancellationToken cancellationToken);
     Task<IEnumerable<Schedule?>> GetAllByServiceIdAsync(int serviceId, CancellationToken cancellationToken);
     Task<Schedule?> GetByIdWithAnimalAndService(int id, CancellationToken cancellationToken);
-    public Task<IEnumerable<Schedule?>> GetAllByAnimalsIds(IEnumerable<int> animalIds, CancellationToken cancellationToken);
+
+    public Task<IEnumerable<Schedule?>> GetAllByAnimalsIds(IEnumerable<int> animalIds,
+        CancellationToken cancellationToken);
+
+    public Task<IEnumerable<Schedule?>> GetSchedulesWithEmployeeByDateAndTime(
+        DateTime date,
+        string serviceName,
+        CancellationToken cancellationToken);
+
+    Task<IEnumerable<Schedule?>> GetAllWithEmployeeAndAnimalAndService(CancellationToken cancellationToken);
+    Task<IEnumerable<Schedule?>> GetSchedulesByUsersIds(IEnumerable<int> usersIds, CancellationToken cancellationToken);
 }

@@ -47,6 +47,27 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Schedule?>> GetAllWithEmployeeAndAnimalAndService(CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedules
+            .AsNoTracking()
+            .Include(s => s.Animal)
+            .Include(s => s.Service)
+            .Include(s => s.Employee)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Schedule?>> GetSchedulesByUsersIds(IEnumerable<int> usersIds,
+        CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedules
+            .AsNoTracking()
+            .Where(s => usersIds.Contains(s.EmployeeId))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Schedule?> GetByIdWithAnimalAndService(int id, CancellationToken cancellationToken)
     {
         return await _context
@@ -66,6 +87,17 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Include(schedule => schedule.Service)
             .Include(schedule => schedule.Animal)
             .Where(schedule => animalsIds.Contains(schedule.AnimalId))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Schedule?>> GetSchedulesWithEmployeeByDateAndTime(DateTime date, string serviceName,
+        CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedules
+            .AsNoTracking()
+            .Include(s => s.Employee)
+            .Where(s => s.Date == date && s.Date.Hour == date.Hour)
             .ToListAsync(cancellationToken);
     }
 

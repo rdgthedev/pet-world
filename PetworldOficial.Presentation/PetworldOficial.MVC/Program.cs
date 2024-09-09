@@ -1,25 +1,26 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Commands.Service;
-using PetWorldOficial.Application.Mappers;
 using PetWorldOficial.Application.Mappers.Product;
 using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
-using System.Linq.Expressions;
+using Newtonsoft.Json;
+using PetWorldOficial.Application.Settings;
 using AuthService = PetWorldOficial.Infrastructure.Services.AuthService;
 using UserService = PetWorldOficial.Application.Services.Implementations.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; })
     .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
+
+builder.Services.Configure<OpeningHours>(builder.Configuration.GetSection("OpeningHours"));
 
 builder.Services.AddDbContext<AppDbContext>(
     options => { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });

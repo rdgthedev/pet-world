@@ -47,5 +47,6 @@ public sealed class User : IdentityUser<int>
     public string Complement { get; private set; }
     public string City { get; private set; }
     public string State { get; private set; }
-    public List<Animal> Animals { get; private set; }
+    public List<Animal> Animals { get; private set; } = null!;
+    public List<Schedule> Schedules { get; set; } = null!;
 }

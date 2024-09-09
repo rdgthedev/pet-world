@@ -1,5 +1,6 @@
 ﻿namespace PetWorldOficial.Application.ViewModels.Animal;
 
+[Serializable]
 public class AnimalDetailsViewModel
 {
     public int Id { get; set; }

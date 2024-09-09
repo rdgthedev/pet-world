@@ -28,7 +28,6 @@ namespace PetWorldOficial.Application.Handlers.Service
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
