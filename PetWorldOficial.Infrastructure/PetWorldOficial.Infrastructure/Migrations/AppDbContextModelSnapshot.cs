@@ -150,7 +150,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("Gender");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 

@@ -5,13 +5,11 @@ namespace PetWorldOficial.Domain.Entities;
 
 public class Animal : Entity
 {
-    public Animal()
-    {
-    }
+    protected Animal() { }
 
     public Animal(
         string name,
-        DateTime birthDate,
+        DateTime? birthDate,
         EGender gender,
         int raceId,
         int categoryId,
@@ -24,6 +22,7 @@ public class Animal : Entity
         RaceId = raceId;
         CategoryId = categoryId;
         OwnerId = ownerId;
+        CreatedAt = DateTime.Now;
         Schedullings = new();
     }
 
@@ -31,7 +30,7 @@ public class Animal : Entity
     public DateTime? BirthDate { get; private set; }
     public EGender Gender { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
     public int RaceId { get; private set; }
     public Race Race { get; private set; }
     public int CategoryId { get; set; }

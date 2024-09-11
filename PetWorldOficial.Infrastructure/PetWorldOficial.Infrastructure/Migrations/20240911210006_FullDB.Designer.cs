@@ -12,8 +12,8 @@ using PetWorldOficial.Infrastructure.Context;
 namespace PetWorldOficial.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240910203524_FixDB")]
-    partial class FixDB
+    [Migration("20240911210006_FullDB")]
+    partial class FullDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -153,7 +153,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("Gender");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
