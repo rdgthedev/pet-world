@@ -1,10 +1,10 @@
-﻿using PetWorldOficial.Application.DTOs.Role.Input;
-using PetWorldOficial.Application.DTOs.User.Output;
+﻿using PetWorldOficial.Application.Commands.Role;
+using PetWorldOficial.Application.ViewModels.Role;
 
 namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IRoleService
 {
-    Task<OutputRoleDTO> GetByName(string name);
-    Task<bool> AddRoleAsync(RoleRegisterDTO role);
+    Task<RoleDetailsViewModel?> GetByName(string name);
+    Task<bool> AddRoleAsync(RegisterRoleCommand role);
 }

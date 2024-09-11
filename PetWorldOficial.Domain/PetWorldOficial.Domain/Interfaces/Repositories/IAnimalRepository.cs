@@ -1,4 +1,5 @@
-﻿using PetWorldOficial.Domain.Entities;
+﻿using PetWorldOficial.Domain.Common;
+using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Domain.Interfaces.Repositories;
 

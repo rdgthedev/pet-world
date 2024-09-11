@@ -2,6 +2,7 @@
 using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Animal;
+using PetWorldOficial.Domain.Common;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;

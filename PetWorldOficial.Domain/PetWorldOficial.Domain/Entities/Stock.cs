@@ -2,7 +2,24 @@
 
 namespace PetWorldOficial.Domain.Entities;
 
-public class Stock
+public class Stock : Entity
 {
-    
+    public Stock()
+    {
+    }
+
+    public Stock(
+        int productId,
+        int quantity)
+    {
+        ProductId = productId;
+        Quantity = quantity;
+        CreatedAt = DateTime.Now;
+    }
+
+    public int ProductId { get; private set; }
+    public Product Product { get; private set; }
+    public int Quantity { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime LastUpdatedAt { get; private set; }
 }

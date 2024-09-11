@@ -133,11 +133,26 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("DATE")
+                        .HasColumnName("BirthDate");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("NVARCHAR")
+                        .HasColumnType("nvarchar(20)")
                         .HasColumnName("Gender");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -145,29 +160,189 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Name");
 
-                    b.Property<string>("Race")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("NVARCHAR")
-                        .HasColumnName("Race");
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Species")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("NVARCHAR")
-                        .HasColumnName("Species");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("RaceId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("RaceId");
 
                     b.HasIndex(new[] { "Id" }, "IX_Animal_Id")
                         .IsUnique();
 
+                    b.HasIndex(new[] { "Id" }, "IX_Animal_Name")
+                        .IsUnique();
+
                     b.ToTable("Animal", (string)null);
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime>("ExpiresDate")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("ExpiresDate");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("DECIMAL(10,2)")
+                        .HasColumnName("TotalPrice");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique();
+
+                    b.ToTable("Cart", (string)null);
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.CartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("DECIMAL(10,2)")
+                        .HasColumnName("Price");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INT")
+                        .HasColumnName("Quantity");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("DECIMAL(10,2)")
+                        .HasColumnName("TotalPrice");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Id" }, "IX_CartItem_Id");
+
+                    b.ToTable("CartItem", (string)null);
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Title");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category", (string)null);
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("PaymentDate");
+
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("PaymentMethod");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Status");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("DECIMAL(10,2)")
+                        .HasColumnName("TotalPrice");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex(new[] { "Code" }, "IX_Order_Code");
+
+                    b.HasIndex(new[] { "Id" }, "IX_Order_Id");
+
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Product", b =>
@@ -177,6 +352,13 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -190,9 +372,13 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Image");
 
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(180)
+                        .HasMaxLength(120)
                         .HasColumnType("VARCHAR")
                         .HasColumnName("Name");
 
@@ -216,6 +402,27 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.ToTable("Product", (string)null);
                 });
 
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Race", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Id" }, "IX_Race_Id");
+
+                    b.ToTable("Race", (string)null);
+                });
+
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -227,6 +434,12 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
@@ -246,7 +459,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Schedule", b =>
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Schedulling", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -257,16 +470,42 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<int>("AnimalId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("DATE")
                         .HasColumnName("Date");
 
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
+
                     b.Property<string>("Observation")
-                        .HasColumnType("VARCHAR(255)")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR")
                         .HasColumnName("Observation");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Status");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("TIME")
@@ -276,28 +515,45 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.HasIndex("AnimalId");
 
+                    b.HasIndex("CategoryId");
+
                     b.HasIndex("ServiceId");
 
-                    b.HasIndex(new[] { "Id" }, "IX_Schedule_Id")
-                        .IsUnique();
+                    b.HasIndex(new[] { "EmployeeId" }, "IX_Schedulling_EmployeeId");
 
-                    b.ToTable("Schedule", (string)null);
+                    b.HasIndex(new[] { "Id" }, "IX_Schedulling_Id");
+
+                    b.ToTable("Schedulling", (string)null);
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Service", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("Id");
+                        .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<int>("DurationInMinutes")
+                        .HasColumnType("INT")
+                        .HasColumnName("DurationInMinutes");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasMaxLength(255)
+                        .HasMaxLength(120)
                         .HasColumnType("NVARCHAR")
-                        .HasColumnName("Image");
+                        .HasColumnName("ImageUrl");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -306,18 +562,59 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("Name");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("MONEY")
+                        .HasColumnType("DECIMAL(10,2)")
                         .HasColumnName("Price");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Status");
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Id" }, "IX_Service_Id")
-                        .IsUnique();
+                    b.HasIndex(new[] { "CategoryId" }, "IX_Service_Category_CategoryId");
 
-                    b.HasIndex(new[] { "Name" }, "IX_Service_Name")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Id" }, "IX_Service_Id");
+
+                    b.HasIndex(new[] { "Name" }, "IX_Service_Name");
 
                     b.ToTable("Service", (string)null);
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Stock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INT")
+                        .HasColumnName("Quantity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Id" }, "IX_Stock_Id");
+
+                    b.HasIndex(new[] { "Id" }, "IX_Stock_ProductId")
+                        .HasDatabaseName("IX_Stock_ProductId1");
+
+                    b.ToTable("Stock", (string)null);
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Supplier", b =>
@@ -334,23 +631,37 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("VARCHAR")
                         .HasColumnName("CNPJ");
 
+                    b.Property<string>("CellPhone")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("VARCHAR")
+                        .HasColumnName("CellPhone");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasMaxLength(180)
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("City");
 
-                    b.Property<string>("Company")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("NVARCHAR")
-                        .HasColumnName("Company");
-
                     b.Property<string>("Complement")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Complement");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(140)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Name");
 
                     b.Property<string>("Neighborhood")
                         .IsRequired()
@@ -362,23 +673,16 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("INT")
                         .HasColumnName("Number");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("VARCHAR")
-                        .HasColumnName("PhoneNumber");
-
-                    b.Property<string>("Representative")
-                        .IsRequired()
-                        .HasMaxLength(180)
-                        .HasColumnType("NVARCHAR")
-                        .HasColumnName("Representative");
-
                     b.Property<string>("State")
                         .IsRequired()
                         .HasMaxLength(2)
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("State");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Status");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -387,9 +691,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("Street");
 
                     b.HasKey("Id");
-
-                    b.HasIndex(new[] { "Id" }, "IX_Supplier_Id")
-                        .IsUnique();
 
                     b.ToTable("Supplier", (string)null);
                 });
@@ -413,12 +714,14 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Complement")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Document")
                         .IsRequired()
@@ -431,9 +734,11 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -557,18 +862,96 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Animal", b =>
                 {
-                    b.HasOne("PetWorldOficial.Domain.Entities.User", "User")
+                    b.HasOne("PetWorldOficial.Domain.Entities.Category", "Category")
                         .WithMany("Animals")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Animal_Category_CategoryId");
+
+                    b.HasOne("PetWorldOficial.Domain.Entities.User", "Owner")
+                        .WithMany("Animals")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Animal_User_UserId");
 
-                    b.Navigation("User");
+                    b.HasOne("PetWorldOficial.Domain.Entities.Race", "Race")
+                        .WithMany("Animals")
+                        .HasForeignKey("RaceId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_Animal_Race_RaceId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Race");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Cart", b =>
+                {
+                    b.HasOne("PetWorldOficial.Domain.Entities.User", "Client")
+                        .WithOne()
+                        .HasForeignKey("PetWorldOficial.Domain.Entities.Cart", "ClientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_Cart_User_ClientId");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.CartItem", b =>
+                {
+                    b.HasOne("PetWorldOficial.Domain.Entities.Cart", "Cart")
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CartItem_Cart_CartId");
+
+                    b.HasOne("PetWorldOficial.Domain.Entities.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CartItem_Order_OrderId");
+
+                    b.HasOne("PetWorldOficial.Domain.Entities.Product", "Product")
+                        .WithOne()
+                        .HasForeignKey("PetWorldOficial.Domain.Entities.CartItem", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_CartItem_Product_ProductId");
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("PetWorldOficial.Domain.Entities.User", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Product", b =>
                 {
+                    b.HasOne("PetWorldOficial.Domain.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Product_Category_CategoryId");
+
                     b.HasOne("PetWorldOficial.Domain.Entities.Supplier", "Supplier")
                         .WithMany("Products")
                         .HasForeignKey("SupplierId")
@@ -576,38 +959,114 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Product_Supplier_SupplierId");
 
+                    b.Navigation("Category");
+
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Schedule", b =>
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Schedulling", b =>
                 {
                     b.HasOne("PetWorldOficial.Domain.Entities.Animal", "Animal")
-                        .WithMany("Schedules")
+                        .WithMany("Schedullings")
                         .HasForeignKey("AnimalId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("FK_Schedule_Animal_AnimalId");
+                        .HasConstraintName("FK_Schedulling_Animal_AnimalId");
+
+                    b.HasOne("PetWorldOficial.Domain.Entities.Category", "Category")
+                        .WithMany("Schedullings")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Schedulling_Category_CategoryId");
+
+                    b.HasOne("PetWorldOficial.Domain.Entities.User", "Employee")
+                        .WithMany("Schedullings")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_Schedulling_User_EmployeeId");
 
                     b.HasOne("PetWorldOficial.Domain.Entities.Service", "Service")
-                        .WithMany("Schedules")
+                        .WithMany("Schedullings")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("FK_Schedule_Animal_ServiceId");
+                        .HasConstraintName("FK_Schedulling_Service_ServiceId");
 
                     b.Navigation("Animal");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Employee");
 
                     b.Navigation("Service");
                 });
 
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Service", b =>
+                {
+                    b.HasOne("PetWorldOficial.Domain.Entities.Category", "Category")
+                        .WithMany("Services")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Service_Category_CategoryId");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Stock", b =>
+                {
+                    b.HasOne("PetWorldOficial.Domain.Entities.Product", "Product")
+                        .WithOne("Stock")
+                        .HasForeignKey("PetWorldOficial.Domain.Entities.Stock", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Stock_ProductId");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Animal", b =>
                 {
-                    b.Navigation("Schedules");
+                    b.Navigation("Schedullings");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Cart", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("Animals");
+
+                    b.Navigation("Products");
+
+                    b.Navigation("Schedullings");
+
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Stock")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Race", b =>
+                {
+                    b.Navigation("Animals");
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Service", b =>
                 {
-                    b.Navigation("Schedules");
+                    b.Navigation("Schedullings");
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Supplier", b =>
@@ -618,6 +1077,8 @@ namespace PetWorldOficial.Infrastructure.Migrations
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.User", b =>
                 {
                     b.Navigation("Animals");
+
+                    b.Navigation("Schedullings");
                 });
 #pragma warning restore 612, 618
         }

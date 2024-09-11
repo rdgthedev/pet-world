@@ -5,27 +5,38 @@ namespace PetWorldOficial.Domain.Entities;
 
 public class Animal : Entity
 {
-    public string Name { get; private set; }
-    public string Species { get; private set; }
-    public string Race { get; private set; }
-    public EGender Gender { get; private set; }
-    public int UserId { get; private set; }
-    public User User { get; private set; }
-    public List<Schedule> Schedules { get; private set; }
-    
+    public Animal()
+    {
+    }
+
     public Animal(
-        string name, 
-        string species, 
-        string race,
-        EGender gender, 
-        int userId)
+        string name,
+        DateTime birthDate,
+        EGender gender,
+        int raceId,
+        int categoryId,
+        int ownerId
+    )
     {
         Name = name;
-        Species = species;
-        Race = race;
+        BirthDate = birthDate;
         Gender = gender;
-        UserId = userId;
-
-        Schedules = [];
+        RaceId = raceId;
+        CategoryId = categoryId;
+        OwnerId = ownerId;
+        Schedullings = new();
     }
+
+    public string Name { get; private set; }
+    public DateTime? BirthDate { get; private set; }
+    public EGender Gender { get; private set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime LastUpdatedAt { get; private set; }
+    public int RaceId { get; private set; }
+    public Race Race { get; private set; }
+    public int CategoryId { get; set; }
+    public Category Category { get; set; }
+    public int OwnerId { get; private set; }
+    public User Owner { get; private set; }
+    public List<Schedulling> Schedullings { get; private set; }
 }

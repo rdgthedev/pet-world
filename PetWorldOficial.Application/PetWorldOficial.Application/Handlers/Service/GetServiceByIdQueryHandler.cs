@@ -1,21 +1,16 @@
 ﻿using MediatR;
-using PetWorldOficial.Application.DTOs.Service.Output;
 using PetWorldOficial.Application.Queries.Service;
-using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PetWorldOficial.Application.Services.Implementations;
+using PetWorldOficial.Application.Services.Interfaces;
 
 namespace PetWorldOficial.Application.Handlers.Service
 {
-    public class GetServiceByIdQueryHandler(
-        IServiceService serviceService) : IRequestHandler<GetServiceByIdQuery, ServiceDetailsViewModel>
+    public class GetServiceByIdQueryHandler(IServiceService serviceService) : IRequestHandler<GetServiceByIdQuery, ServiceDetailsViewModel>
     {
-        public async Task<ServiceDetailsViewModel> Handle(GetServiceByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ServiceDetailsViewModel> Handle(GetServiceByIdQuery request,
+            CancellationToken cancellationToken)
         {
             try
             {

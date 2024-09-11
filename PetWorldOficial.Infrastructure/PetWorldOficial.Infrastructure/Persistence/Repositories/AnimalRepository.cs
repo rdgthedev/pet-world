@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PetWorldOficial.Domain.Common;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
@@ -30,8 +31,8 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
         var animals = await _context
              .Animals
              .AsNoTracking()
-             .Include(a => a.User)
-             .Where(animal => animal.User.Id == id)
+             .Include(a => a.Owner)
+             .Where(animal => animal.OwnerId == id)
              .ToListAsync(cancellationToken);
 
         return animals;
@@ -42,7 +43,7 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
         return await _context
             .Animals
             .AsNoTracking()
-            .Include(a => a.User)
+            .Include(a => a.Owner)
             .ToListAsync(cancellationToken);
     }
 

@@ -10,7 +10,7 @@ public record UpdateAnimalCommand([Required] int Id) : IRequest<UpdateAnimalComm
     public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "A espécie é obrigatória!")]
-    public string Species { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "A raça é obrigatória!")]
     public string Race { get; set; } = string.Empty;

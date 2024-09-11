@@ -15,12 +15,7 @@ public class LoginUserCommanHandler(
     {
         try
         {
-            var user = await userService.GetByUserNameAsync(request.UserName, cancellationToken);
-
-            if (user is null)
-                throw new LoginInvalidException("Login ou senha inválidos!");
-
-            var result = await authService.Login(mapper.Map<Domain.Entities.User>(user), request.Password);
+            var result = await authService.Login(request);
 
             if (!result)
                 throw new LoginInvalidException("Login ou senha inválidos!");

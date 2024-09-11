@@ -7,6 +7,6 @@ public class CommandToDomainProfiles : Profile
 {
     public CommandToDomainProfiles()
     {
-        CreateMap<CreateScheduleCommand, Domain.Entities.Schedule>();
+        CreateMap<CreateScheduleCommand, Domain.Entities.Schedulling>();
     }
 }

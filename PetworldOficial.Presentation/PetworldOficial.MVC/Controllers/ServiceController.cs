@@ -3,10 +3,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.Commands.Service;
-using PetWorldOficial.Application.DTOs.Service;
 using PetWorldOficial.Application.Queries.Service;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;

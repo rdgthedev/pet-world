@@ -23,6 +23,6 @@ public class CreateScheduleViewModel
     public string? Observation { get; set; }
 
     public Domain.Entities.Service? Service { get; set; }
-    public IEnumerable<PetWorldOficial.Domain.Entities.Animal>? Animals { get; set; }
+    public IEnumerable<Domain.Entities.Animal>? Animals { get; set; }
     public int UserId { get; set; }
 }

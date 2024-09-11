@@ -83,11 +83,11 @@ else if (TempData["SuccessMessage"] != null)
                             @if (User.IsInRole(ERole.Admin.ToString()))
                             {
                                 <p>
-                                    <b>Dono:</b> @animal.User!.Name
+                                    <b>Dono:</b> @animal.Owner!.Name
                                 </p>
                             }
                             <p>
-                                <b>Espécie:</b> @animal.Species
+                                <b>Espécie:</b> @animal.Category
                             </p>
 
                             <p>

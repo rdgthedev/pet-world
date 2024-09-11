@@ -10,5 +10,6 @@ public class CommandToDomain : Profile
         CreateMap<RegisterUserCommand, Domain.Entities.User>();
         CreateMap<UpdateUserCommand, Domain.Entities.User>();
         CreateMap<DeleteUserCommand, Domain.Entities.User>();
+        CreateMap<LoginUserCommand, Domain.Entities.User>();
     }
 }

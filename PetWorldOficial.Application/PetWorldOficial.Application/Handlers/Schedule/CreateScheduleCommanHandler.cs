@@ -82,10 +82,9 @@ public class CreateScheduleCommanHandler(
 
             //Conta o número de agendamentos filtrando por data e horário.
             var countSchedulesByDateAndTime = (await scheduleService.GetAll(cancellationToken))
-                .Where(s => s.Date == request.Date
-                && s.Time > request.Time!.Value
-                && request.Time.Value.Add(TimeSpan.FromMinutes(serviceVm.DurationInMinutes)) <= s.Time)
-                .Count();
+                .Count(s => s.Date == request.Date
+                            && s.Time > request.Time!.Value
+                            && request.Time.Value.Add(TimeSpan.FromMinutes(serviceVm.DurationInMinutes)) <= s.Time);
 
             //!Verifica disponibilidade para agendamento (agendamentos >= funcionários)
             //throw new FalhaNoAgendamento

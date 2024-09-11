@@ -76,14 +76,14 @@ public class ScheduleService(
     }
 
     public async Task Update(UpdateScheduleViewModel entity, CancellationToken cancellationToken)
-        => await _scheduleRepository.UpdateAsync(_mapper.Map<Schedule>(entity), cancellationToken);
+        => await _scheduleRepository.UpdateAsync(_mapper.Map<Schedulling>(entity), cancellationToken);
 
     public async Task Delete(DeleteScheduleViewModel entity, CancellationToken cancellationToken)
-        => await _scheduleRepository.DeleteAsync(_mapper.Map<Schedule>(entity), cancellationToken);
+        => await _scheduleRepository.DeleteAsync(_mapper.Map<Schedulling>(entity), cancellationToken);
 
     public async Task Create(CreateScheduleCommand command, CancellationToken cancellationToken)
     {
-        await _scheduleRepository.CreateAsync(_mapper.Map<Schedule>(command), cancellationToken);
+        await _scheduleRepository.CreateAsync(_mapper.Map<Schedulling>(command), cancellationToken);
     }
 
     public async Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken)

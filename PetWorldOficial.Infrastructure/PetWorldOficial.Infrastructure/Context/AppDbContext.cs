@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PetWorldOficial.Domain.Common;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 
@@ -11,7 +12,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Supplier> Suppliers { get; set; }
     public DbSet<Service> Services { get; set; }
     public DbSet<Animal> Animals { get; set; }
-    public DbSet<Schedule> Schedules { get; set; }
+    public DbSet<Schedulling> Schedullings { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

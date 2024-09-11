@@ -14,7 +14,7 @@ public class DomainToCommand : Profile
                     Id = user.Id,
                     Name = user.Name,
                     UserName = user.UserName!,
-                    Gender = user.Gender,
+                    Gender = user.Gender.ToString(),
                     BirthDate = user.BirthDate,
                     Document = user.Document,
                     Email = user.Email!,
@@ -23,7 +23,7 @@ public class DomainToCommand : Profile
                     Number = user.Number!,
                     PostalCode = user.PostalCode,
                     Neighborhood = user.Neighborhood,
-                    Complement = user.Complement,
+                    Complement = user.Complement!,
                     City = user.City,
                     State = user.State
                 });

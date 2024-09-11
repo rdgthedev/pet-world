@@ -1,6 +1,4 @@
 ﻿using PetWorldOficial.Application.Commands.Service;
-using PetWorldOficial.Application.DTOs.Service;
-using PetWorldOficial.Application.DTOs.Service.Output;
 using PetWorldOficial.Application.ViewModels.Service;
 
 namespace PetWorldOficial.Application.Services.Interfaces;

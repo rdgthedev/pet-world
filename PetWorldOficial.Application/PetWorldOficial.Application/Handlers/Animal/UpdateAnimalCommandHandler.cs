@@ -29,7 +29,7 @@ public class UpdateAnimalCommandHandler(
                 request.Name = animal.Name;
                 request.Gender = animal.Gender;
                 request.Race = animal.Race;
-                request.Species = animal.Species;
+                request.Category = animal.Category;
                 request.UserId = user.Id;
 
                 return request;

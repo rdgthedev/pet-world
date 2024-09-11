@@ -10,7 +10,7 @@ public record DeleteAnimalCommand([Required] int Id) : IRequest<DeleteAnimalComm
     public string Name { get; set; }
 
     [Required(ErrorMessage = "A espécie é obrigatória!")]
-    public string Species { get; set; }
+    public string Category { get; set; }
 
     [Required(ErrorMessage = "A raça é obrigatória!")]
     public string Race { get; set; }

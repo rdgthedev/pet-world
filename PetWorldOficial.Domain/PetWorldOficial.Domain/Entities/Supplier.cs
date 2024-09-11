@@ -1,68 +1,50 @@
 ﻿using PetWorldOficial.Domain.Common;
+using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Domain.Entities;
 
 public class Supplier : Entity
 {
-    protected Supplier(){ }
-    
+    public Supplier()
+    {
+    }
+
     public Supplier(
-        string company, 
-        string cnpj, 
-        string representative, 
-        string phoneNumber,
-        string street, 
-        int number, 
-        string neighborhood, 
-        string complement, 
-        string city, 
+        string name,
+        string cnpj,
+        string cellPhone,
+        string street,
+        int number,
+        string neighborhood,
+        string complement,
+        string city,
         string state)
     {
-        Company = company;
+        Name = name;
         CNPJ = cnpj;
-        Representative = representative;
-        PhoneNumber = phoneNumber;
+        CellPhone = cellPhone;
         Street = street;
         Number = number;
         Neighborhood = neighborhood;
         Complement = complement;
         City = city;
         State = state;
+        CreatedAt = DateTime.Now;
+        Status = EActivingStatus.Active;
+        Products = new();
     }
 
-    public string Company { get; private set; }
+    public string Name { get; private set; }
     public string CNPJ { get; private set; }
-    public string Representative { get; private set; }
-    public string PhoneNumber { get; private set; }
+    public string CellPhone { get; private set; }
     public string Street { get; private set; }
     public int Number { get; private set; }
     public string Neighborhood { get; private set; }
     public string Complement { get; private set; }
     public string City { get; private set; }
     public string State { get; private set; }
+    public EActivingStatus Status { get; set; }
+    public DateTime CreatedAt { get; private set; }
+    public DateTime LastUpdatedAt { get; private set; }
     public List<Product> Products { get; private set; }
-
-    public void Update(
-        string company, 
-        string cnpj, 
-        string representative, 
-        string phoneNumber,
-        string street, 
-        int number, 
-        string neighborhood, 
-        string complement, 
-        string city, 
-        string state)
-    {
-        Company = company;
-        CNPJ = cnpj;
-        Representative = representative;
-        PhoneNumber = phoneNumber;
-        Street = street;
-        Number = number;
-        Neighborhood = neighborhood;
-        Complement = complement;
-        City = city;
-        State = state;
-    }
 }

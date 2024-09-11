@@ -7,7 +7,7 @@ public class CommandToDomainProfiles : Profile
 {
     public CommandToDomainProfiles()
     {
-        CreateMap<RegisterAnimalCommand, Domain.Entities.Animal>().ReverseMap();
+        CreateMap<RegisterAnimalCommand, Domain.Entities.Animal>();
         CreateMap<DeleteAnimalCommand, Domain.Entities.Animal>().ReverseMap();
         CreateMap<UpdateAnimalCommand, Domain.Entities.Animal>().ReverseMap();
     }

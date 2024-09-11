@@ -27,7 +27,7 @@ public class DeleteAnimalCommandHandler(
                     throw new AnimalNotFoundException("Pet não encontrado!");
 
                 request.Name = animal.Name;
-                request.Species = animal.Species;
+                request.Category = animal.Category;
                 request.Race = animal.Race;
                 request.Gender = animal.Gender;
                 

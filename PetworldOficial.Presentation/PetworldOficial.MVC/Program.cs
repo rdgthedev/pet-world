@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Commands.Service;
-using PetWorldOficial.Application.Mappers.Product;
 using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
@@ -23,7 +22,11 @@ builder.Services.AddControllersWithViews()
 builder.Services.Configure<OpeningHours>(builder.Configuration.GetSection("OpeningHours"));
 
 builder.Services.AddDbContext<AppDbContext>(
-    options => { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });
+    options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+            b => { b.MigrationsAssembly("PetWorldOficial.Infrastructure"); });
+    });
 
 builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<AppDbContext>()
@@ -42,7 +45,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
-builder.Services.AddScoped<IProductService, ProductService>();
+// builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddTransient<IImageService, ImageService>();
@@ -54,7 +57,7 @@ builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
-builder.Services.AddAutoMapper(typeof(UpdateProductDTOToProduct));
+builder.Services.AddAutoMapper(typeof(CreateServiceCommand));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateServiceCommand).Assembly));
 
 var app = builder.Build();

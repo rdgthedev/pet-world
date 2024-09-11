@@ -15,8 +15,12 @@ public class GetAllUsersQueryHandler(IUserService userService)
     {
         try
         {
-            return await userService.GetAllAsync(cancellationToken)
-                ?? throw new UserNotFoundException("Nenhum usuário encontrado!");
+            var users = (await userService.GetAllAsync(cancellationToken)).ToList();
+
+            if (users is null || !users.Any())
+                throw new UserNotFoundException("Nenhum usuário encontrado!");
+
+            return users;
         }
         catch (Exception e)
         {

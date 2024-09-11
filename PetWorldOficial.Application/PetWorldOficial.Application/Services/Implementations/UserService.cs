@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.Commands.User;
-using PetWorldOficial.Application.DTOs.User.Output;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
@@ -32,7 +31,7 @@ public class UserService(
         return mapper.Map<UserDetailsViewModel>(await userRepository.GetByUserNameAsync(userName!, cancellationToken));
     }
 
-    public async Task<OutputUserExistsDTO> UserExistsAsync(
+    public async Task<UserExistsViewModel> UserExistsAsync(
         string? userName,
         string? cpf,
         string? phoneNumber,
@@ -46,7 +45,7 @@ public class UserService(
             user = await userRepository.GetByUserNameAsync(userName, cancellationToken);
 
             if (user != null)
-                return new OutputUserExistsDTO(true, "Username já cadastrado!");
+                return new UserExistsViewModel(true, "Username já cadastrado!");
         }
 
         if (!string.IsNullOrEmpty(cpf))
@@ -54,7 +53,7 @@ public class UserService(
             user = await userRepository.GetByCpfAsync(cpf, cancellationToken);
 
             if (user != null)
-                return new OutputUserExistsDTO(true, "Cpf já cadastrado!");
+                return new UserExistsViewModel(true, "Cpf já cadastrado!");
         }
 
         if (!string.IsNullOrEmpty(phoneNumber))
@@ -62,7 +61,7 @@ public class UserService(
             user = await userRepository.GetByPhoneNumberAsync(phoneNumber, cancellationToken);
 
             if (user != null)
-                return new OutputUserExistsDTO(true, "Telefone já cadastrado!");
+                return new UserExistsViewModel(true, "Telefone já cadastrado!");
         }
 
         if (!string.IsNullOrEmpty(email))
@@ -70,10 +69,10 @@ public class UserService(
             user = await userRepository.GetByEmailAsync(email);
 
             if (user != null)
-                return new OutputUserExistsDTO(true, "Email já cadastrado!");
+                return new UserExistsViewModel(true, "Email já cadastrado!");
         }
 
-        return new OutputUserExistsDTO(false, null!);
+        return new UserExistsViewModel(false, null!);
     }
 
     public async Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken)
@@ -84,7 +83,6 @@ public class UserService(
             throw new UserNotFoundException("Usuário não encontrado!");
 
         var userUpdated = mapper.Map(command, user);
-
         await userRepository.UpdateAsync(userUpdated);
     }
 
