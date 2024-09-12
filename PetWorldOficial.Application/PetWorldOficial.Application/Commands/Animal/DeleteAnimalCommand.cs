@@ -7,18 +7,19 @@ namespace PetWorldOficial.Application.Commands.Animal;
 public record DeleteAnimalCommand([Required] int Id) : IRequest<DeleteAnimalCommand>
 {
     [Required(ErrorMessage = "O nome é obrigatório!")]
-    public string Name { get; set; }
-
-    [Required(ErrorMessage = "A espécie é obrigatória!")]
-    public string Category { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "A raça é obrigatória!")]
-    public string Race { get; set; }
+    public int RaceId { get; set; }
 
     [Required(ErrorMessage = "O gênero é obrigatório!")]
-    public string Gender { get; set; }
+    public string Gender { get; set; } = string.Empty;
+    public string CategoryName { get; set; }
+    public string RaceName { get; set; }
 
-    [Required] public int UserId { get; set; }
+    public int UserId { get; set; }
+    public int CategoryId { get; set; }
+    public int? Age { get; set; }
 
     public ClaimsPrincipal? UserPrincipal { get; set; }
 

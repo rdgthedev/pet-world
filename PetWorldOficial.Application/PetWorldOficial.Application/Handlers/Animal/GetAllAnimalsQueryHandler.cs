@@ -25,21 +25,31 @@ public class GetAllAnimalsQueryHandler(
                 ? ERole.Admin
                 : ERole.User;
 
+            var animals = Enumerable.Empty<AnimalDetailsViewModel?>();
+
             if (request.User.IsInRole(ERole.Admin.ToString()))
             {
-                return (await animalService.GetWithUser(cancellationToken)
-                        ?? throw new NotFoundException("Nenhum pet encontrado!"))!;
+                animals = await animalService.GetWithOwnerAndRace(cancellationToken);
+
+                if (!animals.Any() || animals is null)
+                    throw new NotFoundException("Nenhum pet encontrado!");
+
+                return animals!;
             }
 
             if (request.User.IsInRole(ERole.User.ToString()))
             {
-                return (await animalService.GetByUserId(user.Id, cancellationToken)
-                        ?? throw new NotFoundException("Nenhum pet encontrado!"))!;
+                animals = await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
+
+                if (!animals.Any() || animals is null)
+                    throw new NotFoundException("Nenhum pet encontrado!");
+
+                return animals!;
             }
 
             throw new UnauthorizedUserException("Acesso não autorizado");
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }

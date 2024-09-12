@@ -13,6 +13,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Service> Services { get; set; }
     public DbSet<Animal> Animals { get; set; }
     public DbSet<Schedulling> Schedullings { get; set; }
+    public DbSet<Race> Races { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

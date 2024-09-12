@@ -10,6 +10,7 @@ public interface IAnimalRepository
     Task UpdateAsync(Animal animal, CancellationToken cancellationToken);
     Task DeleteAsync(Animal animal, CancellationToken cancellationToken);
     Task CreateAsync(Animal animal, CancellationToken cancellationToken);
-    Task<IEnumerable<Animal?>> GetByUserIdAsync(int id, CancellationToken cancellationToken);
-    public Task<IEnumerable<Animal?>> GetWithUser(CancellationToken cancellationToken);
+    Task<IEnumerable<Animal?>> GetByUserIdWithOwnerAndRaceAsync(int id, CancellationToken cancellationToken);
+    Task<IEnumerable<Animal?>> GetWithOwnerAndRaceAsync(CancellationToken cancellationToken);
+    Task<Animal?> GetByIdWithOwnerAndCategoryAndRaceAsync(int id, CancellationToken cancellationToken);
 }

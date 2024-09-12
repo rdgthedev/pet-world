@@ -30,7 +30,7 @@ public class GetAllSchedulesQueryHandler(
                 return await scheduleService.GetAll(cancellationToken)
                        ?? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!");
 
-            var animalsIds = (await animalService.GetByUserId(user.Id, cancellationToken))
+            var animalsIds = (await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken))
                 .Select(a => a!.Id).ToList();
 
             if (!animalsIds.Any())

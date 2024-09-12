@@ -23,19 +23,30 @@ public class AnimalService(
         => await animalRepository.UpdateAsync(mapper.Map<Animal>(command), cancellationToken);
 
     public async Task Delete(DeleteAnimalCommand command, CancellationToken cancellationToken)
-        => await animalRepository.DeleteAsync(mapper.Map<Animal>(command), cancellationToken);
-
-    public async Task Create(RegisterAnimalCommand command, CancellationToken cancellationToken)
-        => await animalRepository.CreateAsync(mapper.Map<Animal>(command), cancellationToken);
-
-    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserId(int id, CancellationToken cancellationToken)
     {
-        return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(
-            await animalRepository.GetByUserIdAsync(id, cancellationToken));
+        var animal = mapper.Map<Animal>(command);
+        await animalRepository.DeleteAsync(animal, cancellationToken);
     }
 
-    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetWithUser(CancellationToken cancellationToken)
+    public async Task Create(RegisterAnimalCommand command, CancellationToken cancellationToken)
     {
-        return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(await animalRepository.GetWithUser(cancellationToken));
+        var animal = mapper.Map<Animal>(command);
+        await animalRepository.CreateAsync(animal, cancellationToken);
+    }
+
+    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserIdWithOwnerAndRace(int id, CancellationToken cancellationToken)
+    {
+        return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(
+            await animalRepository.GetByUserIdWithOwnerAndRaceAsync(id, cancellationToken));
+    }
+
+    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetWithOwnerAndRace(CancellationToken cancellationToken)
+    {
+        return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(await animalRepository.GetWithOwnerAndRaceAsync(cancellationToken));
+    }
+
+    public async Task<AnimalDetailsViewModel?> GetByIdWithOwnerAndCategoryAndRaceAsync(int id, CancellationToken cancellationToken)
+    {
+        return mapper.Map<AnimalDetailsViewModel>(await animalRepository.GetByIdWithOwnerAndCategoryAndRaceAsync(id, cancellationToken));
     }
 }

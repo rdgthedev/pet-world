@@ -49,7 +49,7 @@ public class AnimalController(IMediator mediator) : Controller
     public async Task<IActionResult> Register(CancellationToken cancellationToken)
     {
         RegisterAnimalCommand result = null!;
-        
+
         try
         {
             result = await mediator.Send(new RegisterAnimalCommand { UserPrincipal = User }, cancellationToken);
@@ -91,10 +91,12 @@ public class AnimalController(IMediator mediator) : Controller
         catch (UserNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Login", "Auth");
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = result.Message;
+            TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o cadastro do pet!";
+            return View();
         }
 
         return RedirectToAction("Index");

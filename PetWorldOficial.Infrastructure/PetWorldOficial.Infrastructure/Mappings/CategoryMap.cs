@@ -23,6 +23,12 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
             .HasMaxLength(120)
             .IsRequired();
 
+        builder.Property(c => c.Type)
+            .HasColumnName("Type")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(120)
+            .IsRequired();
+
         builder.Property(s => s.CreatedAt)
             .HasColumnName("CreatedAt")
             .HasColumnType("DATETIME")

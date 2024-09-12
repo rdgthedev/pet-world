@@ -38,7 +38,7 @@ public class CreateScheduleCommanHandler(
                 var service = await serviceService.GetById(request.ServiceId, cancellationToken)
                               ?? throw new ServiceNotFoundException("Ocorreu um erro. Nenhum serviço encontrado!");
 
-                var animals = await animalService.GetByUserId(user.Id, cancellationToken);
+                var animals = await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
 
                 //Gerar lista de horários com intervalos (30 em 30min)
 

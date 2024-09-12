@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using PetWorldOficial.Application.Commands.Animal;
+using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
 
@@ -7,7 +8,9 @@ namespace PetWorldOficial.Application.Handlers.Animal;
 
 public class DeleteAnimalCommandHandler(
     IUserService userService,
-    IAnimalService animalService) : IRequestHandler<DeleteAnimalCommand, DeleteAnimalCommand>
+    IAnimalService animalService,
+    IRaceService raceService,
+    ICategoryService categoryService) : IRequestHandler<DeleteAnimalCommand, DeleteAnimalCommand>
 {
     public async Task<DeleteAnimalCommand> Handle(DeleteAnimalCommand request, CancellationToken cancellationToken)
     {
@@ -21,16 +24,19 @@ public class DeleteAnimalCommandHandler(
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
-                var animal = await animalService.GetById(request.Id, cancellationToken);
+                var animal = await animalService.GetByIdWithOwnerAndCategoryAndRaceAsync(request.Id, cancellationToken);
 
                 if (animal is null)
                     throw new AnimalNotFoundException("Pet não encontrado!");
 
                 request.Name = animal.Name;
-                request.Category = animal.Category;
-                request.Race = animal.Race;
+                request.CategoryName = animal.Category.Title;
+                request.RaceName = animal.Race.Name;
+                request.UserId = animal.OwnerId;
                 request.Gender = animal.Gender;
-                
+                request.RaceId = animal.Race.Id;
+                request.CategoryId = animal.Category.Id;
+
                 return request;
             }
 

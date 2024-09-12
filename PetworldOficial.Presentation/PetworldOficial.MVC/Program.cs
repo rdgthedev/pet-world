@@ -35,7 +35,6 @@ builder.Services.AddIdentity<User, Role>()
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.ExpireTimeSpan = TimeSpan.FromHours(8);
-    option.SlidingExpiration = true;
     option.Cookie.HttpOnly = true;
     option.LoginPath = "/Auth/Login";
     option.AccessDeniedPath = "/Auth/Login";
@@ -48,6 +47,8 @@ builder.Services.AddScoped<IServiceService, ServiceService>();
 // builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<IRaceService, RaceService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IImageService, ImageService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -56,6 +57,8 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+builder.Services.AddScoped<IRaceRepository, RaceRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 builder.Services.AddAutoMapper(typeof(CreateServiceCommand));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateServiceCommand).Assembly));

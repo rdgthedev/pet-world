@@ -34,7 +34,7 @@ public class RegisterUserCommandHandler(
 
             return Unit.Value;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }

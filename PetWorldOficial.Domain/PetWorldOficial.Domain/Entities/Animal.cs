@@ -9,7 +9,6 @@ public class Animal : Entity
 
     public Animal(
         string name,
-        DateTime? birthDate,
         EGender gender,
         int raceId,
         int categoryId,
@@ -17,7 +16,6 @@ public class Animal : Entity
     )
     {
         Name = name;
-        BirthDate = birthDate;
         Gender = gender;
         RaceId = raceId;
         CategoryId = categoryId;

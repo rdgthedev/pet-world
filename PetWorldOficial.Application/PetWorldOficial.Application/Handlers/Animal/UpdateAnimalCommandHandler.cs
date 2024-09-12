@@ -28,8 +28,8 @@ public class UpdateAnimalCommandHandler(
 
                 request.Name = animal.Name;
                 request.Gender = animal.Gender;
-                request.Race = animal.Race;
-                request.Category = animal.Category;
+                request.Race = animal.Race.Name;
+                request.Category = animal.Category.Title;
                 request.UserId = user.Id;
 
                 return request;
