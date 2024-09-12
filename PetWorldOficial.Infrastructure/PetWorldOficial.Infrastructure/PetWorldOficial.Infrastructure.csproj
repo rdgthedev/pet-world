@@ -23,10 +23,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\PetWorldOficial.Application\PetWorldOficial.Application\PetWorldOficial.Application.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
   
 
 </Project>

@@ -76,7 +76,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     Title = table.Column<string>(type: "NVARCHAR(120)", maxLength: 120, nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false)
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -113,7 +113,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     State = table.Column<string>(type: "NVARCHAR(2)", maxLength: 2, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false)
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -234,7 +234,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClientId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true),
                     ExpiresDate = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "DECIMAL(10,2)", nullable: false)
                 },
@@ -257,7 +257,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     ClientId = table.Column<int>(type: "int", nullable: false),
                     Code = table.Column<string>(type: "NVARCHAR(10)", maxLength: 10, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true),
                     PaymentDate = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -286,7 +286,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     Price = table.Column<decimal>(type: "DECIMAL(10,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -350,7 +350,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     SupplierId = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false)
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -365,8 +365,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         name: "FK_Product_Supplier_SupplierId",
                         column: x => x.SupplierId,
                         principalTable: "Supplier",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -382,10 +381,10 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     Code = table.Column<string>(type: "NVARCHAR(20)", maxLength: 20, nullable: false),
                     Date = table.Column<DateTime>(type: "DATE", nullable: false),
                     Time = table.Column<TimeSpan>(type: "TIME", nullable: false),
-                    Observation = table.Column<string>(type: "NVARCHAR", nullable: false),
+                    Observation = table.Column<string>(type: "NVARCHAR", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false)
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -460,7 +459,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "INT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false),
-                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: false)
+                    LastUpdatedAt = table.Column<DateTime>(type: "DATETIME", nullable: true)
                 },
                 constraints: table =>
                 {

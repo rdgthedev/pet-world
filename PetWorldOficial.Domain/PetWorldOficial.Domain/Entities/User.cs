@@ -52,7 +52,7 @@ public sealed class User : IdentityUser<int>
     public string City { get; private set; }
     public string State { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
     public List<Animal> Animals { get; private set; }
     public List<Schedulling> Schedullings { get; set; }
 

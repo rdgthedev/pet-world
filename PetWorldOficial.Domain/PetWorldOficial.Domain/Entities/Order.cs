@@ -7,8 +7,8 @@ public class Order : Entity
 {
     public Order()
     {
-        
     }
+
     public Order(
         int clientId,
         CartItem item)
@@ -24,7 +24,7 @@ public class Order : Entity
     public User Client { get; private set; }
     public Guid Code { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
     public DateTime PaymentDate { get; private set; }
     public EOrderStatus Status { get; private set; }
     public EPaymentMethod PaymentMethod { get; private set; }

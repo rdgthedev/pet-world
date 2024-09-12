@@ -56,7 +56,8 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME");
+            .HasColumnType("DATETIME")
+            .IsRequired(false);
 
         builder.HasIndex(s => s.Id, "IX_Product_Id")
             .IsUnique();

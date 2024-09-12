@@ -39,5 +39,5 @@ public class Schedulling : Entity
     public string? Observation { get; private set; }
     public ESchedullingStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; set; }
+    public DateTime? LastUpdatedAt { get; set; }
 }

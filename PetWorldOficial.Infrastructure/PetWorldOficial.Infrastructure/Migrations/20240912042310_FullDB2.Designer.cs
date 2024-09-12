@@ -12,8 +12,8 @@ using PetWorldOficial.Infrastructure.Context;
 namespace PetWorldOficial.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240911210006_FullDB")]
-    partial class FullDB
+    [Migration("20240912042310_FullDB2")]
+    partial class FullDB2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -205,7 +205,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("DATETIME")
                         .HasColumnName("ExpiresDate");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
@@ -276,7 +276,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("DATETIME")
                         .HasColumnName("CreatedAt");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
@@ -315,7 +315,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("DATETIME")
                         .HasColumnName("CreatedAt");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
@@ -375,7 +375,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Image");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
@@ -493,12 +493,11 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
                     b.Property<string>("Observation")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Observation");
 
@@ -554,7 +553,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("ImageUrl");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
@@ -596,7 +595,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("DATETIME")
                         .HasColumnName("CreatedAt");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
@@ -656,7 +655,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("DATETIME")
                         .HasColumnName("CreatedAt");
 
-                    b.Property<DateTime>("LastUpdatedAt")
+                    b.Property<DateTime?>("LastUpdatedAt")
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
@@ -717,7 +716,8 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Complement")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Complement");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -740,8 +740,9 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTime?>("LastUpdatedAt")
+                        .HasColumnType("DATETIME")
+                        .HasColumnName("LastUpdatedAt");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -958,7 +959,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.HasOne("PetWorldOficial.Domain.Entities.Supplier", "Supplier")
                         .WithMany("Products")
                         .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK_Product_Supplier_SupplierId");
 

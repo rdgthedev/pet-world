@@ -28,7 +28,7 @@ public class Service : Entity
     public double Price { get; private set; }
     public EActivingStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
 
     public int CategoryId { get; private set; }
     public Category Category { get; private set; }

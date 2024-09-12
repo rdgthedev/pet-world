@@ -45,6 +45,6 @@ public class Supplier : Entity
     public string State { get; private set; }
     public EActivingStatus Status { get; set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
     public List<Product> Products { get; private set; }
 }

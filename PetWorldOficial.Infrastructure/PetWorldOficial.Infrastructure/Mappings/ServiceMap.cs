@@ -61,7 +61,8 @@ public class ServiceMap : IEntityTypeConfiguration<Service>
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME");
+            .HasColumnType("DATETIME")
+            .IsRequired(false);
 
         builder.HasIndex(s => s.Id, "IX_Service_Id");
         builder.HasIndex(s => s.Name, "IX_Service_Name");

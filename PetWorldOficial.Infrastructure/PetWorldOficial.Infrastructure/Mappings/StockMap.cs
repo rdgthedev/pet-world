@@ -33,7 +33,8 @@ public class StockMap : IEntityTypeConfiguration<Stock>
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME");
+            .HasColumnType("DATETIME")
+            .IsRequired(false);
 
         builder.HasIndex(s => s.Id, "IX_Stock_Id");
         builder.HasIndex(s => s.Id, "IX_Stock_ProductId");

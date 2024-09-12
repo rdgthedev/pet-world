@@ -84,11 +84,13 @@ public class SupplierMap : IEntityTypeConfiguration<Supplier>
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME");
+            .HasColumnType("DATETIME")
+            .IsRequired(false);
 
         builder.HasMany(s => s.Products)
             .WithOne(p => p.Supplier)
             .HasForeignKey(p => p.SupplierId)
+            .OnDelete(DeleteBehavior.NoAction)
             .IsRequired();
     }
 }

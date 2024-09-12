@@ -6,8 +6,8 @@ public class Product : Entity
 {
     public Product()
     {
-        
     }
+
     public Product(
         string name,
         string description,
@@ -23,8 +23,8 @@ public class Product : Entity
         CreatedAt = DateTime.Now;
     }
 
-    public string Name { get; private set; } 
-    public string Description { get; private set; } 
+    public string Name { get; private set; }
+    public string Description { get; private set; }
     public string ImageUrl { get; private set; }
     public double Price { get; private set; }
     public int SupplierId { get; private set; }
@@ -33,5 +33,5 @@ public class Product : Entity
     public Category Category { get; private set; }
     public Stock Stock { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
 }

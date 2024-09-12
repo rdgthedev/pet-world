@@ -30,7 +30,7 @@ public class Cart : Entity
     public User Client { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
     public DateTime ExpiresDate { get; private set; }
     public decimal TotalPrice { get; set; }
     public List<CartItem> Items { get; private set; }

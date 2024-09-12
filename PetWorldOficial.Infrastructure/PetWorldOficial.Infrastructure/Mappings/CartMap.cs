@@ -32,7 +32,8 @@ public class CartMap : IEntityTypeConfiguration<Cart>
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
             .HasColumnType("DATETIME")
-            .IsRequired();
+            .IsRequired()
+            .IsRequired(false);
 
         builder.Property(c => c.ExpiresDate)
             .HasColumnName("ExpiresDate")

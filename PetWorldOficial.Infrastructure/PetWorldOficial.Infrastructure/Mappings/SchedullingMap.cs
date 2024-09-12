@@ -31,12 +31,12 @@ public class SchedullingMap : IEntityTypeConfiguration<Schedulling>
             .HasForeignKey(s => s.ServiceId)
             .OnDelete(DeleteBehavior.Restrict)
             .IsRequired();
-        
+
         builder.HasOne(s => s.Employee)
             .WithMany(s => s.Schedullings)
             .HasConstraintName("FK_Schedulling_User_EmployeeId")
             .HasForeignKey(s => s.EmployeeId)
-            .OnDelete(DeleteBehavior.NoAction)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
         builder.HasOne(s => s.Category)
@@ -56,22 +56,22 @@ public class SchedullingMap : IEntityTypeConfiguration<Schedulling>
             .HasColumnName("Date")
             .HasColumnType("DATE")
             .IsRequired();
-        
+
         builder.Property(s => s.Time)
             .HasColumnName("Time")
             .HasColumnType("TIME")
             .IsRequired();
-        
+
         builder.Property(s => s.Observation)
             .HasColumnName("Observation")
             .HasColumnType("NVARCHAR")
-            .IsRequired();
-        
+            .IsRequired(false);
+
         builder.Property(s => s.Status)
             .HasColumnName("Status")
             .HasConversion(
-                v => v.ToString(), 
-                v => (ESchedullingStatus)Enum.Parse(typeof(ESchedullingStatus), v) 
+                v => v.ToString(),
+                v => (ESchedullingStatus)Enum.Parse(typeof(ESchedullingStatus), v)
             )
             .IsRequired();
 
@@ -82,7 +82,8 @@ public class SchedullingMap : IEntityTypeConfiguration<Schedulling>
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME");
+            .HasColumnType("DATETIME")
+            .IsRequired(false);
 
         builder.HasIndex(s => s.Id, "IX_Schedulling_Id");
         builder.HasIndex(s => s.EmployeeId, "IX_Schedulling_EmployeeId");

@@ -47,7 +47,8 @@ public class OrderMap : IEntityTypeConfiguration<Order>
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME");
+            .HasColumnType("DATETIME")
+            .IsRequired(false);
 
         builder.Property(o => o.Status)
             .HasColumnName("Status")

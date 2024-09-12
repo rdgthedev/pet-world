@@ -7,8 +7,8 @@ public class Category : Entity
 {
     public Category()
     {
-        
     }
+
     public Category(
         string title,
         ECategoryType type)
@@ -21,7 +21,7 @@ public class Category : Entity
     public string Title { get; private set; }
     public ECategoryType Type { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
     public List<Product> Products { get; private set; }
     public List<Animal> Animals { get; private set; }
     public List<Service> Services { get; private set; }
