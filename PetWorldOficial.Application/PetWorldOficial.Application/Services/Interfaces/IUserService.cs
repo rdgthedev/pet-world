@@ -19,5 +19,9 @@ public interface IUserService
 
     Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken);
     Task DeleteAsync(DeleteUserCommand command, CancellationToken cancellationToken);
+
+    Task<IEnumerable<UserDetailsViewModel>> GetAllUsersExceptCurrentAsync(
+        int userId,
+        CancellationToken cancellationToken);
     Task<int> CountUsersByRoleAsync(ERole roleName);
 }

@@ -96,6 +96,13 @@ public class UserService(
         await userRepository.DeleteAsync(user);
     }
 
+    public async Task<IEnumerable<UserDetailsViewModel>> GetAllUsersExceptCurrentAsync(
+        int userId,
+        CancellationToken cancellationToken)
+        => mapper.Map<IEnumerable<UserDetailsViewModel>>(
+            await userRepository.GetAllUsersExceptCurrentAsync(userId, cancellationToken));
+
+
     public async Task<int> CountUsersByRoleAsync(ERole roleName)
     {
         var users = await userRepository.GetUsersByRoleAsync(roleName);

@@ -9,18 +9,19 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    private readonly AppDbContext _context; 
+    private readonly AppDbContext _context;
+
     public ProductRepository(AppDbContext context)
     {
         _context = context;
     }
-    
+
     public async Task<IEnumerable<Product>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _context
             .Products
             .AsNoTracking()
-            .ToListAsync(cancellationToken);  
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Product?> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -28,8 +29,14 @@ public class ProductRepository : IProductRepository
         return await _context
             .Products
             .AsNoTracking()
-            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);  
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
+
+    public async Task<Product?> GetByNameAsync(string productName, CancellationToken cancellationToken)
+        => await _context
+            .Products
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Name == productName, cancellationToken);
 
     public async Task CreateAsync(Product product, CancellationToken cancellationToken)
     {

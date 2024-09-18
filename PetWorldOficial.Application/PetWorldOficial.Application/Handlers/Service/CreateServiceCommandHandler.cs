@@ -1,26 +1,36 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Service;
-using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PetWorldOficial.Application.Handlers.Service
 {
     public class CreateServiceCommandHandler(
         IServiceService serviceService,
-        IImageService imageService) : IRequestHandler<CreateServiceCommand, CreateServiceCommand>
+        IImageService imageService,
+        IMemoryCache memoryCache,
+        ICategoryService categoryService) : IRequestHandler<CreateServiceCommand, CreateServiceCommand>
     {
         public async Task<CreateServiceCommand> Handle(
-            CreateServiceCommand request, CancellationToken cancellationToken)
+            CreateServiceCommand request,
+            CancellationToken cancellationToken)
         {
             try
             {
+                if (string.IsNullOrEmpty(request.Name.Trim()))
+                {
+                    if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                    {
+                        categories = await categoryService.GetAllServiceCategories(cancellationToken);
+                        memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
+                    }
+
+                    request.Categories = categories;
+                    return request;
+                }
+
                 var serviceResult = await serviceService.GetByName(request.Name, cancellationToken);
 
                 if (serviceResult != null)

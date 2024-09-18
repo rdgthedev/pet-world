@@ -4,13 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Queries.User;
-using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
 
 public class UserController(
-    IUserService userService,
     IMediator mediator,
     IMapper mapper) : Controller
 {
@@ -20,10 +18,14 @@ public class UserController(
     {
         try
         {
-            var users = await mediator.Send(new GetAllUsersQuery(), cancellationToken);
+            var users = await mediator.Send(new GetAllUsersExceptCurrentQuery(User), cancellationToken);
             return View(users);
         }
         catch (UserNotFoundException e)
+        {
+            TempData["UserNotFoundMessage"] = e.Message;
+        }
+        catch (AccessFailureException e)
         {
             TempData["UserNotFoundMessage"] = e.Message;
         }

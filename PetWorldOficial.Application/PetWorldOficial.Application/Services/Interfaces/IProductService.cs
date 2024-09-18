@@ -1,10 +1,14 @@
-﻿namespace PetWorldOficial.Application.Services.Interfaces;
+﻿using PetWorldOficial.Application.Commands.Product;
+using PetWorldOficial.Application.ViewModels.Product;
+
+namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IProductService
 {
-    // Task<IEnumerable<ProductDetailsViewModel>> GetAll(CancellationToken cancellationToken);
-    // Task<OutputProductDTO> GetById(int id, CancellationToken cancellationToken);
-    // Task Create(RegisterProductDTO product, CancellationToken cancellationToken);
-    // Task Update(UpdateProductDTO product, CancellationToken cancellationToken);
-    // Task Delete(DeleteProductDTO product, CancellationToken cancellationToken);
+    Task<IEnumerable<ProductDetailsViewModel>> GetAll(CancellationToken cancellationToken);
+    Task<ProductDetailsViewModel> GetById(int id, CancellationToken cancellationToken);
+    Task<ProductDetailsViewModel> GetByName(string productName, CancellationToken cancellationToken);
+    Task Create(CreateProductCommand product, CancellationToken cancellationToken);
+    Task Update(UpdateProductCommand product, CancellationToken cancellationToken);
+    Task Delete(DeleteProductCommand product, CancellationToken cancellationToken);
 }

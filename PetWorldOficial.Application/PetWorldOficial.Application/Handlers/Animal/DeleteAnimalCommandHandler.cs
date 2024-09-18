@@ -8,9 +8,7 @@ namespace PetWorldOficial.Application.Handlers.Animal;
 
 public class DeleteAnimalCommandHandler(
     IUserService userService,
-    IAnimalService animalService,
-    IRaceService raceService,
-    ICategoryService categoryService) : IRequestHandler<DeleteAnimalCommand, DeleteAnimalCommand>
+    IAnimalService animalService) : IRequestHandler<DeleteAnimalCommand, DeleteAnimalCommand>
 {
     public async Task<DeleteAnimalCommand> Handle(DeleteAnimalCommand request, CancellationToken cancellationToken)
     {

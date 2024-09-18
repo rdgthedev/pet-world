@@ -1,5 +1,6 @@
 ﻿@using PetWorldOficial.Domain.Enums
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetworldOficial.MVC.Utils
 @model PetWorldOficial.Application.Commands.Animal.RegisterAnimalCommand
 
 @{
@@ -51,9 +52,9 @@ else if (TempData["SuccessMessage"] != null)
             <label asp-for="@Model.Gender" class="form-label">Gênero <span style="color: red;">*</span></label>
             <select asp-for="@Model.Gender" class="form-select shadow-none">
                 <option value="" selected disabled>Selecione o gênero</option>
-                @foreach (var gender in Enum.GetValues(typeof(EGender)))
+                @foreach (EGender gender in Enum.GetValues(typeof(EGender)))
                 {
-                    <option value="@gender">@gender</option>
+                    <option value="@gender">@gender.GetDisplayName()</option>
                 }
             </select>
             <span asp-validation-for="Gender" class="text-danger"></span>
@@ -80,7 +81,7 @@ else if (TempData["SuccessMessage"] != null)
                 <option value="" selected disabled>Selecione a raça</option>
                 @foreach (var race in Model.Races)
                 {
-                    <option value="@race.Id">@race!.Name</option>
+                    <option value="@race!.Id">@race.Name</option>
                 }
             </select>
             <span asp-validation-for="RaceId" class="text-danger"></span>
@@ -97,7 +98,7 @@ else if (TempData["SuccessMessage"] != null)
                 <option value="" selected disabled>Selecione a categoria</option>
                 @foreach (var category in Model.Categories)
                 {
-                    <option value="@category!.Id">@category!.Title</option>
+                    <option value="@category!.Id">@category.Title</option>
                 }
             </select>
             <span asp-validation-for="CategoryId" class="text-danger"></span>

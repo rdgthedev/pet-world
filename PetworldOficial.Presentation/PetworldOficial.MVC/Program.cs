@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Commands.Service;
@@ -40,11 +41,27 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.AccessDeniedPath = "/Auth/Login";
 });
 
+builder.Services.AddMemoryCache();
+
+// builder.Services.AddDistributedMemoryCache();
+
+// builder.Services.AddSession(options =>
+// {
+//     options.IdleTimeout = TimeSpan.FromMinutes(30);
+//     options.Cookie.HttpOnly = true;
+// });
+
+// builder.Services.Configure<FormOptions>(options =>
+// {
+//     options.MultipartBodyLengthLimit = 104857600; // 100 MB
+// });
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
-// builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IRaceService, RaceService>();
@@ -65,11 +82,9 @@ builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateSer
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -79,6 +94,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+// app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

@@ -7,7 +7,9 @@
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw"><img src="/Images/DadosDoServico.png" alt=""></h2>
+    <h2 class="display-6 text-center fw">
+        <img src="/Images/DadosDoServico.png" alt="">
+    </h2>
     <br>
 </div>
 
@@ -30,20 +32,37 @@ else if (TempData["SuccessMessage"] != null)
     </div>
 }
 
-
 <div class="container">
     <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Service" asp-action="Create" method="post">
-
+        
         <div class="col-md-8">
-            <label asp-for="@Model.Name" class="form-label">Nome<span style="color: red;">*</span></label>
+            <label asp-for="@Model.Name" class="form-label">Nome <span style="color: red;">*</span></label>
             <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Digite o nome">
             <span asp-validation-for="@Model.Name" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Price" class="form-label">Preço<span style="color: red;">*</span></label>
+            <label asp-for="@Model.Price" class="form-label">Preço <span style="color: red;">*</span></label>
             <input asp-for="@Model.Price" type="text" class="form-control shadow-none" placeholder="Digite o preço">
             <span asp-validation-for="@Model.Price" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.DurationInMinutes" class="form-label">Duração em minutos <span style="color: red;">*</span></label>
+            <input asp-for="@Model.DurationInMinutes" type="text" class="form-control shadow-none" placeholder="Digite o preço">
+            <span asp-validation-for="@Model.DurationInMinutes" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.CategoryId" class="form-label">Categoria <span style="color: red;">*</span></label>
+            <select asp-for="@Model.CategoryId" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione a categoria</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">@category.Title</option>
+                }
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">

@@ -1,13 +1,19 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels;
+using PetWorldOficial.Application.ViewModels.Race;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetWorldOficial.Application.Handlers.Animal;
 
 public class UpdateAnimalCommandHandler(
     IUserService userService,
-    IAnimalService animalService) : IRequestHandler<UpdateAnimalCommand, UpdateAnimalCommand>
+    IAnimalService animalService,
+    ICategoryService categoryService,
+    IRaceService raceService,
+    IMemoryCache memoryCache) : IRequestHandler<UpdateAnimalCommand, UpdateAnimalCommand>
 {
     public async Task<UpdateAnimalCommand> Handle(UpdateAnimalCommand request, CancellationToken cancellationToken)
     {
@@ -21,16 +27,33 @@ public class UpdateAnimalCommandHandler(
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
-                var animal = await animalService.GetById(request.Id, cancellationToken);
+                var animal = await animalService.GetByIdWithOwnerAndCategoryAndRaceAsync(request.Id, cancellationToken);
 
                 if (animal is null)
                     throw new AnimalNotFoundException("Pet não encontrado!");
 
+                if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                {
+                    categories = await categoryService.GetAll(cancellationToken);
+                    memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
+                }
+
+                if (!memoryCache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                {
+                    races = await raceService.GetAll(cancellationToken);
+                    memoryCache.Set("Races", races, TimeSpan.FromHours(8));
+                }
+
                 request.Name = animal.Name;
                 request.Gender = animal.Gender;
-                request.Race = animal.Race.Name;
-                request.Category = animal.Category.Title;
+                request.RaceName = animal.Race.Name;
+                request.RaceId = animal.Race.Id;
+                request.CategoryId = animal.Category.Id;
+                request.CategoryTitle = animal.Category.Title;
+                request.Age = animal.Age;
                 request.UserId = user.Id;
+                request.Categories = categories;
+                request.Races = races;
 
                 return request;
             }

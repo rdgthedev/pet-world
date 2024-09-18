@@ -1,15 +1,19 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Queries.Animal;
+using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Animal;
+using PetWorldOficial.Application.ViewModels.Race;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
 
-public class AnimalController(IMediator mediator) : Controller
+public class AnimalController(
+    IMediator mediator,
+    IMemoryCache cache) : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
@@ -53,7 +57,6 @@ public class AnimalController(IMediator mediator) : Controller
         try
         {
             result = await mediator.Send(new RegisterAnimalCommand { UserPrincipal = User }, cancellationToken);
-            ViewBag.UserPrincipal = User;
             return View(result);
         }
         catch (UserNotFoundException e)
@@ -74,14 +77,20 @@ public class AnimalController(IMediator mediator) : Controller
         command.UserPrincipal = User;
 
         if (!ModelState.IsValid)
-            return View(command);
+        {
+            if (cache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                command.Races = races!;
 
-        RegisterAnimalCommand result = null!;
+            if (cache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                command.Categories = categories!;
+
+            return View(command);
+        }
 
         try
         {
-            result = await mediator.Send(command, cancellationToken);
-            TempData["SuccessMessage"] = "Pet cadastrado com sucesso!";
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
         }
         catch (AnimalAlreadyExistsException e)
@@ -129,7 +138,15 @@ public class AnimalController(IMediator mediator) : Controller
         command.UserPrincipal = User;
 
         if (!ModelState.IsValid)
+        {
+            if (cache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                command.Races = races!;
+
+            if (cache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                command.Categories = categories!;
+
             return View(command);
+        }
 
         try
         {

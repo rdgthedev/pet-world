@@ -8,7 +8,9 @@
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw"><img src="/Images/DadosDoPet.png" alt=""></h2>
+    <h2 class="display-6 text-center fw">
+        <img src="/Images/DadosDoPet.png" alt="">
+    </h2>
     <br>
 </div>
 
@@ -32,9 +34,18 @@
             </div>
         </div>
     }
-    <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Animal" asp-action="Update" method="post">
+
+    <form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="Animal" asp-action="Update" method="post">
         <input type="hidden" asp-for="@Model.Id">
         <input type="hidden" asp-for="@Model.UserId">
+        <input type="hidden" asp-for="@Model.RaceName">
+        <input type="hidden" asp-for="@Model.CategoryTitle">
+
+        @if (Model.RaceId == 0 || Model.CategoryId == 0)
+        {
+            <input type="hidden" asp-for="@Model.CategoryId">
+            <input type="hidden" asp-for="@Model.RaceId">
+        }
 
         <div class="col-md-8">
             <label asp-for="@Model.Name" class="form-label">Nome</label>
@@ -44,20 +55,37 @@
 
         <div class="col-md-8">
             <label asp-for="@Model.Gender" class="form-label">Gênero</label>
-            <input asp-for="@Model.Gender" type="text" class="form-control shadow-none" placeholder="Gênero" readonly>
+            <input asp-for="@Model.Gender" type="text" class="form-control shadow-none" placeholder="Gênero" value="@Model.Gender" readonly>
             <span asp-validation-for="Gender" class="text-danger"></span>
         </div>
 
-        <div class="col-md-8">
-            <label asp-for="@Model.Category" class="form-label">Espécie</label>
-            <input asp-for="@Model.Category" type="text" class="form-control shadow-none" placeholder="Espécie" readonly>
-            <span asp-validation-for="Category" class="text-danger"></span>
+        <div class="col-md-6">
+            <label asp-for="@Model.RaceId" class="form-label">Raça <span style="color: red;">*</span></label>
+            <select asp-for="@Model.RaceId" class="form-select shadow-none">
+                <option value="@Model.RaceId" disabled selected>@Model.RaceName</option>
+                @foreach (var race in Model.Races)
+                {
+                    <option value="@race.Id">@race.Name</option>
+                }
+            </select>
+            <span asp-validation-for="RaceId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-2">
+            <label asp-for="@Model.Age" class="form-label">Idade</label>
+            <input asp-for="@Model.Age" type="text" class="form-control shadow-none" value="@Model.Age">
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Race" class="form-label">Raça</label>
-            <input asp-for="@Model.Race" type="text" class="form-control shadow-none" placeholder="Raça" readonly>
-            <span asp-validation-for="Race" class="text-danger"></span>
+            <label asp-for="@Model.CategoryId" class="form-label">Categoria <span style="color: red;">*</span></label>
+            <select asp-for="@Model.CategoryId" class="form-select shadow-none">
+                <option value="">@Model.CategoryTitle</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id">@category.Title</option>
+                }
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
 
         <div class="d-grid gap-2 col-4 mx-auto col-md-5">

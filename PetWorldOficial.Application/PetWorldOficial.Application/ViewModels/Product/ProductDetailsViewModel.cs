@@ -1,7 +1,4 @@
-﻿using System.Data.Common;
-using PetWorldOficial.Domain.Entities;
-
-namespace PetWorldOficial.Application.ViewModels.Product;
+﻿namespace PetWorldOficial.Application.ViewModels.Product;
 
 public record ProductDetailsViewModel
 {
@@ -11,5 +8,5 @@ public record ProductDetailsViewModel
     public string ImageUrl { get; set; } = string.Empty;
     public double Price { get; set; }
     public int SupplierId { get; set; }
-    public Supplier Supplier { get; set; } = null!;
+    public Domain.Entities.Supplier Supplier { get; set; } = null!;
 }

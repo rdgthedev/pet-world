@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PetWorldOficial.Domain.Common;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 

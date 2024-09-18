@@ -22,7 +22,7 @@ public class GetAllUsersQueryHandler(IUserService userService)
 
             return users;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }

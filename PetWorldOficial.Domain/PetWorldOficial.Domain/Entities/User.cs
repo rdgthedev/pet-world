@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using PetWorldOficial.Domain.Common;
 using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Domain.Entities;
