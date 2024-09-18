@@ -84,7 +84,7 @@ public class ProductController(
 
         try
         {
-            command.BaseUrl = webHostEnvironment.WebRootPath;
+            command.BaseUrl = webHostEnvironment.ContentRootPath;
             var result = await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");

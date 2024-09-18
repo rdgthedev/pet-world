@@ -37,7 +37,7 @@ public class AuthService(
         if (!result.Succeeded)
             return false;
 
-        await userManager.AddToRoleAsync(user, ERole.Admin.ToString());
+        await userManager.AddToRoleAsync(user, ERole.User.ToString());
 
         if (!result.Succeeded)
         {

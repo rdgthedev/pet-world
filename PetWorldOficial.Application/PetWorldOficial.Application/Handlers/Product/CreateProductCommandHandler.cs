@@ -23,7 +23,7 @@ public class CreateProductCommandHandler(
         {
             if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
             {
-                categories = await categoryService.GetAllServiceCategories(cancellationToken);
+                categories = await categoryService.GetAllProductCategories(cancellationToken);
                 memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
             }
 
@@ -38,7 +38,7 @@ public class CreateProductCommandHandler(
             return request;
         }
 
-        var product = productService.GetByName(request.Name, cancellationToken);
+        var product = await productService.GetByName(request.Name, cancellationToken);
 
         if (product != null)
             throw new ProductAlreadyExistsException("Produto já existe!");
