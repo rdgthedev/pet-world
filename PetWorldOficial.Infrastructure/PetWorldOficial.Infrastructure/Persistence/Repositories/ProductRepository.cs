@@ -21,6 +21,8 @@ public class ProductRepository : IProductRepository
         return await _context
             .Products
             .AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Supplier)
             .ToListAsync(cancellationToken);
     }
 
@@ -29,6 +31,8 @@ public class ProductRepository : IProductRepository
         return await _context
             .Products
             .AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Supplier)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 

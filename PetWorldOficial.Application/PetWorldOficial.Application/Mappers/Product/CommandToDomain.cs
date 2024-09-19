@@ -15,5 +15,14 @@ public class CommandToDomain : Profile
             cpc.ImageUrl,
             cpc.SupplierId,
             cpc.CategoryId));
+
+        CreateMap<DeleteProductCommand, Domain.Entities.Product>();
+            //.ConstructUsing(cpc => new Domain.Entities.Product(
+            //    cpc.Name,
+            //    cpc.Description,
+            //    cpc.Price,
+            //    cpc.ImageUrl,
+            //    cpc.SupplierId,
+            //    cpc.CategoryId));
     }
 }

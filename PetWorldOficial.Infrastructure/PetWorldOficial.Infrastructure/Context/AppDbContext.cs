@@ -15,6 +15,7 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Schedulling> Schedullings { get; set; }
     public DbSet<Race> Races { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Stock> Stocks { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

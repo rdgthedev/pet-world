@@ -23,6 +23,9 @@ public class Product : Entity
         SupplierId = supplierId;
         CategoryId = categoryId;
         CreatedAt = DateTime.Now;
+
+        Category = new();
+        Supplier = new();
     }
 
     public string Name { get; private set; }
@@ -30,7 +33,7 @@ public class Product : Entity
     public string ImageUrl { get; private set; }
     public decimal Price { get; private set; }
     public int SupplierId { get; private set; }
-    public Supplier Supplier { get; private set; } = null!;
+    public Supplier Supplier { get; private set; }
     public int CategoryId { get; private set; }
     public Category Category { get; private set; }
     public Stock Stock { get; private set; }

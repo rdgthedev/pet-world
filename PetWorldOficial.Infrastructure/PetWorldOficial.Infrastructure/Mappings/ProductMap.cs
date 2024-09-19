@@ -51,12 +51,12 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 
         builder.Property(s => s.CreatedAt)
             .HasColumnName("CreatedAt")
-            .HasColumnType("DATETIME")
+            .HasColumnType("DATETIME2")
             .IsRequired();
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME")
+            .HasColumnType("DATETIME2")
             .IsRequired(false);
 
         builder.HasIndex(s => s.Id, "IX_Product_Id")

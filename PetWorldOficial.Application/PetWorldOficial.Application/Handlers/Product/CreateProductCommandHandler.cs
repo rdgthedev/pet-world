@@ -13,44 +13,61 @@ public class CreateProductCommandHandler(
     ISupplierService supplierService,
     IImageService imageService,
     IMemoryCache memoryCache,
-    ICategoryService categoryService) : IRequestHandler<CreateProductCommand, CreateProductCommand>
+    ICategoryService categoryService,
+    IStockService stockService) : IRequestHandler<CreateProductCommand, CreateProductCommand>
 {
     public async Task<CreateProductCommand> Handle(
         CreateProductCommand request,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(request.Name.Trim()))
+        try
         {
-            if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+            if (string.IsNullOrEmpty(request.Name.Trim()))
             {
-                categories = await categoryService.GetAllProductCategories(cancellationToken);
-                memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
+                if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                {
+                    categories = await categoryService.GetAllProductCategories(cancellationToken);
+                    memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
+                }
+
+                if (!memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))
+                {
+                    suppliers = await supplierService.GetAllAsync(cancellationToken);
+                    memoryCache.Set("Suppliers", suppliers, TimeSpan.FromHours(8));
+                }
+
+                request.Categories = categories;
+                request.Suppliers = suppliers;
+                return request;
             }
 
-            if (!memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))
+            var product = await productService.GetByName(request.Name, cancellationToken);
+
+            if (product != null)
+                throw new ProductAlreadyExistsException("Produto já existe!");
+
+            var path = Path.Combine(request.BaseUrl, "wwwroot");
+
+            request.ImageUrl = imageService.GenerateImageName(request.File, path);
+            await imageService.SaveImage(request.File, path, request.ImageUrl);
+
+            await productService.Create(request, cancellationToken);
+
+            product = await productService.GetByName(request.Name, cancellationToken);
+
+            if (product != null)
             {
-                suppliers = await supplierService.GetAllAsync(cancellationToken);
-                memoryCache.Set("Suppliers", suppliers, TimeSpan.FromHours(8));
+                request.ProductId = product.Id;
+                await stockService.CreateAsync(request, cancellationToken);
             }
 
-            request.Categories = categories;
-            request.Suppliers = suppliers;
+            request.Message = "Produto criado com sucesso!";
             return request;
         }
+        catch (Exception)
+        {
+            throw;
+        }
 
-        var product = await productService.GetByName(request.Name, cancellationToken);
-
-        if (product != null)
-            throw new ProductAlreadyExistsException("Produto já existe!");
-
-        var path = Path.Combine(request.BaseUrl, "wwwroot");
-
-        request.ImageUrl = imageService.GenerateImageName(request.File, path);
-        await imageService.SaveImage(request.File, path, request.ImageUrl);
-
-        await productService.Create(request, cancellationToken);
-
-        request.Message = "Produto criado com sucesso!";
-        return request;
     }
 }

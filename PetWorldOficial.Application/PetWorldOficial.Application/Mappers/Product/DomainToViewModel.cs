@@ -20,7 +20,10 @@ namespace PetWorldOficial.Application.Mappers.Product
                     Description = p.Description,
                     ImageUrl = p.ImageUrl,
                     Price = p.Price,
+                    CategoryName = p.Category.Title,
+                    SupplierName= p.Supplier.Name,
                     SupplierId = p.SupplierId,
+                    CategoryId = p.CategoryId,
                     Supplier = p.Supplier
                 });
         }

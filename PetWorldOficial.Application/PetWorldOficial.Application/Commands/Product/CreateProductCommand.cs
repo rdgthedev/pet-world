@@ -25,10 +25,13 @@ public record CreateProductCommand : IRequest<CreateProductCommand>
 
     [Range(1, int.MaxValue, ErrorMessage = "O Fornecedor é obrigatório!")]
     public int SupplierId { get; set; }
+    [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
+    public int? Quantity { get; set; }
 
     public string ImageUrl { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public string BaseUrl { get; set; } = string.Empty;
+    public int ProductId { get; set; }
 
     public IEnumerable<CategoryDetailsViewModel> Categories { get; set; } = Enumerable.Empty<CategoryDetailsViewModel>();
 

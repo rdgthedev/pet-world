@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Product;
@@ -58,7 +59,8 @@ public class ProductController(
     //     }
     // }
     //
-    [HttpGet]
+    [HttpGet()]
+
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new CreateProductCommand(), cancellationToken);
@@ -193,49 +195,42 @@ public class ProductController(
     //     }
     // }
     //
-    // [HttpGet]
-    // public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
-    // {
-    //     try
-    //     {
-    //         var product = mapper.Map<DeleteProductDTO>(await productService.GetById(id, cancellationToken));
-    //
-    //         var supplier = await supplierRepository.GetByIdAsync(product.SupplierId, cancellationToken);
-    //
-    //         if (supplier is null) throw new NotFoundException("Fornecedor não encontrado!");
-    //
-    //         product.Supplier = supplier;
-    //
-    //         return View(product);
-    //     }
-    //     catch (NotFoundException e)
-    //     {
-    //         TempData["ErrorMessage"] = e.Message;
-    //         return RedirectToAction("Index", "Product");
-    //     }
-    //     catch (Exception)
-    //     {
-    //         TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-    //         return RedirectToAction("Index", "Product");
-    //     }
-    // }
-    //
-    // [HttpPost]
-    // public async Task<IActionResult> Delete([FromForm] DeleteProductDTO deleteProductDto, CancellationToken cancellationToken)
-    // {
-    //     if (!ModelState.IsValid) return View();
-    //
-    //     try
-    //     {
-    //         await productService.Delete(deleteProductDto, cancellationToken);
-    //         TempData["SuccessMessage"] = "Produto deletado com sucesso!";
-    //
-    //         return RedirectToAction("Index", "Product");
-    //     }
-    //     catch (Exception)
-    //     {
-    //         TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-    //         return RedirectToAction("Index", "Product");
-    //     }
-    // }
+    [HttpGet]
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await mediator.Send(new DeleteProductCommand(id), cancellationToken);
+            return View(result);
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Product");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("Index", "Product");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete([FromForm] DeleteProductCommand command, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid) return View();
+
+        //try
+        //{
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
+
+            return RedirectToAction("Index", "Product");
+        //}
+        //catch (Exception)
+        //{
+        //    TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+        //    return RedirectToAction("Index", "Product");
+        //}
+    }
 }

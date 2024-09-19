@@ -4,7 +4,7 @@ namespace PetWorldOficial.Domain.Entities;
 
 public class Stock : Entity
 {
-    public Stock()
+    protected Stock()
     {
     }
 
