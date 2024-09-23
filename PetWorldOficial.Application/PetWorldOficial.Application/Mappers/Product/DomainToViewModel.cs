@@ -1,11 +1,5 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.ViewModels.Product;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace PetWorldOficial.Application.Mappers.Product
 {
     public class DomainToViewModel : Profile
@@ -24,7 +18,8 @@ namespace PetWorldOficial.Application.Mappers.Product
                     SupplierName= p.Supplier.Name,
                     SupplierId = p.SupplierId,
                     CategoryId = p.CategoryId,
-                    Supplier = p.Supplier
+                    Supplier = p.Supplier,
+                    Stock = p.Stock
                 });
         }
     }

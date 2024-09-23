@@ -19,6 +19,7 @@ public class StockMap : IEntityTypeConfiguration<Stock>
             .WithOne(p => p.Stock)
             .HasConstraintName("FK_Stock_ProductId")
             .HasForeignKey<Stock>(s => s.ProductId)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
         builder.Property(s => s.Quantity)

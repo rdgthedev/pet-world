@@ -141,7 +141,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("DATETIME")
+                        .HasColumnType("DATETIME2")
                         .HasColumnName("CreatedAt");
 
                     b.Property<string>("Gender")
@@ -151,7 +151,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("Gender");
 
                     b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("DATETIME")
+                        .HasColumnType("DATETIME2")
                         .HasColumnName("LastUpdatedAt");
 
                     b.Property<string>("Name")
@@ -360,7 +360,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("DATETIME2")
+                        .HasColumnType("DATETIME")
                         .HasColumnName("CreatedAt");
 
                     b.Property<string>("Description")
@@ -376,7 +376,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("Image");
 
                     b.Property<DateTime?>("LastUpdatedAt")
-                        .HasColumnType("DATETIME2")
+                        .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
                     b.Property<string>("Name")
@@ -386,13 +386,15 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("Name");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("MONEY")
+                        .HasColumnType("DECIMAL(10,2)")
                         .HasColumnName("Price");
 
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("SupplierId");
 
@@ -951,7 +953,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                 {
                     b.HasOne("PetWorldOficial.Domain.Entities.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("SupplierId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_Product_Category_CategoryId");

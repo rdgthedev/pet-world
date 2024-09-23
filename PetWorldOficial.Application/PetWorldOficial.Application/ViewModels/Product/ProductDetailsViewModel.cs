@@ -14,4 +14,5 @@ public record ProductDetailsViewModel
 
     public Domain.Entities.Supplier Supplier { get; set; } = null!;
     public Domain.Entities.Category Category { get; set; } = null!;
+    public Domain.Entities.Stock Stock { get; set; } = null!;
 }

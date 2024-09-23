@@ -2,18 +2,14 @@
 using PetWorldOficial.Application.Commands.Product;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PetWorldOficial.Application.Handlers.Product
 {
     public class DeleteProductCommandHandler(
         IProductService productService) : IRequestHandler<DeleteProductCommand, DeleteProductCommand>
     {
-        public async Task<DeleteProductCommand> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<DeleteProductCommand> Handle(DeleteProductCommand request,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -32,7 +28,6 @@ namespace PetWorldOficial.Application.Handlers.Product
                     request.ImageUrl = product.ImageUrl;
                     request.SupplierId = product.SupplierId;
                     request.CategoryId = product.CategoryId;
-                    request.LastUpdatedAt = DateTime.Now;
 
                     return request;
                 }

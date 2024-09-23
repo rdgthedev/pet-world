@@ -10,5 +10,6 @@ namespace PetWorldOficial.Application.Services.Interfaces
     public interface IStockService
     {
         Task CreateAsync(CreateProductCommand command, CancellationToken cancellationToken);
+        Task UdpateAsync(UpdateProductCommand command, CancellationToken cancellationToken);
     }
 }

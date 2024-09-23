@@ -108,39 +108,32 @@ public class ProductController(
             return View(command);
         }
     }
-    //
-    // [HttpGet]
-    // [Authorize(Roles = "Admin")]
-    // public async Task<IActionResult> Update([FromRoute] int id, CancellationToken cancellationToken)
-    // {
-    //     try
-    //     {
-    //         var suppliers = await supplierRepository.GetAllAsync(cancellationToken);
-    //         var productResult = await productService.GetById(id, cancellationToken);
-    //
-    //         return View(new UpdateProductViewModel
-    //         {
-    //             Id = productResult.Id,
-    //             Name = productResult.Name,
-    //             Description = productResult.Description,
-    //             ImageUrl = productResult.ImageUrl,
-    //             Price = productResult.Price,
-    //             SupplierId = productResult.SupplierId,
-    //             Suppliers = suppliers
-    //         });
-    //     }
-    //     catch (NotFoundException e)
-    //     {
-    //         TempData["ErrorMessage"] = e.Message;
-    //         return View();
-    //     }
-    //     catch (Exception)
-    //     {
-    //         TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-    //         return View();
-    //     }
-    // }
-    //
+    
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Update(
+        [FromRoute] int id, 
+        [FromBody] UpdateProductCommand command,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            command.Id = id;
+            var result = await mediator.Send(command, cancellationToken);
+            return RedirectToAction("Index");
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return View();
+        }
+    }
+    
     // [HttpPost]
     // public async Task<IActionResult> Update(
     //     [FromForm] UpdateProductViewModel updateProductDto,

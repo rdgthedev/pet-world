@@ -61,12 +61,12 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
 
         builder.Property(a => a.CreatedAt)
             .HasColumnName("CreatedAt")
-            .HasColumnType("DATETIME")
+            .HasColumnType("DATETIME2")
             .IsRequired();
 
         builder.Property(a => a.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME")
+            .HasColumnType("DATETIME2")
             .IsRequired(false);
 
         builder.HasIndex(a => a.Id, "IX_Animal_Id")

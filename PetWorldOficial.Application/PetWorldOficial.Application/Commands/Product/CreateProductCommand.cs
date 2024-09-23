@@ -25,6 +25,7 @@ public record CreateProductCommand : IRequest<CreateProductCommand>
 
     [Range(1, int.MaxValue, ErrorMessage = "O Fornecedor é obrigatório!")]
     public int SupplierId { get; set; }
+    
     [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
     public int? Quantity { get; set; }
 

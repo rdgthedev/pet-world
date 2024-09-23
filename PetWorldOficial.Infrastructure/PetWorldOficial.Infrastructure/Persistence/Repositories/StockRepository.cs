@@ -15,5 +15,11 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
             await context.Stocks.AddAsync(stock, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task UpdateAsync(Stock stock, CancellationToken cancellationToken)
+        {
+            context.Stocks.Update(stock);
+            await context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

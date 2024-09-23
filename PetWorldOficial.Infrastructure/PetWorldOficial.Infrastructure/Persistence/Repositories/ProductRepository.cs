@@ -33,6 +33,7 @@ public class ProductRepository : IProductRepository
             .AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Supplier)
+            .Include(p => p.Stock)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
@@ -40,6 +41,8 @@ public class ProductRepository : IProductRepository
         => await _context
             .Products
             .AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Supplier)
             .FirstOrDefaultAsync(p => p.Name == productName, cancellationToken);
 
     public async Task CreateAsync(Product product, CancellationToken cancellationToken)

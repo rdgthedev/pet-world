@@ -8,21 +8,15 @@ public class CommandToDomain : Profile
     public CommandToDomain()
     {
         CreateMap<CreateProductCommand, Domain.Entities.Product>()
-            .ConstructUsing(cpc => new Domain.Entities.Product(
-            cpc.Name,
-            cpc.Description,
-            cpc.Price!.Value,
-            cpc.ImageUrl,
-            cpc.SupplierId,
-            cpc.CategoryId));
+            .ForMember(d => d.LastUpdatedAt, opt => opt.Ignore());
 
         CreateMap<DeleteProductCommand, Domain.Entities.Product>();
-            //.ConstructUsing(cpc => new Domain.Entities.Product(
-            //    cpc.Name,
-            //    cpc.Description,
-            //    cpc.Price,
-            //    cpc.ImageUrl,
-            //    cpc.SupplierId,
-            //    cpc.CategoryId));
+        //.ConstructUsing(cpc => new Domain.Entities.Product(
+        //    cpc.Name,
+        //    cpc.Description,
+        //    cpc.Price,
+        //    cpc.ImageUrl,
+        //    cpc.SupplierId,
+        //    cpc.CategoryId));
     }
 }

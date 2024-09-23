@@ -23,7 +23,7 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 
         builder.HasOne(p => p.Category)
             .WithMany(c => c.Products)
-            .HasForeignKey(p => p.SupplierId)
+            .HasForeignKey(p => p.CategoryId)
             .HasConstraintName("FK_Product_Category_CategoryId");
 
         builder.Property(p => p.Name)
@@ -46,17 +46,17 @@ public class ProductMap : IEntityTypeConfiguration<Product>
 
         builder.Property(p => p.Price)
             .HasColumnName("Price")
-            .HasColumnType("MONEY")
+            .HasColumnType("DECIMAL(10,2)")
             .IsRequired();
 
         builder.Property(s => s.CreatedAt)
             .HasColumnName("CreatedAt")
-            .HasColumnType("DATETIME2")
+            .HasColumnType("DATETIME")
             .IsRequired();
 
         builder.Property(s => s.LastUpdatedAt)
             .HasColumnName("LastUpdatedAt")
-            .HasColumnType("DATETIME2")
+            .HasColumnType("DATETIME")
             .IsRequired(false);
 
         builder.HasIndex(s => s.Id, "IX_Product_Id")
