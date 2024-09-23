@@ -15,10 +15,6 @@ public record UpdateProductCommand : IRequest<UpdateProductCommand>
 
     [Required(ErrorMessage = "A Descrição é obrigatória!")]
     public string Description { get; set; } = string.Empty;
-
-    [Required(ErrorMessage = "A imagem é obrigatória!")]
-    public IFormFile File { get; set; } = null!;
-
     [Range(0.01, double.MaxValue, ErrorMessage = "O Preço deve ser maior que zero!")]
     public decimal? Price { get; set; } = null!;
 
@@ -30,7 +26,10 @@ public record UpdateProductCommand : IRequest<UpdateProductCommand>
 
     [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
     public int? QuantityInStock { get; set; }
+    public IFormFile? File { get; set; }
 
+    public string CategoryName { get; set; } = string.Empty;
+    public string SupplierName { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public string BaseUrl { get; set; } = string.Empty;

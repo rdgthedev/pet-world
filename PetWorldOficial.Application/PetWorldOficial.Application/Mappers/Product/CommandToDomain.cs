@@ -9,14 +9,14 @@ public class CommandToDomain : Profile
     {
         CreateMap<CreateProductCommand, Domain.Entities.Product>()
             .ForMember(d => d.LastUpdatedAt, opt => opt.Ignore());
-
         CreateMap<DeleteProductCommand, Domain.Entities.Product>();
-        //.ConstructUsing(cpc => new Domain.Entities.Product(
-        //    cpc.Name,
-        //    cpc.Description,
-        //    cpc.Price,
-        //    cpc.ImageUrl,
-        //    cpc.SupplierId,
-        //    cpc.CategoryId));
+        CreateMap<UpdateProductCommand, Domain.Entities.Product>()
+            .ConstructUsing(s => new Domain.Entities.Product(
+                s.Name,
+                s.Description,
+                s.Price!.Value,
+                s.ImageUrl,
+                s.SupplierId,
+                s.CategoryId));
     }
 }

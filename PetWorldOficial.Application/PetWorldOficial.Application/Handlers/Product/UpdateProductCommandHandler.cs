@@ -49,8 +49,10 @@ public class UpdateProductCommandHandler(
                 request.CategoryId = product.CategoryId;
                 request.ImageUrl = product.ImageUrl;
                 request.QuantityInStock = product.Stock.Quantity;
-                request.Categories = categories;
-                request.Suppliers = suppliers;
+                request.Categories = categories!;
+                request.Suppliers = suppliers!;
+                request.CategoryName = product.CategoryName;
+                request.SupplierName = product.SupplierName;
 
                 return request;
             }
@@ -66,10 +68,7 @@ public class UpdateProductCommandHandler(
             await productService.Update(request, cancellationToken);
 
             if (request.QuantityInStock != product.Stock.Quantity)
-            {
-                request.ProductId = product.Id;
                 await stockService.UdpateAsync(request, cancellationToken);
-            }
 
             request.Message = "Produto atualizado com sucesso!";
 

@@ -26,8 +26,11 @@ public class ProductService(
         await productRepository.CreateAsync(product, cancellationToken);
     }
 
-    public Task Update(UpdateProductCommand command, CancellationToken cancellationToken)
-        => productRepository.UpdateAsync(mapper.Map<Product>(command), cancellationToken);
+    public async Task Update(UpdateProductCommand command, CancellationToken cancellationToken)
+    {
+        var product = mapper.Map<Product>(command);
+        await productRepository.UpdateAsync(product, cancellationToken);
+    }
 
     public async Task Delete(DeleteProductCommand command, CancellationToken cancellationToken)
     {

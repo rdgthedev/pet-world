@@ -68,7 +68,7 @@
                             {
                                 <div class="d-flex justify-content-center align-items-center">
                                     <div style="padding-right: 15px">
-                                        <a style="width: 100px;" asp-route-id="@product.Id" class="btn btn-dark me-2 shadow-none">Editar</a>
+                                        <a style="width: 100px;" class="btn btn-dark me-2 shadow-none" asp-route-id="@product.Id" asp-controller="Product" asp-action="Update">Editar</a>
                                     </div>
                                     <div style="padding-left: 15px">
                                         <a style="width: 100px" class="btn btn-danger shadow-none" asp-route-id="@product.Id" asp-controller="Product" asp-action="Delete">

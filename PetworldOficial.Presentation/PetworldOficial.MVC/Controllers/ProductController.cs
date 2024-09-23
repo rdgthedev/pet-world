@@ -108,19 +108,20 @@ public class ProductController(
             return View(command);
         }
     }
-    
+
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(
-        [FromRoute] int id, 
-        [FromBody] UpdateProductCommand command,
+        [FromRoute] int id,
+        UpdateProductCommand command,
         CancellationToken cancellationToken)
     {
         try
         {
             command.Id = id;
             var result = await mediator.Send(command, cancellationToken);
-            return RedirectToAction("Index");
+            ModelState.Clear();
+            return View(result);
         }
         catch (NotFoundException e)
         {
@@ -133,61 +134,37 @@ public class ProductController(
             return View();
         }
     }
-    
-    // [HttpPost]
-    // public async Task<IActionResult> Update(
-    //     [FromForm] UpdateProductViewModel updateProductDto,
-    //     IFormFile? file,
-    //     CancellationToken cancellationToken)
-    // {
-    //     if (!ModelState.IsValid)
-    //         return View(updateProductDto);
-    //
-    //     try
-    //     {
-    //         updateProductDto.Suppliers = await supplierRepository.GetAllAsync(cancellationToken);
-    //         var productResult = await productService.GetById(updateProductDto.Id, cancellationToken);
-    //
-    //         switch (file)
-    //         {
-    //             case not null:
-    //                 updateProductDto.ImageUrl = imageService.GenerateImageName(file, webHostEnvironment.WebRootPath);
-    //                 await imageService.SaveImage(file, webHostEnvironment.WebRootPath, updateProductDto.ImageUrl);
-    //                 break;
-    //             default:
-    //                 updateProductDto.ImageUrl = productResult.ImageUrl;
-    //                 break;
-    //         }
-    //
-    //         await productService.Update(new UpdateProductDTO(
-    //                 updateProductDto.Id,
-    //                 updateProductDto.Name,
-    //                 updateProductDto.Description,
-    //                 updateProductDto.ImageUrl,
-    //                 updateProductDto.Price,
-    //                 updateProductDto.SupplierId),
-    //             cancellationToken);
-    //
-    //         TempData["SuccessMessage"] = "Produto alterado com sucesso!";
-    //         return View(updateProductDto);
-    //     }
-    //     catch (NotFoundException e)
-    //     {
-    //         TempData["ErrorMessage"] = e.Message;
-    //         return RedirectToAction("Index", "Product");
-    //     }
-    //     catch (InvalidExtensionException e)
-    //     {
-    //         TempData["ErrorMessage"] = e.Message;
-    //         return RedirectToAction("Index", "Product");
-    //     }
-    //     catch (Exception)
-    //     {
-    //         TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-    //         return RedirectToAction("Error", "Home");
-    //     }
-    // }
-    //
+
+    [HttpPost]
+    public async Task<IActionResult> Update(
+        [FromForm] UpdateProductCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View(command);
+
+        try
+        {
+            var result = await mediator.Send(command, cancellationToken);
+            return RedirectToAction("Index");
+        }
+        catch (NotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Product");
+        }
+        catch (InvalidExtensionException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Product");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("Error", "Home");
+        }
+    }
+
     [HttpGet]
     public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
     {
@@ -213,17 +190,17 @@ public class ProductController(
     {
         if (!ModelState.IsValid) return View();
 
-        //try
-        //{
+        try
+        {
             var result = await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = result.Message;
 
             return RedirectToAction("Index", "Product");
-        //}
-        //catch (Exception)
-        //{
-        //    TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-        //    return RedirectToAction("Index", "Product");
-        //}
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("Index", "Product");
+        }
     }
 }
