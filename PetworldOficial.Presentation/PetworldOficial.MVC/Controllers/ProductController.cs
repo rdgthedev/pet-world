@@ -146,6 +146,7 @@ public class ProductController(
         try
         {
             var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
         }
         catch (NotFoundException e)

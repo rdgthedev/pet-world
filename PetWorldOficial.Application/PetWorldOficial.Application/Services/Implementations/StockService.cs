@@ -18,6 +18,10 @@ namespace PetWorldOficial.Application.Services.Implementations
             => await stockRepository.CreateAsync(mapper.Map<Domain.Entities.Stock>(command), cancellationToken);
 
         public async Task UdpateAsync(UpdateProductCommand command, CancellationToken cancellationToken)
-            => await stockRepository.UpdateAsync(mapper.Map<Domain.Entities.Stock>(command), cancellationToken);
+        {
+            var stock = mapper.Map<Domain.Entities.Stock>(command);
+            await stockRepository.UpdateAsync(stock, cancellationToken);
+        }
+            
     }
 }

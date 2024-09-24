@@ -5,6 +5,7 @@ using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Product;
 using PetWorldOficial.Application.ViewModels.Supplier;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetWorldOficial.Application.Handlers.Product;
@@ -21,11 +22,9 @@ public class UpdateProductCommandHandler(
     {
         try
         {
-            ProductDetailsViewModel product = null!;
-
             if (string.IsNullOrEmpty(request.Name.Trim()))
             {
-                product = await productService.GetById(request.Id, cancellationToken);
+                var product = await productService.GetById(request.Id, cancellationToken);
 
                 if (product is null)
                     throw new ProductNotFoundException("Produto não encontrado!");
@@ -53,6 +52,7 @@ public class UpdateProductCommandHandler(
                 request.Suppliers = suppliers!;
                 request.CategoryName = product.CategoryName;
                 request.SupplierName = product.SupplierName;
+                request.ProductId = product.Id;
 
                 return request;
             }
@@ -67,8 +67,16 @@ public class UpdateProductCommandHandler(
 
             await productService.Update(request, cancellationToken);
 
-            if (request.QuantityInStock != product.Stock.Quantity)
+            var productResult = await productService.GetById(request.Id, cancellationToken);
+
+            if (productResult is null)
+                throw new ProductNotFoundException("Produto não encontrado!");
+
+            if (request.QuantityInStock != productResult.Stock.Quantity)
+            {
+                request.Id = productResult.Stock.Id;
                 await stockService.UdpateAsync(request, cancellationToken);
+            }
 
             request.Message = "Produto atualizado com sucesso!";
 

@@ -11,11 +11,12 @@ namespace PetWorldOficial.Application.Mappers.Stock
                 .ConstructUsing(cpc => new Domain.Entities.Stock(
                     cpc.ProductId,
                     cpc.Quantity!.Value));
-            
+
             CreateMap<UpdateProductCommand, Domain.Entities.Stock>()
                 .ConstructUsing(cpc => new Domain.Entities.Stock(
-                    cpc.Id,
+                    cpc.ProductId,
                     cpc.QuantityInStock!.Value));
+                //.ForMember(cpc => cpc.Id, options => options.Ignore());
         }
     }
 }
