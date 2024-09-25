@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Race;
 
@@ -23,10 +24,10 @@ public record UpdateAnimalCommand([Required] int Id) : IRequest<UpdateAnimalComm
     public int RaceId { get; set; }
 
     public string RaceName { get; set; } = string.Empty;
-
+    public DateTime? BirthDate { get; set; }
+    public IFormFile? File { get; set; }
+    public string? ImageUrl { get; set; }
     public int UserId { get; set; }
-
-    public int? Age { get; set; }
     public ClaimsPrincipal? UserPrincipal { get; set; }
     public string Message { get; set; } = string.Empty;
 

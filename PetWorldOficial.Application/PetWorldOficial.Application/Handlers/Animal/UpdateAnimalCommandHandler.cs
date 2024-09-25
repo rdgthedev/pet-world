@@ -50,7 +50,7 @@ public class UpdateAnimalCommandHandler(
                 request.RaceId = animal.Race.Id;
                 request.CategoryId = animal.Category.Id;
                 request.CategoryTitle = animal.Category.Title;
-                request.Age = animal.Age;
+                request.BirthDate = animal.BirthDate;
                 request.UserId = user.Id;
                 request.Categories = categories;
                 request.Races = races;

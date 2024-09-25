@@ -10,8 +10,8 @@
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw">
-        <img src="/Images/Servicos.png" alt="">
+    <h2 class="text-center">
+        Serviços
     </h2>
     <br>
 </div>
@@ -90,6 +90,17 @@ else
 {
     <div class="container-fluid text-black py-3">
         <br>
-        <h2 class="display-6 text-center fw">@TempData["NotFoundService"]</h2>
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
+            @TempData["NotFoundService"]
+        </h2>
+        <br>
+        @if (User.IsInRole(ERole.Admin.ToString()))
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Create">
+                    Adicionar Serviço
+                </a>
+            </div>
+        }
     </div>
 }

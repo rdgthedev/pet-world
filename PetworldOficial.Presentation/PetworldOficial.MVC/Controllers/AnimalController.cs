@@ -13,7 +13,8 @@ namespace PetworldOficial.MVC.Controllers;
 
 public class AnimalController(
     IMediator mediator,
-    IMemoryCache cache) : Controller
+    IMemoryCache cache,
+    IWebHostEnvironment webHostEnvironment) : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
@@ -89,6 +90,7 @@ public class AnimalController(
 
         try
         {
+            command.BaseUrl = webHostEnvironment.ContentRootPath;
             var result = await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");

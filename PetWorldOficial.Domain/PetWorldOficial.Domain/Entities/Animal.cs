@@ -12,7 +12,8 @@ public class Animal : Entity
         EGender gender,
         int raceId,
         int categoryId,
-        int ownerId
+        int ownerId,
+        string? imageUrl
     )
     {
         Name = name;
@@ -20,6 +21,7 @@ public class Animal : Entity
         RaceId = raceId;
         CategoryId = categoryId;
         OwnerId = ownerId;
+        ImageUrl = imageUrl;
         CreatedAt = DateTime.Now;
         Schedullings = new();
     }
@@ -29,6 +31,7 @@ public class Animal : Entity
     public EGender Gender { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
+    public string? ImageUrl { get; set; }
     public int RaceId { get; private set; }
     public Race Race { get; private set; }
     public int CategoryId { get; set; }

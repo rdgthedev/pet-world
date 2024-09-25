@@ -1,11 +1,13 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Animal;
+using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Race;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
+using System.Collections.Generic;
 
 namespace PetWorldOficial.Application.Handlers.Animal;
 
@@ -14,7 +16,8 @@ public class RegisterAnimalCommandHandler(
     IAnimalService animalService,
     IRaceService raceService,
     ICategoryService categoryService,
-    IMemoryCache memoryCache) : IRequestHandler<RegisterAnimalCommand, RegisterAnimalCommand>
+    IMemoryCache memoryCache,
+    IImageService imageService) : IRequestHandler<RegisterAnimalCommand, RegisterAnimalCommand>
 {
     public async Task<RegisterAnimalCommand> Handle(
         RegisterAnimalCommand request,
@@ -30,20 +33,20 @@ public class RegisterAnimalCommandHandler(
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
-                if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
-                {
-                    categories = await categoryService.GetAll(cancellationToken);
-                    memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
-                }
 
-                if (!memoryCache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                request.Categories = await memoryCache.GetOrCreateAsync("Categories", async entry =>
                 {
-                    races = await raceService.GetAll(cancellationToken);
-                    memoryCache.Set("Races", races, TimeSpan.FromHours(8));
-                }
+                    entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
+                    var categories = await categoryService.GetAll(cancellationToken);
+                    return categories;
+                }) ?? Enumerable.Empty<CategoryDetailsViewModel>();
 
-                request.Races = races;
-                request.Categories = categories;
+                request.Races = await memoryCache.GetOrCreateAsync("Races", async entry =>
+                {
+                    entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
+                    var races = await raceService.GetAll(cancellationToken);
+                    return races;
+                }) ?? Enumerable.Empty<RaceDetailsViewModel>();
 
                 if (request.UserPrincipal!.IsInRole(ERole.Admin.ToString())
                     && string.IsNullOrEmpty(request.Name.Trim()))
@@ -58,6 +61,14 @@ public class RegisterAnimalCommandHandler(
                     request.UserId = user.Id;
                     return request;
                 }
+            }
+
+            if (request.File != null)
+            {
+                var path = Path.Combine(request.BaseUrl, "wwwroot");
+
+                request.ImageUrl = imageService.GenerateImageName(request.File, path);
+                await imageService.SaveImage(request.File, path, request.ImageUrl);
             }
 
             await animalService.Create(request, cancellationToken);

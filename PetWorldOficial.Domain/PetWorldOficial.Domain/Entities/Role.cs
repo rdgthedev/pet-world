@@ -8,5 +8,5 @@ public class Role : IdentityRole<int>
         => CreatedAt = DateTime.Now;
 
     public DateTime CreatedAt { get; private set; }
-    public DateTime LastUpdatedAt { get; private set; }
+    public DateTime? LastUpdatedAt { get; private set; }
 }

@@ -9,12 +9,8 @@ public class CommandToDomainProfiles : Profile
     public CommandToDomainProfiles()
     {
         CreateMap<RegisterAnimalCommand, Domain.Entities.Animal>()
-            .ConstructUsing(cmd => new Domain.Entities.Animal(
-                cmd.Name,
-                (EGender)Enum.Parse(typeof(EGender), cmd.Gender),
-                cmd.RaceId,
-                cmd.CategoryId,
-                cmd.UserId));
+            .ForMember(dest => dest.Gender, opt =>
+                opt.MapFrom(src => Enum.Parse<EGender>(src.Gender)));
 
         CreateMap<DeleteAnimalCommand, Domain.Entities.Animal>()
             .ConstructUsing(cmd => new Domain.Entities.Animal(
@@ -22,7 +18,8 @@ public class CommandToDomainProfiles : Profile
                 (EGender)Enum.Parse(typeof(EGender), cmd.Gender),
                 cmd.RaceId,
                 cmd.CategoryId,
-                cmd.UserId));
+                cmd.UserId,
+                cmd.ImageUrl));
         
         CreateMap<UpdateAnimalCommand, Domain.Entities.Animal>()
             .ConstructUsing(cmd => new Domain.Entities.Animal(
@@ -30,7 +27,8 @@ public class CommandToDomainProfiles : Profile
                 (EGender)Enum.Parse(typeof(EGender), cmd.Gender),
                 cmd.RaceId,
                 cmd.CategoryId,
-                cmd.UserId));
+                cmd.UserId,
+                cmd.ImageUrl));
 
         //CreateMap<UpdateAnimalCommand, Domain.Entities.Animal>().ReverseMap();
     }

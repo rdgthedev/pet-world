@@ -9,7 +9,9 @@
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw">Produtos</h2>
+    <h2 class="text-center">
+        Produtos
+    </h2>
     <br>
 </div>
 
@@ -92,11 +94,14 @@ else
             @TempData["ProductNotFound"]
         </h2>
         <br>
-
-        <div class="d-flex justify-content-center align-items-center">
-            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
-                Adicionar Produto
-            </a>
-        </div>
+        @if (User.IsInRole(ERole.Admin.ToString()))
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
+                    Adicionar Produto
+                </a>
+            </div>
+        }
     </div>
+
 }

@@ -5,7 +5,7 @@ public class AnimalDetailsViewModel
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public int? Age { get; set; }
+    public DateTime? BirthDate { get; set; }
     public Domain.Entities.Category Category { get; set; } = null!;
     public Domain.Entities.Race Race { get; set; } = null!;
     public string Gender { get; set; } = string.Empty;

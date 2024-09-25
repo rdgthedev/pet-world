@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace PetWorldOficial.Infrastructure.Mappings
 {
-    //public class RoleMap : IEntityTypeConfiguration<Role>
-    //{
-    //    //public void Configure(EntityTypeBuilder<Role> builder)
-    //    //{
-    //    //    builder.Property(r => r.LastUpdatedAt)
-    //    //        .HasColumnName(nameof(Role.Name))
-    //    //        .HasColumnType("NVARCHAR")
-    //    //        .IsRequired(false);
-    //    //}
-    //}
+    public class RoleMap : IEntityTypeConfiguration<Role>
+    {
+        public void Configure(EntityTypeBuilder<Role> builder)
+        {
+            builder.Property(r => r.LastUpdatedAt)
+                .HasColumnName(nameof(Role.LastUpdatedAt))
+                .HasColumnType("DATETIME")
+                .IsRequired(false);
+        }
+    }
 }

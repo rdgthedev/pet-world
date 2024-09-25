@@ -20,6 +20,7 @@ public record DeleteAnimalCommand([Required] int Id) : IRequest<DeleteAnimalComm
     public int UserId { get; set; }
     public int CategoryId { get; set; }
     public int? Age { get; set; }
+    public string? ImageUrl { get; set; }
 
     public ClaimsPrincipal? UserPrincipal { get; set; }
 
