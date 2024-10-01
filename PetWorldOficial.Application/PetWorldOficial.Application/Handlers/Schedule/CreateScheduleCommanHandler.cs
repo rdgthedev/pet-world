@@ -7,6 +7,8 @@ using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Settings;
 using PetWorldOficial.Application.Utils;
+using PetWorldOficial.Application.ViewModels.Schedule;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
@@ -27,10 +29,10 @@ public class CreateScheduleCommanHandler(
     {
         try
         {
+            // Verificação de pets e serviço, já existente no seu código
             if (request.Animals is null || !request.Animals.Any())
             {
-                var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!,
-                    cancellationToken);
+                var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!, cancellationToken);
                 if (user is null)
                     throw new UserNotFoundException("Ocorreu um erro! Por favor tente se reconectar.");
 
@@ -45,37 +47,28 @@ public class CreateScheduleCommanHandler(
                 request.ServiceName = service.Name;
                 request.ServicePrice = service.Price;
                 request.DurationInMinutes = service.DurationInMinutes;
-
                 return request;
             }
 
-            var roleName = RoleUtils.GetRoleByServiceName(request.ServiceName);
+            //var roleName = RoleUtils.GetRoleByServiceName(request.ServiceName);
 
-            if (roleName.ToString() is null)
-                throw new Exception("Ocorreu um erro. Não foi possível realizar o seu agendamento!");
+            //if (string.IsNullOrEmpty(roleName.ToString()))
+            //    throw new Exception("Ocorreu um erro! Perfil não existe.");
 
-            var employeesIds = (await userService.GetUsersByRoleAsync(roleName, cancellationToken)).Select(u => u.Id);
-            if (!employeesIds.Any())
-                throw new UserNotFoundException("Nenhum funcionário cadastrado com este perfil!");
+            //var totalBlocks = request.DurationInMinutes / _defaultRange;
 
-            var schedules = await scheduleService.GetAll(cancellationToken);
+            //var schedullings = await scheduleService.GetAll(cancellationToken);
 
-            var conflicts = schedules.Where(s =>
-                s.Date.Date == request.Date!.Value.Date
-                && s.Time < request.Time!.Value.Add(TimeSpan.FromMinutes(request.DurationInMinutes))
-                && s.Time.Add(TimeSpan.FromMinutes(s.Service.DurationInMinutes)) > request.Time.Value);
+            //var scheduledByDateAndTime = schedullings.Where(s => s.Date.Date == request.Date!.Value.Date
+            //&& s.Time == request.Time!.Value);
 
-            if (conflicts.Any())
-                throw new Exception("Conflito de horário! O horário desejado já está agendado.");
+            //if (scheduledByDateAndTime.Any())
+            //    throw new Exception("");
 
-            var availableEmployeeId =
-                employeesIds.FirstOrDefault(e => !conflicts.Select(c => c.Employee.Id).Contains(e));
+            //if (totalBlocks > 1)
+            //{
 
-            if (request.EmployeeId == 0)
-                throw new UserNotFoundException("Nenhum funcionário disponível!");
-
-            await scheduleService.Create(request, cancellationToken);
-            request.Message = $"{request.ServiceName} agendado com sucesso!";
+            //}
             return request;
         }
         catch (Exception)
