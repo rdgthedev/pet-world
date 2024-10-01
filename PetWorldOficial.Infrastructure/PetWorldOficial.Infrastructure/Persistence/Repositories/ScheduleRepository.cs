@@ -1,6 +1,8 @@
 ﻿using System.Xml.Schema;
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
 
@@ -13,6 +15,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
         return await _context
             .Schedullings
             .AsNoTracking()
+            .Include(s => s.Service)
             .ToListAsync(cancellationToken);
     }
 
@@ -38,7 +41,8 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .CountAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Schedulling?>> GetAllByServiceIdAsync(int serviceId, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Schedulling?>> GetAllByServiceIdAsync(int serviceId,
+        CancellationToken cancellationToken)
     {
         return await _context
             .Schedullings
@@ -47,7 +51,14 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Schedulling?>> GetAllWithEmployeeAndAnimalAndService(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Schedulling>> GetAllByRoleAndDateAndHour(ERole role, DateTime scheduleDate,
+        TimeSpan hour, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<Schedulling?>> GetAllWithEmployeeAndAnimalAndService(
+        CancellationToken cancellationToken)
     {
         return await _context
             .Schedullings
@@ -65,6 +76,20 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Schedullings
             .AsNoTracking()
             .Where(s => usersIds.Contains(s.EmployeeId))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDate(
+        DateTime date,
+        IEnumerable<int> employeesIds,
+        CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedullings
+            .AsNoTracking()
+            .Include(s => s.Employee)
+            .Where(s => s.Date.Date == date.Date && employeesIds.Contains(s.EmployeeId))
+            .Select(s => s.Time)
             .ToListAsync(cancellationToken);
     }
 
@@ -90,7 +115,8 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Schedulling?>> GetSchedulesWithEmployeeByDateAndTime(DateTime date, string serviceName,
+    public async Task<IEnumerable<Schedulling?>> GetSchedulesWithEmployeeByDateAndTime(DateTime date,
+        string serviceName,
         CancellationToken cancellationToken)
     {
         return await _context
@@ -113,8 +139,10 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken)
+    public async Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time,
+        CancellationToken cancellationToken)
     {
-        return await _context.Schedullings.Where(s => s.Date == scheduleDate && s.Time == time).CountAsync(cancellationToken);
+        return await _context.Schedullings.Where(s => s.Date == scheduleDate && s.Time == time)
+            .CountAsync(cancellationToken);
     }
 }

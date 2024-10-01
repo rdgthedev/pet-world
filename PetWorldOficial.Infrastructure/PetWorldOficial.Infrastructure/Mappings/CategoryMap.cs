@@ -39,11 +39,11 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
             .HasColumnType("DATETIME")
             .IsRequired(false);
 
-        builder.HasMany(c => c.Schedullings)
-            .WithOne(s => s.Category)
-            .HasForeignKey(s => s.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict)
-            .IsRequired();
+        // builder.HasMany(c => c.Schedullings)
+        //     .WithOne(s => s.Category)
+        //     .HasForeignKey(s => s.CategoryId)
+        //     .OnDelete(DeleteBehavior.Restrict)
+        //     .IsRequired();
 
         builder.HasMany(c => c.Services)
             .WithOne(s => s.Category)

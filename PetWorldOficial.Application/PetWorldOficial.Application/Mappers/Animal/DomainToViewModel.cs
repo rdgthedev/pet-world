@@ -1,10 +1,5 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.ViewModels.Animal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PetWorldOficial.Application.Mappers.Animal
 {
@@ -20,6 +15,7 @@ namespace PetWorldOficial.Application.Mappers.Animal
                     Gender = a.Gender.ToString(),
                     CreatedAt = a.CreatedAt,
                     LastUpdatedAt = a.LastUpdatedAt,
+                    ImageUrl = a.ImageUrl!,
                     Race = a.Race,
                     Category = a.Category,
                     Owner = a.Owner,

@@ -1,15 +1,19 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using System.Globalization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetWorldOficial.Domain.Enums
+@using PetworldOficial.MVC.Utils
 @model PetWorldOficial.Application.Commands.Animal.UpdateAnimalCommand
 
 @{
     ViewData["Title"] = "Atualizar Pet";
     Layout = "_Layout";
+    var gender = (EGender)Enum.Parse(typeof(EGender), Model.Gender);
 }
 
 <div class="container-fluid text-black py-3">
     <br>
     <h2 class="display-6 text-center fw">
-        <img src="/Images/DadosDoPet.png" alt="">
+        Dados do Pet
     </h2>
     <br>
 </div>
@@ -35,11 +39,32 @@
         </div>
     }
 
-    <form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="Animal" asp-action="Update" method="post">
+    <div class="d-flex justify-content-center align-items-center">
+        @if (Model.ImageUrl != null)
+        {
+            <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
+                <img style="width: min-content; height: 250px" src="/Images/@Model.ImageUrl"
+                     class="card-img-top"
+                     alt="...">
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
+                <img style="width: min-content; height: 250px " src="/Images/PetImage.jpg"
+                     class="card-img-top"
+                     alt="...">
+            </div>
+        }
+
+    </div>
+
+    <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Animal" asp-action="Update" method="post">
         <input type="hidden" asp-for="@Model.Id">
         <input type="hidden" asp-for="@Model.UserId">
         <input type="hidden" asp-for="@Model.RaceName">
         <input type="hidden" asp-for="@Model.CategoryTitle">
+        <input type="hidden" asp-for="@Model.ImageUrl">
 
         @if (Model.RaceId == 0 || Model.CategoryId == 0)
         {
@@ -47,15 +72,21 @@
             <input type="hidden" asp-for="@Model.RaceId">
         }
 
-        <div class="col-md-8">
+        <div class="col-md-6">
             <label asp-for="@Model.Name" class="form-label">Nome</label>
             <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Nome">
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
-        <div class="col-md-8">
-            <label asp-for="@Model.Gender" class="form-label">Gênero</label>
-            <input asp-for="@Model.Gender" type="text" class="form-control shadow-none" placeholder="Gênero" value="@Model.Gender" readonly>
+        <div class="col-md-2">
+            <label asp-for="@Model.Gender" class="form-label">Gênero <span style="color: red;">*</span></label>
+            <select asp-for="@Model.Gender" class="form-select shadow-none">
+                <option value="@Model.Gender" selected disabled hidden>@gender.GetDisplayName()</option>
+                @foreach (EGender gender in Enum.GetValues(typeof(EGender)))
+                {
+                    <option value="@gender">@gender.GetDisplayName()</option>
+                }
+            </select>
             <span asp-validation-for="Gender" class="text-danger"></span>
         </div>
 
@@ -72,8 +103,8 @@
         </div>
 
         <div class="col-md-2">
-            <label asp-for="@Model.BirthDate" class="form-label">Data de Nascimento</label>
-            <input asp-for="@Model.BirthDate" type="text" class="form-control shadow-none" value="@Model.BirthDate">
+            <label asp-for="BirthDate" class="form-label">Data de Nascimento</label>
+            <input asp-for="BirthDate" type="date" max="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control shadow-none">
         </div>
 
         <div class="col-md-8">
@@ -86,6 +117,12 @@
                 }
             </select>
             <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.File" class="form-label">Imagem <span style="color: red;">*</span></label>
+            <input asp-for="@Model.File" type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
+            <span asp-validation-for="File" class="text-danger"></span>
         </div>
 
         <div class="d-grid gap-2 col-4 mx-auto col-md-5">

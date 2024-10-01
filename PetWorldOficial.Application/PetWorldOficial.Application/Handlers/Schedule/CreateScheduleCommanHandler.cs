@@ -1,13 +1,12 @@
 ﻿using System.Reflection.Metadata;
 using MediatR;
+using MediatR.Pipeline;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Settings;
 using PetWorldOficial.Application.Utils;
-using PetWorldOficial.Application.ViewModels.Schedule;
-using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
@@ -22,91 +21,61 @@ public class CreateScheduleCommanHandler(
     IUserRepository userRepository,
     IOptions<OpeningHours> openingHours) : IRequestHandler<CreateScheduleCommand, CreateScheduleCommand>
 {
+    private const int _defaultRange = 30;
+
     public async Task<CreateScheduleCommand> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            if (request.Animals is null)
+            if (request.Animals is null || !request.Animals.Any())
             {
                 var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!,
                     cancellationToken);
-
                 if (user is null)
-                    throw new UserNotFoundException("Ocorreu um erro. Tente fazer o login novamente no site." +
-                                                    " Possívelmente sua sessão foi expirada!");
+                    throw new UserNotFoundException("Ocorreu um erro! Por favor tente se reconectar.");
 
-                var service = await serviceService.GetById(request.ServiceId, cancellationToken)
-                              ?? throw new ServiceNotFoundException("Ocorreu um erro. Nenhum serviço encontrado!");
+                request.Animals = await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
+                if (request.Animals is null || !request.Animals.Any())
+                    throw new UserNotFoundException("Nenhum pet encontrado!");
 
-                var animals = await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
+                var service = await serviceService.GetById(request.ServiceId, cancellationToken);
+                if (service is null)
+                    throw new ServiceNotFoundException("Serviço não encontrado!");
 
-                //Gerar lista de horários com intervalos (30 em 30min)
-
-                //Pegar agendamentos por data.
-
-                //Selecionar horários dos agendamentos.
-
-                request.UserId = user.Id;
-                request.Animals = animals;
                 request.ServiceName = service.Name;
                 request.ServicePrice = service.Price;
+                request.DurationInMinutes = service.DurationInMinutes;
 
                 return request;
             }
 
-            //Busca serviço por nome
-            var serviceVm = await serviceService.GetByName(request.ServiceName, cancellationToken);
+            var roleName = RoleUtils.GetRoleByServiceName(request.ServiceName);
 
-            if (serviceVm is null)
-                throw new Exception();
+            if (roleName.ToString() is null)
+                throw new Exception("Ocorreu um erro. Não foi possível realizar o seu agendamento!");
 
-            //Verifica tipo de serviço e define o perfil do funcionário (Higiene ou Veterinário).
-            ERole roleName;
+            var employeesIds = (await userService.GetUsersByRoleAsync(roleName, cancellationToken)).Select(u => u.Id);
+            if (!employeesIds.Any())
+                throw new UserNotFoundException("Nenhum funcionário cadastrado com este perfil!");
 
-            if (request.ServiceName == "Banho"
-                || request.ServiceName == "Tosa"
-                || request.ServiceName == "Banho & Tosa")
-            {
-                roleName = ERole.Grooming;
-            }
-            else
-                roleName = ERole.Veterinary;
+            var schedules = await scheduleService.GetAll(cancellationToken);
 
+            var conflicts = schedules.Where(s =>
+                s.Date.Date == request.Date!.Value.Date
+                && s.Time < request.Time!.Value.Add(TimeSpan.FromMinutes(request.DurationInMinutes))
+                && s.Time.Add(TimeSpan.FromMinutes(s.Service.DurationInMinutes)) > request.Time.Value);
 
-            //Conta o número de funcionários de um determinado perfil.
-            var countEmployeesInRole = await userService.CountUsersByRoleAsync(roleName);
+            if (conflicts.Any())
+                throw new Exception("Conflito de horário! O horário desejado já está agendado.");
 
-            if (countEmployeesInRole == 0)
-                throw new Exception("Nenhum funcionário encontrado para esse tipo de serviço!");
+            var availableEmployeeId =
+                employeesIds.FirstOrDefault(e => !conflicts.Select(c => c.Employee.Id).Contains(e));
 
+            if (request.EmployeeId == 0)
+                throw new UserNotFoundException("Nenhum funcionário disponível!");
 
-            //Conta o número de agendamentos filtrando por data e horário.
-            var countSchedulesByDateAndTime = (await scheduleService.GetAll(cancellationToken))
-                .Count(s => s.Date == request.Date
-                            && s.Time > request.Time!.Value
-                            && request.Time.Value.Add(TimeSpan.FromMinutes(serviceVm.DurationInMinutes)) <= s.Time);
-
-            //!Verifica disponibilidade para agendamento (agendamentos >= funcionários)
-            //throw new FalhaNoAgendamento
-
-            int standardTime = 30;
-
-            var timesServiceFits = serviceVm.DurationInMinutes / standardTime;
-
-            if (countSchedulesByDateAndTime >= countEmployeesInRole
-                || countSchedulesByDateAndTime < timesServiceFits)
-                throw new Exception("Não há horário disponível!");
-
-            if (timesServiceFits >= 2)
-            {
-                //Segrega o serviço em dois.
-                //Realiza o agendamento
-                //Envia e-mail ou SMS.
-            }
-
-            //Realiza agendamento.
-            //Envia email ou SMS.
-
+            await scheduleService.Create(request, cancellationToken);
+            request.Message = $"{request.ServiceName} agendado com sucesso!";
             return request;
         }
         catch (Exception)

@@ -109,4 +109,11 @@ public class UserService(
 
         return users.Count();
     }
+
+    public async Task<IEnumerable<UserDetailsViewModel>> GetUsersByRoleAsync(
+        ERole role,
+        CancellationToken cancellationToken)
+    {
+        return mapper.Map<IEnumerable<UserDetailsViewModel>>(await userRepository.GetUsersByRoleAsync(role));
+    }
 }

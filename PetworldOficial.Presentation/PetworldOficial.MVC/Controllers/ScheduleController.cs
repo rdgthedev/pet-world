@@ -9,7 +9,6 @@ using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Application.ViewModels.Schedule;
-using PetWorldOficial.Application.ViewModels.Service;
 using PetWorldOficial.Domain.Exceptions;
 using PetworldOficial.MVC.Utils;
 
@@ -23,6 +22,22 @@ public class ScheduleController(
     IMapper _mapper,
     IMediator mediator) : Controller
 {
+    [HttpGet]
+    public async Task<JsonResult> GetAvailableTimes(
+        GetAvailableTimesQuery query,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await mediator.Send(query, cancellationToken);
+            return Json(result);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)

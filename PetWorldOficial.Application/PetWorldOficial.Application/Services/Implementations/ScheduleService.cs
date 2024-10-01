@@ -1,8 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics;
+using AutoMapper;
 using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Settings;
+using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
@@ -75,6 +77,7 @@ public class ScheduleService(
             .Any(schedule => schedule!.AnimalId == command.AnimalId && schedule.Date == command.Date);
     }
 
+
     public async Task Update(UpdateScheduleViewModel entity, CancellationToken cancellationToken)
         => await _scheduleRepository.UpdateAsync(_mapper.Map<Schedulling>(entity), cancellationToken);
 
@@ -83,10 +86,25 @@ public class ScheduleService(
 
     public async Task Create(CreateScheduleCommand command, CancellationToken cancellationToken)
     {
-        await _scheduleRepository.CreateAsync(_mapper.Map<Schedulling>(command), cancellationToken);
+        var s = new Schedulling(
+            command.AnimalId!.Value,
+            command.ServiceId,
+            command.EmployeeId!.Value,
+            command.Date!.Value,
+            command.Time!.Value,
+            command.Observation);
+        
+        await _scheduleRepository.CreateAsync(s, cancellationToken);
     }
 
-    public async Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken)
+    public async Task<IEnumerable<TimeSpan>> GetAllSchedulesTimesByDate(
+        DateTime date,
+        IEnumerable<int> employeeIds,
+        CancellationToken cancellationToken)
+        => await _scheduleRepository.GetAllScheduleTimesByDate(date, employeeIds, cancellationToken);
+
+    public async Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan time,
+        CancellationToken cancellationToken)
     {
         return await _scheduleRepository.CountSchedulesAsync(scheduleDate, time, cancellationToken);
     }

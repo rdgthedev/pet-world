@@ -32,4 +32,9 @@ public interface IScheduleService
     Task Update(UpdateScheduleViewModel model, CancellationToken cancellationToken);
     Task Delete(DeleteScheduleViewModel model, CancellationToken cancellationToken);
     Task Create(CreateScheduleCommand command, CancellationToken cancellationToken);
+
+    Task<IEnumerable<TimeSpan>> GetAllSchedulesTimesByDate(
+        DateTime date,
+        IEnumerable<int> employeeIds,
+        CancellationToken cancellationToken);
 }

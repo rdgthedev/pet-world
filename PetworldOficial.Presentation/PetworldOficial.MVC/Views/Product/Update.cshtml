@@ -13,14 +13,17 @@
 </div>
 
 <div class="d-flex justify-content-center align-items-center">
-    <img style="width: 350px;" src="\Images/@Model.ImageUrl" alt="Imagem do Produto">
+    @if (Model.ImageUrl != null)
+    {
+        <img style="width: 250px;" src="\Images/@Model.ImageUrl" alt="Imagem do Produto">
+    }
 </div>
 
 <div class="container">
     <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Product" asp-action="Update" method="post">
-        <input type="hidden" asp-for="@Model.ImageUrl" />
-        <input type="hidden" asp-for="@Model.Id" />
-        <input type="hidden" asp-for="@Model.ProductId" />
+        <input type="hidden" asp-for="@Model.ImageUrl"/>
+        <input type="hidden" asp-for="@Model.Id"/>
+        <input type="hidden" asp-for="@Model.ProductId"/>
 
         <div class="col-md-8">
             <label asp-for="@Model.Name" class="form-label">Nome <span style="color: red;">*</span></label>

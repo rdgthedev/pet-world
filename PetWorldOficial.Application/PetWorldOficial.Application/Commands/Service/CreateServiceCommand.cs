@@ -14,7 +14,7 @@ namespace PetWorldOficial.Application.Commands.Service
         public IFormFile File { get; set; } = null!;
 
         [Required(ErrorMessage = "A duração em minutos é obrigatória!")]
-        public int DurationInMinutes { get; set; }
+        public int? DurationInMinutes { get; set; }
 
         [Required(ErrorMessage = "O Preço é obrigatório!")]
         public double? Price { get; set; }

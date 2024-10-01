@@ -11,7 +11,7 @@ public interface IUserRepository
     Task<User?> GetByCpfAsync(string cpf, CancellationToken cancellationToken);
     Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken);
     Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken);
-    Task<IEnumerable<User>> GetAllUsersExceptCurrentAsync(int UserId, CancellationToken cancellationToken);
+    Task<IEnumerable<User>> GetAllUsersExceptCurrentAsync(int userId, CancellationToken cancellationToken);
     Task<IEnumerable<User?>> GetUsersByRoleAsync(ERole roleName);
     Task UpdateAsync(User user);
     Task DeleteAsync(User user);

@@ -57,6 +57,7 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
         builder.Property(a => a.ImageUrl)
             .HasColumnName("ImageUrl")
             .HasColumnType("NVARCHAR")
+            .HasMaxLength(120)
             .IsRequired(false);
 
         builder.Property(a => a.BirthDate)

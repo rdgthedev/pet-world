@@ -39,17 +39,17 @@ public class SchedullingMap : IEntityTypeConfiguration<Schedulling>
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
-        builder.HasOne(s => s.Category)
-            .WithMany(a => a.Schedullings)
-            .HasConstraintName("FK_Schedulling_Category_CategoryId")
-            .HasForeignKey(s => s.CategoryId)
-            .OnDelete(DeleteBehavior.Restrict)
-            .IsRequired();
+        // builder.HasOne(s => s.Category)
+        //     .WithMany(a => a.Schedullings)
+        //     .HasConstraintName("FK_Schedulling_Category_CategoryId")
+        //     .HasForeignKey(s => s.CategoryId)
+        //     .OnDelete(DeleteBehavior.Restrict)
+        //     .IsRequired();
 
         builder.Property(s => s.Code)
             .HasColumnName("Code")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(20)
+            .HasMaxLength(120)
             .IsRequired();
 
         builder.Property(s => s.Date)

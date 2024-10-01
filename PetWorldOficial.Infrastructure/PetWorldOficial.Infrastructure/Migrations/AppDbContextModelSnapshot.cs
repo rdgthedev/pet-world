@@ -151,6 +151,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("Gender");
 
                     b.Property<string>("ImageUrl")
+                        .HasMaxLength(120)
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("ImageUrl");
 
@@ -480,12 +481,9 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<int>("AnimalId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(20)
+                        .HasMaxLength(120)
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Code");
 
@@ -523,8 +521,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AnimalId");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("ServiceId");
 
@@ -984,13 +980,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Schedulling_Animal_AnimalId");
 
-                    b.HasOne("PetWorldOficial.Domain.Entities.Category", "Category")
-                        .WithMany("Schedullings")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_Schedulling_Category_CategoryId");
-
                     b.HasOne("PetWorldOficial.Domain.Entities.User", "Employee")
                         .WithMany("Schedullings")
                         .HasForeignKey("EmployeeId")
@@ -1006,8 +995,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasConstraintName("FK_Schedulling_Service_ServiceId");
 
                     b.Navigation("Animal");
-
-                    b.Navigation("Category");
 
                     b.Navigation("Employee");
 
@@ -1053,8 +1040,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Navigation("Animals");
 
                     b.Navigation("Products");
-
-                    b.Navigation("Schedullings");
 
                     b.Navigation("Services");
                 });

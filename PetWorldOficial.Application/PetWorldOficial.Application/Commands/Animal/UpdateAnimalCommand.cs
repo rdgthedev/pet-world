@@ -30,6 +30,7 @@ public record UpdateAnimalCommand([Required] int Id) : IRequest<UpdateAnimalComm
     public int UserId { get; set; }
     public ClaimsPrincipal? UserPrincipal { get; set; }
     public string Message { get; set; } = string.Empty;
+    public string BaseUrl { get; set; } = string.Empty;
 
     public IEnumerable<RaceDetailsViewModel> Races { get; set; } = Enumerable.Empty<RaceDetailsViewModel>();
 

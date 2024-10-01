@@ -13,7 +13,8 @@ public class UpdateAnimalCommandHandler(
     IAnimalService animalService,
     ICategoryService categoryService,
     IRaceService raceService,
-    IMemoryCache memoryCache) : IRequestHandler<UpdateAnimalCommand, UpdateAnimalCommand>
+    IMemoryCache memoryCache,
+    IImageService imageService) : IRequestHandler<UpdateAnimalCommand, UpdateAnimalCommand>
 {
     public async Task<UpdateAnimalCommand> Handle(UpdateAnimalCommand request, CancellationToken cancellationToken)
     {
@@ -54,8 +55,17 @@ public class UpdateAnimalCommandHandler(
                 request.UserId = user.Id;
                 request.Categories = categories;
                 request.Races = races;
+                request.ImageUrl = animal.ImageUrl;
 
                 return request;
+            }
+
+            if (request.File != null)
+            {
+                var path = Path.Combine(request.BaseUrl, "wwwroot");
+
+                request.ImageUrl = imageService.GenerateImageName(request.File, path);
+                await imageService.SaveImage(request.File, path, request.ImageUrl);
             }
 
             await animalService.Update(request, cancellationToken);

@@ -20,6 +20,14 @@ builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; })
     .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder.WithOrigins("http://example.com") // Substitua pela URL da sua aplicação
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 builder.Services.Configure<OpeningHours>(builder.Configuration.GetSection("OpeningHours"));
 
 builder.Services.AddDbContext<AppDbContext>(
@@ -42,19 +50,6 @@ builder.Services.ConfigureApplicationCookie(option =>
 });
 
 builder.Services.AddMemoryCache();
-
-// builder.Services.AddDistributedMemoryCache();
-
-// builder.Services.AddSession(options =>
-// {
-//     options.IdleTimeout = TimeSpan.FromMinutes(30);
-//     options.Cookie.HttpOnly = true;
-// });
-
-// builder.Services.Configure<FormOptions>(options =>
-// {
-//     options.MultipartBodyLengthLimit = 104857600; // 100 MB
-// });
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -96,6 +91,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseCors();
 // app.UseSession();
 
 app.MapControllerRoute(

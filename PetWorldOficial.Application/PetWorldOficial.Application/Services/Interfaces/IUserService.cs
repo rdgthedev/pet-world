@@ -23,5 +23,10 @@ public interface IUserService
     Task<IEnumerable<UserDetailsViewModel>> GetAllUsersExceptCurrentAsync(
         int userId,
         CancellationToken cancellationToken);
+
     Task<int> CountUsersByRoleAsync(ERole roleName);
+
+    Task<IEnumerable<UserDetailsViewModel>> GetUsersByRoleAsync(
+        ERole role,
+        CancellationToken cancellationToken);
 }
