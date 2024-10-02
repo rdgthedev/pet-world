@@ -1,10 +1,5 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.ViewModels.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PetWorldOficial.Application.Mappers.Service
 {
@@ -13,8 +8,15 @@ namespace PetWorldOficial.Application.Mappers.Service
         public DomainToViewModel()
         {
             CreateMap<Domain.Entities.Service, ServiceDetailsViewModel>();
-            CreateMap<Domain.Entities.Service, ServiceDetailsViewModel>();
-            CreateMap<Domain.Entities.Service, ServiceDetailsViewModel>();
+            // .ConstructUsing(s => new ServiceDetailsViewModel
+            // {
+            //     Id = s.Id,
+            //     Name = s.Name,
+            //     CategoryTitle = s.Category.Title,
+            //     DurationInMinutes = s.DurationInMinutes,
+            //     ImageUrl = s.ImageUrl,
+            //     Price = s.Price
+            // });
         }
     }
 }

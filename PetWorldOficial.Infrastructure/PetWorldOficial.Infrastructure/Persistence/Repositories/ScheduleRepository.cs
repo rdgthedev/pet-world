@@ -145,4 +145,18 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
         return await _context.Schedullings.Where(s => s.Date == scheduleDate && s.Time == time)
             .CountAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
+        ECategoryType categoryType,
+        DateTime schedullingDate,
+        CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedullings
+            .AsNoTracking()
+            .Include(s => s.Service)
+            .Where(s => s.Date.Date == schedullingDate.Date
+                        && s.Service.Category.Title == categoryType.ToString())
+            .ToListAsync(cancellationToken);
+    }
 }

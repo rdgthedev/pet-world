@@ -7,4 +7,5 @@ public record GetAvailableTimesQuery(
     DateTime Date, 
     int DurationInMinutes,
     string ServiceName,
+    string CategoryName,
     ClaimsPrincipal User) : IRequest<IEnumerable<TimeSpan>>;

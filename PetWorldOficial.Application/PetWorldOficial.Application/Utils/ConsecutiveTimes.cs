@@ -6,14 +6,14 @@ public static class ConsecutiveTimes
     {
         var consecutiveEmptyTimes = new List<TimeSpan>();
 
-        for (int i = 0; i < emptyTimes.Count() - 1; i++)
+        for (int i = 0; i < emptyTimes.Count - 1; i++)
         {
             if (emptyTimes[i + 1] - emptyTimes[i] == TimeSpan.FromMinutes(defaultRange))
             {
                 if (!consecutiveEmptyTimes.Contains(emptyTimes[i]))
                     consecutiveEmptyTimes.Add(emptyTimes[i]);
 
-                consecutiveEmptyTimes.Add(emptyTimes[i + 1]);
+                // consecutiveEmptyTimes.Add(emptyTimes[i + 1]);
             }
         }
 

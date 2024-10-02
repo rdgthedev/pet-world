@@ -32,6 +32,8 @@ public record CreateScheduleCommand(ClaimsPrincipal? UserPrincipal) : IRequest<C
     [Required(ErrorMessage = "O preço é obrigatório")]
     public double ServicePrice { get; set; }
 
+    public string CategoryName { get; set; } = string.Empty;
+    
     public IEnumerable<AnimalDetailsViewModel?>? Animals { get; set; }
     public int? UserId { get; set; }
     public int? EmployeeId { get; set; }

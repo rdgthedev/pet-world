@@ -13,6 +13,7 @@ public class ServiceRepository(AppDbContext context) : IServiceRepository
         return await context
             .Services
             .AsNoTracking()
+            .Include(s => s.Category)
             .ToListAsync(cancellationToken);
     }
 
@@ -21,9 +22,10 @@ public class ServiceRepository(AppDbContext context) : IServiceRepository
         return await context
             .Services
             .AsNoTracking()
+            .Include(s => s.Category)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
-    
+
     public async Task<Service?> GetByNameAsync(string name, CancellationToken cancellationToken)
     {
         return await context

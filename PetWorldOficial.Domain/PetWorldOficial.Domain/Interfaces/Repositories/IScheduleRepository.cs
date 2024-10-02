@@ -32,9 +32,14 @@ public interface IScheduleRepository
         CancellationToken cancellationToken);
 
     Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDate(
-        DateTime date, 
-        IEnumerable<int> employeeIds, 
+        DateTime date,
+        IEnumerable<int> employeeIds,
         CancellationToken cancellationToken);
 
     Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken);
+
+    Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
+        ECategoryType categoryType,
+        DateTime schedullingDate,
+        CancellationToken cancellationToken);
 }

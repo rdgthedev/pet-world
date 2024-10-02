@@ -16,6 +16,8 @@ using UserService = PetWorldOficial.Application.Services.Implementations.UserSer
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
+
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; })
     .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
@@ -76,6 +78,7 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 
 builder.Services.AddAutoMapper(typeof(CreateServiceCommand));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateServiceCommand).Assembly));
+
 
 var app = builder.Build();
 

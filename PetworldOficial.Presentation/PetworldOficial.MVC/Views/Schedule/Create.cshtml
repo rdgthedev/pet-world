@@ -66,6 +66,7 @@ else if (TempData["SuccessMessage"] != null)
         <input type="hidden" asp-for="@Model.ServicePrice" value="@Model.ServicePrice">
         <input type="hidden" asp-for="@Model.UserId" value="@Model.UserId">
         <input type="hidden" id="durationInMinutes" asp-for="@Model.DurationInMinutes" value="@Model.DurationInMinutes">
+        <input type="hidden" id="categoryName" asp-for="@Model.CategoryName" value="@Model.CategoryName">
 
 
         <div class="col-md-4">
@@ -134,6 +135,8 @@ else if (TempData["SuccessMessage"] != null)
             var selectedDate = $('#date').val();
             var durationInMinutes = $('#durationInMinutes').val();
             var serviceName = $('#serviceName').val();
+            var categoryName = $('#categoryName').val();
+            
             if (selectedDate) {
                 $.ajax({
                     url: '@Url.Action("GetAvailableTimes", "Schedule")',
@@ -141,7 +144,8 @@ else if (TempData["SuccessMessage"] != null)
                     data: { 
                         date: selectedDate,
                         durationInMinutes: durationInMinutes,
-                        serviceName: serviceName
+                        serviceName: serviceName,
+                        categoryName: categoryName
                     },
                     success: function (data) {
                         var timeSelect = $('#time');
