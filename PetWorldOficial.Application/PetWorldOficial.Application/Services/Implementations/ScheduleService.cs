@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Settings;
-using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
@@ -77,7 +75,6 @@ public class ScheduleService(
             .Any(schedule => schedule!.AnimalId == command.AnimalId && schedule.Date == command.Date);
     }
 
-
     public async Task Update(UpdateScheduleViewModel entity, CancellationToken cancellationToken)
         => await _scheduleRepository.UpdateAsync(_mapper.Map<Schedulling>(entity), cancellationToken);
 
@@ -93,7 +90,7 @@ public class ScheduleService(
             command.Date!.Value,
             command.Time!.Value,
             command.Observation);
-        
+
         await _scheduleRepository.CreateAsync(s, cancellationToken);
     }
 

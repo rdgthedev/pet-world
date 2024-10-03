@@ -10,6 +10,12 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
 public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
 {
+    public async Task CreateRangeAsync(List<Schedulling> schedullings, CancellationToken cancellationToken)
+    {
+        await _context.Schedullings.AddRangeAsync(schedullings, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<Schedulling>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _context

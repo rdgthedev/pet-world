@@ -6,7 +6,8 @@ namespace PetWorldOficial.Domain.Interfaces.Repositories;
 
 public interface IScheduleRepository
 {
-    Task CreateAsync(Schedulling schedule, CancellationToken cancellationToken);
+    Task CreateAsync(Schedulling schedulling, CancellationToken cancellationToken);
+    Task CreateRangeAsync(List<Schedulling> schedullings, CancellationToken cancellationToken);
     Task<IEnumerable<Schedulling>> GetAllAsync(CancellationToken cancellationToken);
     Task<Schedulling?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task UpdateAsync(Schedulling schedule, CancellationToken cancellationToken);
