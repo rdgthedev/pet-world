@@ -93,12 +93,16 @@ public class ScheduleService(
 
         await _scheduleRepository.CreateAsync(s, cancellationToken);
     }
+    
+    public async Task CreateInBatch(CreateScheduleCommand command, CancellationToken cancellationToken)
+    {
+        await _scheduleRepository.CreateRangeAsync(command.Schedullings!, cancellationToken);
+    }
 
     public async Task<IEnumerable<TimeSpan>> GetAllSchedulesTimesByDate(
         DateTime date,
-        IEnumerable<int> employeeIds,
         CancellationToken cancellationToken)
-        => await _scheduleRepository.GetAllScheduleTimesByDate(date, employeeIds, cancellationToken);
+        => await _scheduleRepository.GetAllScheduleTimesByDate(date, cancellationToken);
 
     public async Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan time,
         CancellationToken cancellationToken)

@@ -8,7 +8,6 @@ public class Settings
 
     public class DefaultRange
     {
-        public int DefaultRangeGrooming { get; set; }
-        public int DefaultRangeVeterinary { get; set; }
+        public int DefaultRangeServices { get; set; }
     }
 }

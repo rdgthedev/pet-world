@@ -1,19 +1,23 @@
-﻿namespace PetWorldOficial.Application.Utils;
+﻿using Microsoft.AspNetCore.Mvc.Formatters;
+
+namespace PetWorldOficial.Application.Utils;
 
 public static class ConsecutiveTimes
 {
-    public static List<TimeSpan> Get(List<TimeSpan> emptyTimes, int defaultRange)
+    public static Dictionary<TimeSpan, TimeSpan> Get(
+        List<TimeSpan> emptyTimes,
+        int defaultRange) 
     {
-        var consecutiveEmptyTimes = new List<TimeSpan>();
+        var consecutiveEmptyTimes = new Dictionary<TimeSpan, TimeSpan>();
 
         for (int i = 0; i < emptyTimes.Count - 1; i++)
         {
             if (emptyTimes[i + 1] - emptyTimes[i] == TimeSpan.FromMinutes(defaultRange))
             {
-                if (!consecutiveEmptyTimes.Contains(emptyTimes[i]))
-                    consecutiveEmptyTimes.Add(emptyTimes[i]);
-
-                // consecutiveEmptyTimes.Add(emptyTimes[i + 1]);
+                if (!consecutiveEmptyTimes.ContainsKey(emptyTimes[i]))
+                {
+                    consecutiveEmptyTimes.Add(emptyTimes[i], emptyTimes[i + 1]);
+                }
             }
         }
 

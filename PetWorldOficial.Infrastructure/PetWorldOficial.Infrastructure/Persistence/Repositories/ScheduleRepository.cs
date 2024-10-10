@@ -87,14 +87,13 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
 
     public async Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDate(
         DateTime date,
-        IEnumerable<int> employeesIds,
         CancellationToken cancellationToken)
     {
         return await _context
             .Schedullings
             .AsNoTracking()
             .Include(s => s.Employee)
-            .Where(s => s.Date.Date == date.Date && employeesIds.Contains(s.EmployeeId))
+            .Where(s => s.Date.Date == date.Date)
             .Select(s => s.Time)
             .ToListAsync(cancellationToken);
     }
@@ -161,6 +160,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Schedullings
             .AsNoTracking()
             .Include(s => s.Service)
+            .Include(s => s.Employee)
             .Where(s => s.Date.Date == schedullingDate.Date
                         && s.Service.Category.Title == categoryType.ToString())
             .ToListAsync(cancellationToken);

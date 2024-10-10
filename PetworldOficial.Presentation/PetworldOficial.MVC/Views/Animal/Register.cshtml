@@ -81,7 +81,7 @@ else if (TempData["SuccessMessage"] != null)
                 <option value="" selected disabled>Selecione a raça</option>
                 @foreach (var race in Model.Races)
                 {
-                    <option value="@race!.Id">@race!.Name</option>
+                    <option value="@race!.Id">@race.Name</option>
                 }
             </select>
             <span asp-validation-for="RaceId" class="text-danger"></span>
@@ -98,7 +98,7 @@ else if (TempData["SuccessMessage"] != null)
                 <option value="" selected disabled>Selecione a categoria</option>
                 @foreach (var category in Model.Categories)
                 {
-                    <option value="@category!.Id">@category!.Title</option>
+                    <option value="@category!.Id">@category.Title</option>
                 }
             </select>
             <span asp-validation-for="CategoryId" class="text-danger"></span>
@@ -115,7 +115,6 @@ else if (TempData["SuccessMessage"] != null)
             <button class="btn btn-dark btn-lg" type="submit">Cadastrar</button>
         </div>
     </form>
-
     <footer>
     </footer>
 </div>

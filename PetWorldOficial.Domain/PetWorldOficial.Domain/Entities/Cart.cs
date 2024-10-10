@@ -6,29 +6,19 @@ public class Cart : Entity
 {
     public Cart()
     {
-    }
-
-    public Cart(int clientId)
-    {
-        ClientId = clientId;
         CreatedAt = DateTime.Now;
         ExpiresDate = CreatedAt.AddDays(3);
         Items = new();
     }
 
-    public Cart(
-        int clientId,
-        CartItem cartItem) : this(clientId)
+    public Cart(CartItem cartItem)
     {
         CreatedAt = DateTime.Now;
         ExpiresDate = CreatedAt.AddDays(3);
         Items.Add(cartItem);
     }
 
-
-    public int ClientId { get; private set; }
     public User Client { get; private set; }
-
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public DateTime ExpiresDate { get; private set; }

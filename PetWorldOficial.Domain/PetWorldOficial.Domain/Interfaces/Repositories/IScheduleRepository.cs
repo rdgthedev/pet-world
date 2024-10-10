@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using PetWorldOficial.Domain.Entities;
+﻿using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Domain.Interfaces.Repositories;
@@ -34,7 +33,6 @@ public interface IScheduleRepository
 
     Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDate(
         DateTime date,
-        IEnumerable<int> employeeIds,
         CancellationToken cancellationToken);
 
     Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken);

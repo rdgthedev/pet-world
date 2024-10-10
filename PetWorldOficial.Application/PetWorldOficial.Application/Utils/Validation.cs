@@ -1,5 +1,4 @@
 ﻿using PetWorldOficial.Application.DTO;
-using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Application.Utils;

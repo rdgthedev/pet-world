@@ -36,7 +36,7 @@ public record CreateScheduleCommand(ClaimsPrincipal? UserPrincipal) : IRequest<C
     public string CategoryName { get; set; } = string.Empty;
 
     public IEnumerable<AnimalDetailsViewModel?>? Animals { get; set; }
-    public List<Schedulling> Schedullings { get; set; }
+    public List<Schedulling>? Schedullings { get; set; } 
     public int? UserId { get; set; }
     public int? EmployeeId { get; set; }
     public string Message { get; set; } = string.Empty;

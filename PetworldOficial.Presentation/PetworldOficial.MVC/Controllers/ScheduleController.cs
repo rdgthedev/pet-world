@@ -23,7 +23,7 @@ public class ScheduleController(
     IMediator mediator) : Controller
 {
     [HttpGet]
-    public async Task<JsonResult> GetAvailableTimes(
+    public async Task<IActionResult> GetAvailableTimes(
         GetAvailableTimesQuery query,
         CancellationToken cancellationToken)
     {
@@ -34,7 +34,7 @@ public class ScheduleController(
         }
         catch (Exception)
         {
-            throw;
+            return RedirectToAction("Index", "Service");
         }
     }
 

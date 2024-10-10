@@ -67,6 +67,7 @@ else if (TempData["SuccessMessage"] != null)
         <input type="hidden" asp-for="@Model.UserId" value="@Model.UserId">
         <input type="hidden" id="durationInMinutes" asp-for="@Model.DurationInMinutes" value="@Model.DurationInMinutes">
         <input type="hidden" id="categoryName" asp-for="@Model.CategoryName" value="@Model.CategoryName">
+        <input type="hidden" asp-for="EmployeeId" id="employeeId" name="employeeId">
 
 
         <div class="col-md-4">
@@ -131,29 +132,40 @@ else if (TempData["SuccessMessage"] != null)
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        function fetchAvailableTimes() {
+        let isSubmitting = false;
+
+        function fetchTimesGenerator() {
             var selectedDate = $('#date').val();
             var durationInMinutes = $('#durationInMinutes').val();
             var serviceName = $('#serviceName').val();
             var categoryName = $('#categoryName').val();
-            
-            if (selectedDate) {
+
+            // Evita o AJAX quando o formulário estiver sendo submetido
+            if (selectedDate && !isSubmitting) {
                 $.ajax({
                     url: '@Url.Action("GetAvailableTimes", "Schedule")',
                     type: 'GET',
-                    data: { 
+                    data: {
                         date: selectedDate,
                         durationInMinutes: durationInMinutes,
                         serviceName: serviceName,
                         categoryName: categoryName
                     },
                     success: function (data) {
+                        // Supondo que a estrutura de dados retornada é { item1: employeeId, item2: times }
+                        $('#employeeId').val(data.item1);
+
                         var timeSelect = $('#time');
                         timeSelect.empty(); // Limpa os horários atuais
                         timeSelect.append('<option value="" selected disabled>Selecione um horário</option>');
-                        $.each(data, function (index, value) {
+
+                        $.each(data.item2, function (index, value) {
                             timeSelect.append('<option value="' + value + '">' + value + '</option>');
                         });
+
+                        // Para depuração:
+                        console.log('ID do Funcionário:', data.item1);
+                        console.log('Horários Disponíveis:', data.item2);
                     },
                     error: function (xhr, status, error) {
                         console.error('Erro ao buscar horários disponíveis:', error);
@@ -163,11 +175,16 @@ else if (TempData["SuccessMessage"] != null)
         }
 
         // Chama a função para buscar os horários ao carregar a página
-        fetchAvailableTimes();
+        fetchTimesGenerator();
 
         // Reexecuta a função ao alterar a data
         $('#date').change(function () {
-            fetchAvailableTimes();
+            fetchTimesGenerator();
+        });
+
+        // Marca quando o formulário está sendo submetido
+        $('form').on('submit', function (event) {
+            isSubmitting = true;
         });
     });
 </script>

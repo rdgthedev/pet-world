@@ -1,11 +1,12 @@
 ﻿using System.Security.Claims;
 using MediatR;
+using PetWorldOficial.Application.DTO;
 
 namespace PetWorldOficial.Application.Queries.Schedule;
 
 public record GetAvailableTimesQuery(
-    DateTime Date, 
+    DateTime Date,
     int DurationInMinutes,
     string ServiceName,
     string CategoryName,
-    ClaimsPrincipal User) : IRequest<IEnumerable<TimeSpan>>;
+    ClaimsPrincipal User) : IRequest<List<TimeDTO>>;

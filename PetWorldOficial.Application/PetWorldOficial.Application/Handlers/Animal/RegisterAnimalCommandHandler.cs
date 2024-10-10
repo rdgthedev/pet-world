@@ -33,7 +33,6 @@ public class RegisterAnimalCommandHandler(
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
-
                 request.Categories = await memoryCache.GetOrCreateAsync("Categories", async entry =>
                 {
                     entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
@@ -72,12 +71,13 @@ public class RegisterAnimalCommandHandler(
             }
 
             await animalService.Create(request, cancellationToken);
+
             request.Message = "Pet cadastrado com sucesso!";
             return request;
         }
         catch (Exception)
         {
-            request.Message = "Ocorreu um erro interno. Não foi possível realizar o cadastro do pet!";
+            // request.Message = "Ocorreu um erro interno. Não foi possível realizar o cadastro do pet!";
             throw;
         }
     }
