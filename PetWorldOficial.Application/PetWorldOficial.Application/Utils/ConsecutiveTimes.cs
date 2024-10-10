@@ -1,26 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters;
+using PetWorldOficial.Application.DTO;
 
 namespace PetWorldOficial.Application.Utils;
 
 public static class ConsecutiveTimes
 {
-    public static Dictionary<TimeSpan, TimeSpan> Get(
-        List<TimeSpan> emptyTimes,
-        int defaultRange) 
+    public static List<TimeDTO> Get(
+        List<TimeDTO> timesDtos,
+        int defaultRange)
     {
-        var consecutiveEmptyTimes = new Dictionary<TimeSpan, TimeSpan>();
+        var adjustedTimes = timesDtos.OrderBy(t => t.Time).ToList();
 
-        for (int i = 0; i < emptyTimes.Count - 1; i++)
+        foreach (var timeDto in timesDtos)
         {
-            if (emptyTimes[i + 1] - emptyTimes[i] == TimeSpan.FromMinutes(defaultRange))
-            {
-                if (!consecutiveEmptyTimes.ContainsKey(emptyTimes[i]))
-                {
-                    consecutiveEmptyTimes.Add(emptyTimes[i], emptyTimes[i + 1]);
-                }
-            }
+            var indexAHead = timesDtos.IndexOf(timeDto) + 1;
+            var timeAHead = timesDtos[indexAHead];
+
+            if (!IsConsecutive(timeDto.Time, timeAHead.Time, defaultRange)
+                || IsOccupied(timeDto)
+                || IsOccupied(timeAHead))
+                timeDto.Status = false;
         }
 
-        return consecutiveEmptyTimes;
+        return timesDtos;
     }
+
+    private static bool IsConsecutive(TimeSpan currentTime, TimeSpan timeAHead, int defaultRange)
+    {
+        var differenceTimes = Math.Abs(currentTime.Subtract(timeAHead).TotalMinutes);
+        return differenceTimes.Equals(defaultRange);
+    }
+
+    private static bool IsOccupied(TimeDTO time)
+        => time.Status.Equals(false);
 }

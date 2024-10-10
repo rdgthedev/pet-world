@@ -28,7 +28,7 @@ public class GetAvailableTimesQueryHandler(
 
             var employeesCount = await userService.CountUsersByRoleAsync(roleName);
 
-            if (employeesCount > 0)
+            if (employeesCount < 0)
                 throw new UserNotFoundException("Não é possível agendar este serviço. Tente novamente mais tarde!");
 
             var schedulingsTimes = await scheduleService.GetAllSchedulesTimesByDate(request.Date, cancellationToken);
@@ -38,13 +38,15 @@ public class GetAvailableTimesQueryHandler(
 
             var timesInUse = schedulingsTimes
                 .GroupBy(t => t)
-                .Select(g => new TimeDTO(g.Key, g.Count() < employeesCount))
+                .Select(g => new TimeDTO(g.Key, g.Count() >= employeesCount))
                 .ToList();
 
             var adjustedTimes = AdjustTimeStatus(times, timesInUse);
 
-            if (!IsDurationOneHour(request.DurationInMinutes))
-                return adjustedTimes;
+            if (IsDurationOneHour(request.DurationInMinutes))
+                return ConsecutiveTimes.Get(adjustedTimes, _defaultRange);
+
+            return adjustedTimes;
         }
         catch (Exception)
         {
