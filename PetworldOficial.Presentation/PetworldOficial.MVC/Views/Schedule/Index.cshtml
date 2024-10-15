@@ -66,10 +66,10 @@ else if (TempData["SuccessMessage"] != null)
                 <td style="text-align: center;">@schedule.Date.ToString("dd-MM-yyyy")</td>
                 <td style="text-align: center;">@schedule.Time.ToString(@"hh\:mm")</td>
                 <td style="text-align: center;">
-                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Update" asp-route-id="@schedule.Id">
+                            <a class="text-decoration-none" asp-controller="Schedule" asp-action="Update" asp-route-id="@schedule.Id">
                         <img style="width: 45px; cursor: pointer" src="\Images/Edit.svg" alt="Edit">
                     </a>
-                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id">
+                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id" >
                         <img style="width: 35px; cursor: pointer" src="\Images/trash2.svg" alt="Delete">
                     </a>
                 </td>

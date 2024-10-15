@@ -1,5 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.DTO;
 using PetWorldOficial.Application.Queries.Schedule;
@@ -12,7 +11,8 @@ namespace PetWorldOficial.Application.Handlers.Schedule;
 public class GetAvailableTimesQueryHandler(
     IOptions<Settings.Settings> options,
     IUserService userService,
-    IScheduleService scheduleService)
+    IScheduleService scheduleService,
+    IServiceService serviceService)
     : IRequestHandler<GetAvailableTimesQuery, List<TimeDTO>>
 {
     private readonly int _defaultRange = options.Value.Range.DefaultRangeServices;
@@ -23,28 +23,39 @@ public class GetAvailableTimesQueryHandler(
     {
         try
         {
-            var times = TimesGenerator.Generate(_defaultRange);
+            var times = TimesGenerator.Generate(request.Date, _defaultRange);
             var roleName = RoleUtils.GetRoleByServiceName(request.ServiceName);
 
             var employeesCount = await userService.CountUsersByRoleAsync(roleName);
 
             if (employeesCount < 0)
-                throw new UserNotFoundException("Não é possível agendar este serviço. Tente novamente mais tarde!");
+                throw new UserNotFoundException(
+                    "Não foi possível agendar este serviço no momento. Tente novamente mais tarde!");
 
-            var schedulingsTimes = await scheduleService.GetAllSchedulesTimesByDate(request.Date, cancellationToken);
+            var service = await serviceService.GetByName(request.ServiceName, cancellationToken);
 
-            if (!schedulingsTimes.Any())
+            if (service is null)
+                throw new ServiceNotFoundException(
+                    "Não foi possível agendar este serviço no momento. Tente novamente mais tarde!");
+
+            var schedulingsTimes = await scheduleService
+                .GetAllSchedulesTimesByDateAndCategory(
+                    request.Date,
+                    service.Category.Title,
+                    cancellationToken);
+
+            if (!schedulingsTimes.Any() && !Validation.IsDurationOneHour(request.DurationInMinutes))
                 return times;
 
-            var timesInUse = schedulingsTimes
+            var schedulingTimes = schedulingsTimes
                 .GroupBy(t => t)
-                .Select(g => new TimeDTO(g.Key, g.Count() >= employeesCount))
+                .Select(g => new TimeDTO { Time = g.Key, Status = g.Count() < employeesCount })
                 .ToList();
 
-            var adjustedTimes = AdjustTimeStatus(times, timesInUse);
+            var adjustedTimes = AdjustTimeStatus(times, schedulingTimes);
 
-            if (IsDurationOneHour(request.DurationInMinutes))
-                return ConsecutiveTimes.Get(adjustedTimes, _defaultRange);
+            if (Validation.IsDurationOneHour(request.DurationInMinutes))
+                return Consecutive.GetTimes(adjustedTimes, _defaultRange);
 
             return adjustedTimes;
         }
@@ -54,13 +65,13 @@ public class GetAvailableTimesQueryHandler(
         }
     }
 
-    private List<TimeDTO> AdjustTimeStatus(List<TimeDTO> times, List<TimeDTO> timesInUse)
+    private List<TimeDTO> AdjustTimeStatus(List<TimeDTO> times, List<TimeDTO> schedulingTimes)
     {
         var adjustedTimes = times.Select(time =>
         {
-            var matchingTimeInUse = timesInUse.FirstOrDefault(t => t.Time == time.Time);
+            var matchingTimeInUse = schedulingTimes.FirstOrDefault(t => t.Time == time.Time);
 
-            if (matchingTimeInUse != null && time.Status != matchingTimeInUse.Status)
+            if (matchingTimeInUse != null && time.Status && time.Status != matchingTimeInUse.Status)
                 time.Status = matchingTimeInUse.Status;
 
             return time;
@@ -68,7 +79,4 @@ public class GetAvailableTimesQueryHandler(
 
         return adjustedTimes;
     }
-
-    private bool IsDurationOneHour(int durationInMinutes)
-        => durationInMinutes == 60;
 }

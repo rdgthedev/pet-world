@@ -1,4 +1,5 @@
-﻿using System.Xml.Schema;
+﻿using System.Linq.Expressions;
+using System.Xml.Schema;
 using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
@@ -30,6 +31,10 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
         return await _context
             .Schedullings
             .AsNoTracking()
+            .Include(s => s.Animal)
+            .Include(s => s.Service)
+            .ThenInclude(s => s.Category)
+            .Include(s => s.Employee)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
@@ -85,17 +90,26 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDate(
+    public async Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDateAndCategory(
         DateTime date,
+        ECategoryType categoryType,
         CancellationToken cancellationToken)
     {
         return await _context
             .Schedullings
             .AsNoTracking()
             .Include(s => s.Employee)
-            .Where(s => s.Date.Date == date.Date)
+            .Include(s => s.Service)
+            .Where(s => s.Date.Date == date.Date && s.Service.Category.Title == categoryType.ToString())
             .Select(s => s.Time)
             .ToListAsync(cancellationToken);
+    }
+
+    public Task<IEnumerable<Schedulling>> GetAllSchedulingsByDateAndTimeAsync(DateTime schedulingsDate,
+        TimeSpan schedulingTime,
+        CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<Schedulling?> GetByIdWithAnimalAndService(int id, CancellationToken cancellationToken)
@@ -118,6 +132,20 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Include(schedule => schedule.Animal)
             .Where(schedule => animalsIds.Contains(schedule.AnimalId))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Schedulling?> GetByAnimalIdAndDateAndTime(
+        int animalId,
+        DateTime schedulingDate,
+        TimeSpan schedulingTime,
+        CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedullings
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.AnimalId == animalId
+                                      && s.Date.Date == schedulingDate.Date
+                                      && s.Time == schedulingTime, cancellationToken);
     }
 
     public async Task<IEnumerable<Schedulling?>> GetSchedulesWithEmployeeByDateAndTime(DateTime date,
@@ -162,6 +190,23 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Include(s => s.Service)
             .Include(s => s.Employee)
             .Where(s => s.Date.Date == schedullingDate.Date
+                        && s.Service.Category.Title == categoryType.ToString())
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Schedulling>> GetByCategoryAndDateAndTime(
+        ECategoryType categoryType,
+        DateTime schedullingDate, TimeSpan
+            schedulingTime,
+        CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedullings
+            .AsNoTracking()
+            .Include(s => s.Service)
+            .Include(s => s.Employee)
+            .Where(s => s.Date.Date == schedullingDate.Date
+                        && s.Time == schedulingTime
                         && s.Service.Category.Title == categoryType.ToString())
             .ToListAsync(cancellationToken);
     }

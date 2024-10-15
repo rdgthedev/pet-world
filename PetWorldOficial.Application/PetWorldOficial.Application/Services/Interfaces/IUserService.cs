@@ -1,5 +1,6 @@
 ﻿using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.ViewModels.User;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Application.Services.Interfaces;

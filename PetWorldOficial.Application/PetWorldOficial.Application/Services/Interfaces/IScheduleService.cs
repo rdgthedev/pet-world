@@ -1,6 +1,8 @@
 ﻿using System.Security.Cryptography;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.ViewModels.Schedule;
+using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 
 namespace PetWorldOficial.Application.Services.Interfaces;
 
@@ -20,6 +22,12 @@ public interface IScheduleService
     Task<IEnumerable<ScheduleDetailsViewModel>> GetAllByAnimalsIds(IEnumerable<int> id,
         CancellationToken cancellationToken);
 
+    Task<ScheduleDetailsViewModel?> GetByAnimalIdAndDateAndTime(
+        int animalId,
+        DateTime schedulingDate,
+        TimeSpan schedulingTime,
+        CancellationToken cancellationToken);
+
     Task<bool> BusySchedule(DateTime date, CancellationToken cancellationToken);
     Task<bool> IsMaximumBookingsExceeded(DateTime date, TimeSpan time, CancellationToken cancellationToken);
 
@@ -32,9 +40,21 @@ public interface IScheduleService
     Task Update(UpdateScheduleViewModel model, CancellationToken cancellationToken);
     Task Delete(DeleteScheduleViewModel model, CancellationToken cancellationToken);
     Task Create(CreateScheduleCommand command, CancellationToken cancellationToken);
-    Task CreateInBatch(CreateScheduleCommand command, CancellationToken cancellationToken);
+    Task CreateInBatch(List<CreateScheduleCommand> command, CancellationToken cancellationToken);
 
-    Task<IEnumerable<TimeSpan>> GetAllSchedulesTimesByDate(
+    Task<IEnumerable<TimeSpan>> GetAllSchedulesTimesByDateAndCategory(
         DateTime date,
+        string category,
+        CancellationToken cancellationToken);
+
+    Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
+        string category,
+        DateTime date,
+        CancellationToken cancellationToken);
+
+    Task<IEnumerable<Schedulling>> GetByCategoryAndDateAndTime(
+        string category,
+        DateTime date,
+        TimeSpan time,
         CancellationToken cancellationToken);
 }

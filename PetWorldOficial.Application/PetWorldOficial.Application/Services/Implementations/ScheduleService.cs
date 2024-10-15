@@ -5,6 +5,7 @@ using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Settings;
 using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Application.Services.Implementations;
@@ -45,6 +46,18 @@ public class ScheduleService(
         CancellationToken cancellationToken)
         => _mapper.Map<IEnumerable<ScheduleDetailsViewModel>>(
             await _scheduleRepository.GetAllByAnimalsIds(ids, cancellationToken));
+
+    public async Task<ScheduleDetailsViewModel?> GetByAnimalIdAndDateAndTime(
+        int animalId,
+        DateTime schedulingDate,
+        TimeSpan schedulingTime,
+        CancellationToken cancellationToken)
+        => _mapper.Map<ScheduleDetailsViewModel>(
+            await _scheduleRepository.GetByAnimalIdAndDateAndTime(
+                animalId,
+                schedulingDate,
+                schedulingTime,
+                cancellationToken));
 
     public async Task<bool> BusySchedule(DateTime date,
         CancellationToken cancellationToken)
@@ -93,16 +106,44 @@ public class ScheduleService(
 
         await _scheduleRepository.CreateAsync(s, cancellationToken);
     }
-    
-    public async Task CreateInBatch(CreateScheduleCommand command, CancellationToken cancellationToken)
+
+    public async Task CreateInBatch(List<CreateScheduleCommand> commands, CancellationToken cancellationToken)
     {
-        await _scheduleRepository.CreateRangeAsync(command.Schedullings!, cancellationToken);
+        var schedulings = _mapper.Map<List<Schedulling>>(commands);
+        await _scheduleRepository.CreateRangeAsync(schedulings, cancellationToken);
     }
 
-    public async Task<IEnumerable<TimeSpan>> GetAllSchedulesTimesByDate(
+    public async Task<IEnumerable<TimeSpan>> GetAllSchedulesTimesByDateAndCategory(
+        DateTime date,
+        string category,
+        CancellationToken cancellationToken)
+        => await _scheduleRepository
+            .GetAllScheduleTimesByDateAndCategory(date,
+                (ECategoryType)Enum.Parse(typeof(ECategoryType), category),
+                cancellationToken);
+
+    public async Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
+        string category,
         DateTime date,
         CancellationToken cancellationToken)
-        => await _scheduleRepository.GetAllScheduleTimesByDate(date, cancellationToken);
+        => await _scheduleRepository.GetByCategoryAndDate(
+            (ECategoryType)Enum.Parse(typeof(ECategoryType), category),
+            date,
+            cancellationToken);
+
+    public async Task<IEnumerable<Schedulling>> GetByCategoryAndDateAndTime(
+        string category,
+        DateTime date,
+        TimeSpan time,
+        CancellationToken cancellationToken)
+    {
+        return await _scheduleRepository.GetByCategoryAndDateAndTime(
+            (ECategoryType)Enum.Parse(typeof(ECategoryType), category),
+            date,
+            time,
+            cancellationToken);
+    }
+
 
     public async Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan time,
         CancellationToken cancellationToken)

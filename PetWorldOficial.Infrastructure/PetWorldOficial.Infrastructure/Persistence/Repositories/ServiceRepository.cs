@@ -30,6 +30,7 @@ public class ServiceRepository(AppDbContext context) : IServiceRepository
     {
         return await context
             .Services
+            .Include(s => s.Category)
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
     }

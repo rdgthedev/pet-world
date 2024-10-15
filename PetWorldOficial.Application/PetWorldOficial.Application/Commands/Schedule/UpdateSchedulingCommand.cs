@@ -7,8 +7,10 @@ using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Commands.Schedule;
 
-public record CreateScheduleCommand(ClaimsPrincipal? UserPrincipal) : IRequest<CreateScheduleCommand>
+public record UpdateSchedulingCommand(ClaimsPrincipal? UserPrincipal) : IRequest<UpdateSchedulingCommand>
 {
+    public int SchedulingId { get; set; }
+
     [Required(ErrorMessage = "O pet é obrigatório!")]
     public int? AnimalId { get; set; }
 
@@ -31,11 +33,12 @@ public record CreateScheduleCommand(ClaimsPrincipal? UserPrincipal) : IRequest<C
 
     [Required(ErrorMessage = "O preço é obrigatório")]
     public double ServicePrice { get; set; }
-
+    public string EmployeeName { get; set; } = string.Empty;
     public string CategoryName { get; set; } = string.Empty;
+    public string AnimalName { get; set; } = string.Empty;
 
     public IEnumerable<AnimalDetailsViewModel?>? Animals { get; set; }
-    public List<Schedulling>? Schedullings { get; set; } 
+    public List<Schedulling>? Schedullings { get; set; }
     public int? UserId { get; set; }
     public int? EmployeeId { get; set; }
     public string Message { get; set; } = string.Empty;

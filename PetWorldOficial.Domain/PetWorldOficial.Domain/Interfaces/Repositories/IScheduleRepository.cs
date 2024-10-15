@@ -18,6 +18,13 @@ public interface IScheduleRepository
     public Task<IEnumerable<Schedulling?>> GetAllByAnimalsIds(IEnumerable<int> animalIds,
         CancellationToken cancellationToken);
 
+    Task<Schedulling?> GetByAnimalIdAndDateAndTime(
+        int animalId,
+        DateTime schedulingDate,
+        TimeSpan schedulingTime,
+        CancellationToken cancellationToken);
+
+
     public Task<IEnumerable<Schedulling?>> GetSchedulesWithEmployeeByDateAndTime(
         DateTime date,
         string serviceName,
@@ -31,8 +38,14 @@ public interface IScheduleRepository
     Task<IEnumerable<Schedulling?>> GetSchedulesByUsersIds(IEnumerable<int> usersIds,
         CancellationToken cancellationToken);
 
-    Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDate(
+    Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDateAndCategory(
         DateTime date,
+        ECategoryType categoryType,
+        CancellationToken cancellationToken);
+
+    Task<IEnumerable<Schedulling>> GetAllSchedulingsByDateAndTimeAsync(
+        DateTime schedulingsDate,
+        TimeSpan schedulingTime,
         CancellationToken cancellationToken);
 
     Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken);
@@ -40,5 +53,11 @@ public interface IScheduleRepository
     Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
         ECategoryType categoryType,
         DateTime schedullingDate,
+        CancellationToken cancellationToken);
+
+    Task<IEnumerable<Schedulling>> GetByCategoryAndDateAndTime(
+        ECategoryType categoryType,
+        DateTime schedullingDate,
+        TimeSpan schedulingTime,
         CancellationToken cancellationToken);
 }

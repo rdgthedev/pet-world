@@ -8,8 +8,8 @@
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw">
-        <img src="/Images/agendamentoDeServicos.png" alt="">
+    <h2 class="text-center">
+        Agendamento de Serviços
     </h2>
     <br>
 </div>
@@ -86,6 +86,7 @@ else if (TempData["SuccessMessage"] != null)
             <span asp-validation-for="@Model.Time" class="text-danger"></span>
         </div>
 
+
         <div class="col-md-8">
             <label asp-for="@Model.AnimalId" class="form-label">Pets<span style="color: red;">*</span></label>
             <select asp-for="@Model.AnimalId" class="form-select shadow-none">
@@ -96,6 +97,15 @@ else if (TempData["SuccessMessage"] != null)
                 }
             </select>
             <span asp-validation-for="@Model.AnimalId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.EmployeeId" class="form-label">Funcionário <span style="color: red;">*</span></label>
+            <select asp-for="@Model.EmployeeId" id="employee" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione um funcionário</option>
+                <!-- Horários disponíveis serão preenchidos aqui via AJAX -->
+            </select>
+            <span asp-validation-for="@Model.EmployeeId" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
@@ -131,62 +141,143 @@ else if (TempData["SuccessMessage"] != null)
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
-        let isSubmitting = false;
+$(document).ready(function () {
+    let isSubmitting = false;
 
-        function fetchTimesGenerator() {
-            var selectedDate = $('#date').val();
-            var durationInMinutes = $('#durationInMinutes').val();
-            var serviceName = $('#serviceName').val();
-            var categoryName = $('#categoryName').val();
+    // Função para buscar horários disponíveis
+    function fetchTimesGenerator() {
+        var selectedDate = $('#date').val();
+        var durationInMinutes = $('#durationInMinutes').val();
+        var serviceName = $('#serviceName').val();
+        var categoryName = $('#categoryName').val();
 
-            // Evita o AJAX quando o formulário estiver sendo submetido
-            if (selectedDate && !isSubmitting) {
-                $.ajax({
-                    url: '@Url.Action("GetAvailableTimes", "Schedule")',
-                    type: 'GET',
-                    data: {
-                        date: selectedDate,
-                        durationInMinutes: durationInMinutes,
-                        serviceName: serviceName,
-                        categoryName: categoryName
-                    },
-                    success: function (data) {
-                        // Supondo que a estrutura de dados retornada é { item1: employeeId, item2: times }
-                        $('#employeeId').val(data.item1);
+        if (selectedDate && !isSubmitting) {
+            $.ajax({
+                url: '@Url.Action("GetAvailableTimes", "Schedule")',
+                type: 'GET',
+                data: {
+                    date: selectedDate,
+                    durationInMinutes: durationInMinutes,
+                    serviceName: serviceName,
+                    categoryName: categoryName
+                },
+                success: function (data) {
+                    var timeSelect = $('#time');
+                    timeSelect.empty(); // Limpa os horários atuais
+                    timeSelect.append('<option value="" selected disabled>Selecione um horário</option>');
 
-                        var timeSelect = $('#time');
-                        timeSelect.empty(); // Limpa os horários atuais
-                        timeSelect.append('<option value="" selected disabled>Selecione um horário</option>');
+                    let firstAvailableTime = null;
+                    let allTimesDisabled = true; // Assume que todos os horários estão preenchidos
 
-                        $.each(data.item2, function (index, value) {
-                            timeSelect.append('<option value="' + value + '">' + value + '</option>');
-                        });
+                    $.each(data, function (index, timeDTO) {
+                        var option = $('<option></option>')
+                            .attr('value', timeDTO.time)
+                            .text(timeDTO.time);
 
-                        // Para depuração:
-                        console.log('ID do Funcionário:', data.item1);
-                        console.log('Horários Disponíveis:', data.item2);
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Erro ao buscar horários disponíveis:', error);
+                        if (!timeDTO.status) {
+                            option.attr('disabled', 'disabled'); // Desabilita horários não disponíveis
+                        } else {
+                            allTimesDisabled = false; // Pelo menos um horário disponível
+                            if (firstAvailableTime === null) {
+                                firstAvailableTime = timeDTO.time;
+                            }
+                        }
+
+                        timeSelect.append(option);
+                    });
+
+                    // Define o primeiro horário disponível, se houver
+                    if (firstAvailableTime) {
+                        timeSelect.val(firstAvailableTime);
                     }
-                });
-            }
+
+                    // Verifica se todos os horários estão ocupados e desabilita funcionários se for o caso
+                    if (allTimesDisabled) {
+                        console.log('Todos os horários estão ocupados. Desabilitando funcionários.');
+                        $('#employee').prop('disabled', true); // Desabilita o campo de funcionários
+                    } else {
+                        console.log('Existem horários disponíveis. Habilitando funcionários.');
+                        $('#employee').prop('disabled', false); // Habilita o campo de funcionários
+                        fetchAvailableEmployees(); // Busca os funcionários disponíveis
+                    }
+
+                    // Para depuração
+                    console.log('Horários Disponíveis:', data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Erro ao buscar horários disponíveis:', error);
+                }
+            });
         }
+    }
 
-        // Chama a função para buscar os horários ao carregar a página
+    // Função para buscar funcionários disponíveis
+    function fetchAvailableEmployees() {
+        var selectedDate = $('#date').val();
+        var selectedTime = $('#time').val();
+        var durationInMinutes = $('#durationInMinutes').val();
+        var serviceName = $('#serviceName').val();
+        var categoryName = $('#categoryName').val();
+
+        // Verifica se a data e o horário foram selecionados e o formulário não está sendo enviado
+        if (selectedDate && selectedTime && !isSubmitting) {
+            $.ajax({
+                url: '@Url.Action("GetAvailableEmployees", "Schedule")',
+                type: 'GET',
+                data: {
+                    CategoryName: categoryName,
+                    ServiceName: serviceName,
+                    SchedulingDate: selectedDate,
+                    SchedulingTime: selectedTime,
+                    DurationInMinutes: durationInMinutes
+                },
+                success: function (data) {
+                    var employeeSelect = $('#employee');
+                    employeeSelect.empty(); // Limpa os funcionários atuais
+                    employeeSelect.append('<option value="" selected disabled>Selecione um funcionário</option>');
+
+                    $.each(data, function (index, employee) {
+                        var option = $('<option></option>')
+                            .attr('value', employee.item1) // item1 para o ID do funcionário
+                            .text(employee.item2); // item2 para o nome do funcionário
+
+                        if (!employee.item3) {
+                            option.attr('disabled', 'disabled'); // Desabilita se o status for falso
+                        }
+
+                        employeeSelect.append(option);
+                    });
+
+                    // Para depuração
+                    console.log('Funcionários Disponíveis:', data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Erro ao buscar funcionários disponíveis:', error);
+                }
+            });
+        }
+    }
+
+    // Chama a função para buscar os horários ao carregar a página
+    fetchTimesGenerator();
+
+    // Reexecuta a função ao alterar a data
+    $('#date').change(function () {
         fetchTimesGenerator();
-
-        // Reexecuta a função ao alterar a data
-        $('#date').change(function () {
-            fetchTimesGenerator();
-        });
-
-        // Marca quando o formulário está sendo submetido
-        $('form').on('submit', function (event) {
-            isSubmitting = true;
-        });
     });
+
+    // Reexecuta a função ao alterar o horário
+    $('#time').change(function () {
+        fetchAvailableEmployees();
+    });
+
+    // Marca quando o formulário está sendo submetido
+    $('form').on('submit', function (event) {
+        isSubmitting = true;
+        var selectedEmployeeId = $('#employee').val();
+        $('#employeeId').val(selectedEmployeeId); // Preenche o campo oculto com o ID selecionado
+    });
+});
 </script>
 
 

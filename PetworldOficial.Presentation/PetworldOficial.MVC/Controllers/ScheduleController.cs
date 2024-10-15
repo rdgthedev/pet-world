@@ -3,6 +3,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Queries.Schedule;
@@ -15,16 +16,41 @@ using PetworldOficial.MVC.Utils;
 namespace PetworldOficial.MVC.Controllers;
 
 public class ScheduleController(
-    IServiceService _serviceService,
-    IAnimalService _animalService,
-    IUserService _userService,
     IScheduleService _scheduleService,
-    IMapper _mapper,
-    IMediator mediator) : Controller
+    IMediator mediator,
+    IMemoryCache memoryCache) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> GetAvailableTimes(
         GetAvailableTimesQuery query,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await mediator.Send(query, cancellationToken);
+            return Json(result);
+        }
+        catch (UserNotFoundException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
+        }
+        catch (ServiceNotFoundException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Não é possível agendar este serviço no momento. Tente novamente mais tarde!";
+            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
+        }
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> GetAvailableEmployees(
+        GetAvailaEmployeesToSchedulingQuery query,
         CancellationToken cancellationToken)
     {
         try
@@ -102,11 +128,13 @@ public class ScheduleController(
         CreateScheduleCommand command,
         CancellationToken cancellationToken)
     {
-        var animalsJson = TempData["Animals"] as string;
-        command.Animals = JsonConvert.DeserializeObject<List<AnimalDetailsViewModel>>(animalsJson!);
+        if (memoryCache.TryGetValue("Animals", out IEnumerable<AnimalDetailsViewModel>? animals))
+            command.Animals = animals;
 
         if (!ModelState.IsValid)
+        {
             return View(command);
+        }
 
         try
         {
@@ -114,12 +142,7 @@ public class ScheduleController(
             TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index", "Service");
         }
-        catch (BusyScheduleException e)
-        {
-            TempData["ErrorMessage"] = e.Message;
-            return View(command);
-        }
-        catch (MaximumBookingsPerAnimalExceededException e)
+        catch (SchedulingAlreadyExistsException e)
         {
             TempData["ErrorMessage"] = e.Message;
             return View(command);
@@ -146,20 +169,10 @@ public class ScheduleController(
     {
         try
         {
-            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id, cancellationToken);
+            var command = new UpdateSchedulingCommand(User) { SchedulingId = id };
 
-            if (schedule is null)
-                throw new ScheduleNotFoundException("Agendamento não encontrado!");
-
-            return View(new UpdateScheduleViewModel
-            {
-                Id = schedule.Id,
-                Date = schedule.Date,
-                Time = schedule.Time,
-                Observation = schedule.Observation,
-                Animal = schedule.Animal,
-                Service = schedule.Service
-            });
+            var result = await mediator.Send(command, cancellationToken);
+            return View(result);
         }
         catch (ScheduleNotFoundException e)
         {
@@ -175,26 +188,18 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update(UpdateScheduleViewModel model, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(UpdateSchedulingCommand command, CancellationToken cancellationToken)
     {
+        if (memoryCache.TryGetValue("Animals", out IEnumerable<AnimalDetailsViewModel>? animals))
+            command.Animals = animals;
+
         if (!ModelState.IsValid)
         {
-            var schedule = await _scheduleService.GetByIdWithAnimalAndService(model.Id, cancellationToken);
-            model.Service = schedule!.Service;
-            model.Animal = schedule.Animal;
-            return View(model);
+            return View(command);
         }
 
         try
         {
-            if (await _scheduleService.BusySchedule((DateTime)model.Date!, cancellationToken))
-                throw new BusyScheduleException("Agenda lotada para esta data!");
-
-            if (await _scheduleService.IsMaximumBookingsExceeded((DateTime)model.Date, (TimeSpan)model.Time!,
-                    cancellationToken))
-                throw new MaximumBookingsPerAnimalExceededException("Horário não disponível!");
-
-            await _scheduleService.Update(model, cancellationToken);
             TempData["SuccessMessage"] = "Agendamento alterado com sucesso!";
             return RedirectToAction("Index");
         }
@@ -212,10 +217,7 @@ public class ScheduleController(
             return RedirectToAction("Index");
         }
 
-        var scheduleDetails = await _scheduleService.GetByIdWithAnimalAndService(model.Id, cancellationToken);
-        model.Service = scheduleDetails!.Service;
-        model.Animal = scheduleDetails.Animal;
-        return View(model);
+        return View(command);
     }
 
 

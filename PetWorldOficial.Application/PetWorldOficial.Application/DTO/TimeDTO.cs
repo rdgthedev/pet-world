@@ -1,6 +1,7 @@
 ﻿namespace PetWorldOficial.Application.DTO;
 
-public record TimeDTO(TimeSpan Time, bool Status)
+public class TimeDTO
 {
+    public TimeSpan Time { get; set; }
     public bool Status { get; set; }
 }
