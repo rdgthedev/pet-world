@@ -170,7 +170,6 @@ public class ScheduleController(
         try
         {
             var command = new UpdateSchedulingCommand(User) { SchedulingId = id };
-
             var result = await mediator.Send(command, cancellationToken);
             return View(result);
         }
@@ -190,9 +189,6 @@ public class ScheduleController(
     [HttpPost]
     public async Task<IActionResult> Update(UpdateSchedulingCommand command, CancellationToken cancellationToken)
     {
-        if (memoryCache.TryGetValue("Animals", out IEnumerable<AnimalDetailsViewModel>? animals))
-            command.Animals = animals;
-
         if (!ModelState.IsValid)
         {
             return View(command);
@@ -200,6 +196,7 @@ public class ScheduleController(
 
         try
         {
+            await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = "Agendamento alterado com sucesso!";
             return RedirectToAction("Index");
         }

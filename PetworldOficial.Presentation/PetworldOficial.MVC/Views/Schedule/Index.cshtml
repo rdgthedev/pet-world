@@ -9,7 +9,7 @@
 {
     <div class="container-fluid text-black py-3">
         <br>
-        <h1 class="display-6 text-center fw-normal">Agendamentos</h1>
+        <h1 class="text-center">Agendamentos</h1>
         <br>
     </div>
 }
@@ -17,7 +17,9 @@ else
 {
     <div class="container-fluid text-black py-3">
         <br>
-        <h1 class="display-6 text-center fw-normal"><img src="/Images/MeusAgendamentos.png" alt=""></h1>
+        <h1 class="text-center">
+            Meus Agendamentos
+        </h1>
         <br>
     </div>
 }
@@ -66,10 +68,10 @@ else if (TempData["SuccessMessage"] != null)
                 <td style="text-align: center;">@schedule.Date.ToString("dd-MM-yyyy")</td>
                 <td style="text-align: center;">@schedule.Time.ToString(@"hh\:mm")</td>
                 <td style="text-align: center;">
-                            <a class="text-decoration-none" asp-controller="Schedule" asp-action="Update" asp-route-id="@schedule.Id">
+                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Update" asp-route-id="@schedule.Id">
                         <img style="width: 45px; cursor: pointer" src="\Images/Edit.svg" alt="Edit">
                     </a>
-                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id" >
+                    <a class="text-decoration-none" asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id">
                         <img style="width: 35px; cursor: pointer" src="\Images/trash2.svg" alt="Delete">
                     </a>
                 </td>

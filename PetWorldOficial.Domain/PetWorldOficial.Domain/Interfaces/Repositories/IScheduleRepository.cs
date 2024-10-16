@@ -7,8 +7,10 @@ public interface IScheduleRepository
 {
     Task CreateAsync(Schedulling schedulling, CancellationToken cancellationToken);
     Task CreateRangeAsync(List<Schedulling> schedullings, CancellationToken cancellationToken);
+    Task UpdateRangeAsync(List<Schedulling> schedullings, CancellationToken cancellationToken);
     Task<IEnumerable<Schedulling>> GetAllAsync(CancellationToken cancellationToken);
     Task<Schedulling?> GetByIdAsync(int id, CancellationToken cancellationToken);
+    Task<IEnumerable<Schedulling>>? GetByIdsAsync(List<int> ids, CancellationToken cancellationToken);
     Task UpdateAsync(Schedulling schedule, CancellationToken cancellationToken);
     Task DeleteAsync(Schedulling schedule, CancellationToken cancellationToken);
     Task<int> GetCountByDateAsync(DateTime date, CancellationToken cancellationToken);

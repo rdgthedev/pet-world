@@ -88,8 +88,32 @@ public class ScheduleService(
             .Any(schedule => schedule!.AnimalId == command.AnimalId && schedule.Date == command.Date);
     }
 
-    public async Task Update(UpdateScheduleViewModel entity, CancellationToken cancellationToken)
-        => await _scheduleRepository.UpdateAsync(_mapper.Map<Schedulling>(entity), cancellationToken);
+    public async Task Update(UpdateSchedulingCommand command, CancellationToken cancellationToken)
+    {
+        var scheduling = await _scheduleRepository.GetByIdAsync(command.SchedulingId, cancellationToken);
+
+        if (scheduling is null)
+            throw new Exception();
+
+        scheduling = _mapper.Map(command, scheduling);
+        await _scheduleRepository.UpdateAsync(scheduling!, cancellationToken);
+    }
+
+    public async Task UpdateRange(List<UpdateSchedulingCommand> commands, CancellationToken cancellationToken)
+    {
+        var schedulings = await _scheduleRepository.GetByIdsAsync(
+            commands.Select(c => c.SchedulingId).ToList(), cancellationToken)!;
+
+        foreach (var command in commands)
+        {
+            var schedulingToUpdate = schedulings.FirstOrDefault(s => s.Id == command.SchedulingId);
+
+            if (schedulingToUpdate != null)
+                _mapper.Map(command, schedulingToUpdate);
+        }
+
+        await _scheduleRepository.UpdateRangeAsync(schedulings.ToList(), cancellationToken);
+    }
 
     public async Task Delete(DeleteScheduleViewModel entity, CancellationToken cancellationToken)
         => await _scheduleRepository.DeleteAsync(_mapper.Map<Schedulling>(entity), cancellationToken);
@@ -131,19 +155,18 @@ public class ScheduleService(
             date,
             cancellationToken);
 
-    public async Task<IEnumerable<Schedulling>> GetByCategoryAndDateAndTime(
+    public async Task<IEnumerable<ScheduleDetailsViewModel>> GetByCategoryAndDateAndTime(
         string category,
         DateTime date,
         TimeSpan time,
         CancellationToken cancellationToken)
     {
-        return await _scheduleRepository.GetByCategoryAndDateAndTime(
+        return _mapper.Map<IEnumerable<ScheduleDetailsViewModel>>(await _scheduleRepository.GetByCategoryAndDateAndTime(
             (ECategoryType)Enum.Parse(typeof(ECategoryType), category),
             date,
             time,
-            cancellationToken);
+            cancellationToken));
     }
-
 
     public async Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan time,
         CancellationToken cancellationToken)

@@ -1,7 +1,4 @@
-﻿using System.Linq.Expressions;
-using System.Xml.Schema;
-using Azure.Core;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Interfaces.Repositories;
@@ -14,6 +11,12 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
     public async Task CreateRangeAsync(List<Schedulling> schedullings, CancellationToken cancellationToken)
     {
         await _context.Schedullings.AddRangeAsync(schedullings, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateRangeAsync(List<Schedulling> schedullings, CancellationToken cancellationToken)
+    {
+        _context.Schedullings.UpdateRange(schedullings);
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -30,12 +33,23 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
     {
         return await _context
             .Schedullings
-            .AsNoTracking()
             .Include(s => s.Animal)
             .Include(s => s.Service)
             .ThenInclude(s => s.Category)
             .Include(s => s.Employee)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+    }
+
+    public async Task<IEnumerable<Schedulling>>? GetByIdsAsync(List<int> ids, CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedullings
+            .Include(s => s.Animal)
+            .Include(s => s.Service)
+            .ThenInclude(s => s.Category)
+            .Include(s => s.Employee)
+            .Where(s => ids.Contains(s.Id))
+            .ToListAsync(cancellationToken);
     }
 
     public async Task CreateAsync(Schedulling entity, CancellationToken cancellationToken)

@@ -37,7 +37,8 @@ public interface IScheduleService
 
     Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan hour, CancellationToken cancellationToken);
 
-    Task Update(UpdateScheduleViewModel model, CancellationToken cancellationToken);
+    Task Update(UpdateSchedulingCommand command, CancellationToken cancellationToken);
+    Task UpdateRange(List<UpdateSchedulingCommand> schedulings, CancellationToken cancellationToken);
     Task Delete(DeleteScheduleViewModel model, CancellationToken cancellationToken);
     Task Create(CreateScheduleCommand command, CancellationToken cancellationToken);
     Task CreateInBatch(List<CreateScheduleCommand> command, CancellationToken cancellationToken);
@@ -52,7 +53,7 @@ public interface IScheduleService
         DateTime date,
         CancellationToken cancellationToken);
 
-    Task<IEnumerable<Schedulling>> GetByCategoryAndDateAndTime(
+    Task<IEnumerable<ScheduleDetailsViewModel>> GetByCategoryAndDateAndTime(
         string category,
         DateTime date,
         TimeSpan time,

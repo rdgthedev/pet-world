@@ -7,6 +7,7 @@ public class ScheduleDetailsViewModel
     public int Id { get; set; }
     public int AnimalId { get; set; }
     public int ServiceId { get; set; }
+    public int EmployeeId { get; set; }
     public Guid Code { get; set; }
     public DateTime Date { get; set; }
     public TimeSpan Time { get; set; }

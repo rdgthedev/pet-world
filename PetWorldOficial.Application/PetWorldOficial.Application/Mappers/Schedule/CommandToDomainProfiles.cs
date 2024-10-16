@@ -16,5 +16,14 @@ public class CommandToDomainProfiles : Profile
                 s.Date!.Value,
                 s.Time!.Value,
                 s.Observation));
+
+        CreateMap<UpdateSchedulingCommand, Schedulling>()
+            .ConstructUsing(s => new Schedulling(
+                s.AnimalId!.Value,
+                s.EmployeeId!.Value,
+                s.ServiceId,
+                s.Date!.Value,
+                s.Time!.Value,
+                s.Observation));
     }
 }
