@@ -224,4 +224,10 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
                         && s.Service.Category.Title == categoryType.ToString())
             .ToListAsync(cancellationToken);
     }
+
+    public async Task DeleteRangeAsync(List<Schedulling> schedulings, CancellationToken cancellationToken)
+    {
+        _context.Schedullings.RemoveRange(schedulings);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

@@ -224,21 +224,8 @@ public class ScheduleController(
     {
         try
         {
-            var schedule = await _scheduleService.GetByIdWithAnimalAndService(id, cancellationToken);
-
-            if (schedule is null)
-                throw new ScheduleNotFoundException("Agendamento não encontrado!");
-
-            return View(new DeleteScheduleViewModel
-            {
-                Id = schedule.Id,
-                AnimalId = schedule.Animal.Id,
-                ServiceId = schedule.Service.Id,
-                Service = schedule.Service,
-                Animal = schedule.Animal,
-                Date = schedule.Date,
-                Time = schedule.Time
-            });
+            var result = await mediator.Send(new DeleteSchedulingCommand(id), cancellationToken);
+            return View(result);
         }
         catch (ScheduleNotFoundException e)
         {
@@ -253,13 +240,17 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete([FromForm] DeleteScheduleViewModel model,
+    public async Task<IActionResult> Delete(
+        [FromForm] DeleteSchedulingCommand command,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+            return View(command);
+
         try
         {
-            await _scheduleService.Delete(model, cancellationToken);
-            TempData["SuccessMessage"] = "Agendamento cancelado com sucesso!";
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
         }
         catch (Exception)

@@ -13,6 +13,7 @@ public interface IScheduleRepository
     Task<IEnumerable<Schedulling>>? GetByIdsAsync(List<int> ids, CancellationToken cancellationToken);
     Task UpdateAsync(Schedulling schedule, CancellationToken cancellationToken);
     Task DeleteAsync(Schedulling schedule, CancellationToken cancellationToken);
+    Task DeleteRangeAsync(List<Schedulling> schedulings, CancellationToken cancellationToken);
     Task<int> GetCountByDateAsync(DateTime date, CancellationToken cancellationToken);
     Task<IEnumerable<Schedulling?>> GetAllByServiceIdAsync(int serviceId, CancellationToken cancellationToken);
     Task<Schedulling?> GetByIdWithAnimalAndService(int id, CancellationToken cancellationToken);

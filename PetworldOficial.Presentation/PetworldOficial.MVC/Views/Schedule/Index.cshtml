@@ -43,7 +43,7 @@ else if (TempData["SuccessMessage"] != null)
     </div>
 }
 
-@if (Model.Any())
+@if (Model is not null && Model.Any())
 {
     <table class="table-dark table table-hover">
         <thead>

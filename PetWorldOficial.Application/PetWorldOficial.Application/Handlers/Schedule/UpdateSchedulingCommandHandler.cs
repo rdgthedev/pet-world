@@ -47,8 +47,6 @@ public class UpdateSchedulingCommandHandler(
             request.Message = "Agendamento atualizado com sucesso!";
 
             return request;
-
-            return request;
         }
         catch (Exception)
         {

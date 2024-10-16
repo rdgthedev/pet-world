@@ -27,22 +27,17 @@ public class GetAllSchedulesQueryHandler(
             var isAdmin = request.UserPrincipal.IsInRole(ERole.Admin.ToString());
 
             if (isAdmin)
-                return await scheduleService.GetAll(cancellationToken)
-                       ?? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!");
+                return await scheduleService.GetAll(cancellationToken) ?? [];
 
             var animalsIds = (await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken))
-                .Select(a => a!.Id).ToList();
+                .Select(a => a!.Id).ToList() ?? [];
 
             if (!animalsIds.Any())
-                throw new ScheduleNotFoundException("Nenhum agendamento encontrado!");
+                return Enumerable.Empty<ScheduleDetailsViewModel>();
 
-            var schedules = (await scheduleService
-                .GetAllByAnimalsIds(animalsIds, cancellationToken)).ToList();
+            var schedulings = await scheduleService.GetAllByAnimalsIds(animalsIds, cancellationToken);
 
-            if (!schedules.Any() || schedules is null)
-                throw new ScheduleNotFoundException("Nenhum agendamento encontrado!");
-
-            return schedules;
+            return schedulings.ToList() ?? [];
         }
         catch (Exception)
         {

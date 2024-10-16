@@ -6,14 +6,14 @@ using PetWorldOficial.Application.Settings;
 using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
+using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Application.Services.Implementations;
 
 public class ScheduleService(
     IScheduleRepository _scheduleRepository,
-    IMapper _mapper,
-    IOptions<OpeningHours> openingHours) : IScheduleService
+    IMapper _mapper) : IScheduleService
 {
     public async Task<IEnumerable<ScheduleDetailsViewModel>> GetAll(CancellationToken cancellationToken)
         => _mapper.Map<IEnumerable<ScheduleDetailsViewModel>>(await _scheduleRepository.GetAllAsync(cancellationToken));
@@ -172,5 +172,16 @@ public class ScheduleService(
         CancellationToken cancellationToken)
     {
         return await _scheduleRepository.CountSchedulesAsync(scheduleDate, time, cancellationToken);
+    }
+
+    public async Task DeleteRange(List<DeleteSchedulingCommand> commands, CancellationToken cancellationToken)
+    {
+        var schedulings = await _scheduleRepository.GetByIdsAsync(
+            commands.Select(c => c.SchedulingId).ToList(), cancellationToken)!;
+
+        if (schedulings is null)
+            throw new ScheduleNotFoundException("Agendamento não encontrado!");
+
+        await _scheduleRepository.DeleteRangeAsync(schedulings.ToList(), cancellationToken);
     }
 }

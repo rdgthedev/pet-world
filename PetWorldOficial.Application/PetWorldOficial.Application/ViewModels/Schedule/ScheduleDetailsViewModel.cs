@@ -15,5 +15,4 @@ public class ScheduleDetailsViewModel
     public Domain.Entities.Service Service { get; set; } = null!;
     public Domain.Entities.Animal Animal { get; set; } = null!;
     public Domain.Entities.User Employee { get; set; } = null!;
-    public int DurationInMinutes { get; set; }
 }

@@ -34,12 +34,12 @@ public interface IScheduleService
     Task<bool> IsMaximumServiceBookingsPerAnimalExceededAsync(
         CreateScheduleCommand command,
         CancellationToken cancellationToken);
-
     Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan hour, CancellationToken cancellationToken);
 
     Task Update(UpdateSchedulingCommand command, CancellationToken cancellationToken);
     Task UpdateRange(List<UpdateSchedulingCommand> schedulings, CancellationToken cancellationToken);
     Task Delete(DeleteScheduleViewModel model, CancellationToken cancellationToken);
+    Task DeleteRange(List<DeleteSchedulingCommand> commands, CancellationToken cancellationToken);
     Task Create(CreateScheduleCommand command, CancellationToken cancellationToken);
     Task CreateInBatch(List<CreateScheduleCommand> command, CancellationToken cancellationToken);
 
