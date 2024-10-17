@@ -5,40 +5,39 @@ using PetWorldOficial.Infrastructure.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
-public class SupplierRepository : ISupplierRepository
+public class SupplierRepository(AppDbContext context) : ISupplierRepository
 {
-    private readonly AppDbContext _context;
-    
-    public SupplierRepository(AppDbContext context)
+    public async Task<IEnumerable<Supplier>> GetAllAsync(CancellationToken cancellationToken)
     {
-        _context = context;
-    }
-    
-    public async Task<IEnumerable<Supplier>> GetAllAsync()
-    {
-        return await _context.Suppliers.AsNoTracking().ToListAsync();
+        return await context
+            .Suppliers
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<Supplier?> GetByIdAsync(int id)
+    public async Task<Supplier?> GetByIdAsync(int id,  CancellationToken cancellationToken)
     {
-        return await _context.Suppliers.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
+        return await context
+            .Suppliers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async Task CreateAsync(Supplier supplierModel)
+    public async Task CreateAsync(Supplier supplierModel, CancellationToken cancellationToken)
     {
-        await _context.Suppliers.AddAsync(supplierModel);
-        await _context.SaveChangesAsync();
+        await context.Suppliers.AddAsync(supplierModel, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Supplier supplierModel)
+    public async Task UpdateAsync(Supplier supplierModel, CancellationToken cancellationToken)
     {
-        _context.Update(supplierModel);
-        await _context.SaveChangesAsync();
+        context.Update(supplierModel);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Supplier supplierModel)
+    public async Task DeleteAsync(Supplier supplierModel, CancellationToken cancellationToken)
     {
-        _context.Remove(supplierModel);
-        await _context.SaveChangesAsync();
+        context.Remove(supplierModel);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

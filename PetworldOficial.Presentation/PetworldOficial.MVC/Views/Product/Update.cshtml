@@ -1,8 +1,9 @@
-﻿@model PetworldOficial.MVC.Models.Product.UpdateProductViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model PetWorldOficial.Application.Commands.Product.UpdateProductCommand
 
 @{
     ViewData["Title"] = "Atualizar Produto";
-    Layout = "_Layout";
+    Layout = "_LayoutCRUD";
 }
 
 <div class="container-fluid text-black py-3">
@@ -10,55 +11,79 @@
     <h2 class="display-6 text-center fw">Dados do Produto</h2>
     <br>
 </div>
+
 <div class="d-flex justify-content-center align-items-center">
-    <img style="width: 350px;" src="\Images/@Model.ImageUrl" alt="Imagem do Produto">
+    @if (Model.ImageUrl != null)
+    {
+        <img style="width: 250px;" src="\Images/@Model.ImageUrl" alt="Imagem do Produto">
+    }
 </div>
+
 <div class="container">
     <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Product" asp-action="Update" method="post">
-            
-            
+        <input type="hidden" asp-for="@Model.ImageUrl"/>
+        <input type="hidden" asp-for="@Model.Id"/>
+        <input type="hidden" asp-for="@Model.ProductId"/>
+
         <div class="col-md-8">
-            <label asp-for="@Model.Id" class="form-label">Id</label>
-            <input asp-for="@Model.Id" type="text" class="form-control shadow-none" placeholder="Id" readonly>
+            <label asp-for="@Model.Name" class="form-label">Nome <span style="color: red;">*</span></label>
+            <input asp-for="@Model.Name" type="text" class="form-control shadow-none">
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Name" class="form-label">Nome<span style="color: red;">*</span></label>
-            <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Nome">
+            <label asp-for="@Model.Description" class="form-label">Descrição <span style="color: red;">*</span></label>
+            <input asp-for="@Model.Description" type="text" class="form-control shadow-none" value="@Model.Description">
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Description" class="form-label">Descrição<span style="color: red;">*</span></label>
-            <input asp-for="@Model.Description" type="text" class="form-control shadow-none" placeholder="Descrição">
+            <label asp-for="@Model.Price" class="form-label">Preço <span style="color: red;">*</span></label>
+            <input asp-for="@Model.Price" type="text" class="form-control shadow-none" value="@Model.Price">
+            <span asp-validation-for="Price" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Price" class="form-label">Preço<span style="color: red;">*</span></label>
-            <input asp-for="@Model.Price" type="text" class="form-control shadow-none" placeholder="Preço">
+            <label asp-for="@Model.QuantityInStock" class="form-label">Quantidade <span style="color: red;">*</span></label>
+            <input asp-for="@Model.QuantityInStock" type="text" class="form-control shadow-none" value="@Model.QuantityInStock">
+            <span asp-validation-for="QuantityInStock" class="text-danger"></span>
         </div>
-            
+
         <div class="col-md-8">
-            <label asp-for="@Model.SupplierId" class="form-label">Fornecedor<span style="color: red;">*</span></label>
-            <select asp-for="@Model.SupplierId" class="form-select shadow-none">
-                <option value="" selected disabled>Selecione um fornecedor</option>
-                @foreach (var supplier in Model.Suppliers!)
+            <label asp-for="@Model.CategoryId" class="form-label">Categoria <span style="color: red;">*</span></label>
+            <select asp-for="@Model.CategoryId" class="form-select shadow-none">
+                <option value="@Model.CategoryId" selected disabled>@Model.CategoryName</option>
+                @foreach (var category in Model.Categories)
                 {
-                    <option value="@supplier.Id">@supplier.Company</option>
+                    <option value="@category.Id">@category.Title</option>
                 }
             </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
-            <label class="form-label">Imagem<span style="color: red;">*</span></label>
-            <input type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
+            <label asp-for="@Model.SupplierId" class="form-label">Fornecedor <span style="color: red;">*</span></label>
+            <select asp-for="@Model.SupplierId" class="form-select shadow-none">
+                <option value="@Model.SupplierId" selected disabled>@Model.SupplierName</option>
+                @foreach (var supplier in Model.Suppliers)
+                {
+                    <option value="@supplier.Id">@supplier.Name</option>
+                }
+            </select>
+            <span asp-validation-for="SupplierId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.File" class="form-label">Imagem <span style="color: red;">*</span></label>
+            <input asp-for="@Model.File" type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
+            <span asp-validation-for="File" class="text-danger"></span>
         </div>
         <div class="d-grid gap-2 col-4 mx-auto col-md-5">
             <br>
-            <button class="btn btn-dark btn-lg" type="submit">Alterar</button>
+            <button class="btn btn-dark btn-lg" type="submit">Atualizar</button>
         </div>
     </form>
-        
-    <footer>
 
+    <footer>
     </footer>
 </div>

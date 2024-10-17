@@ -10,43 +10,58 @@ public class ProductMap : IEntityTypeConfiguration<Product>
     {
         builder.ToTable("Product");
 
-        builder.HasKey(product => product.Id);
-        builder.Property(product => product.Id)
+        builder.HasKey(p => p.Id);
+        builder.Property(p => p.Id)
             .ValueGeneratedOnAdd()
             .UseIdentityColumn();
 
-        builder.Property(product => product.Name)
+        builder.HasOne(p => p.Supplier)
+            .WithMany(s => s.Products)
+            .HasForeignKey(s => s.SupplierId)
+            .HasConstraintName("FK_Product_Supplier_SupplierId")
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .HasConstraintName("FK_Product_Category_CategoryId");
+
+        builder.Property(p => p.Name)
             .HasColumnName("Name")
             .HasColumnType("VARCHAR")
-            .HasMaxLength(180)
+            .HasMaxLength(120)
             .IsRequired();
-        
-        builder.Property(product => product.Description)
+
+        builder.Property(p => p.Description)
             .HasColumnName("Description")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(255)
             .IsRequired();
-        
-        builder.Property(product => product.ImageUrl)
+
+        builder.Property(p => p.ImageUrl)
             .HasColumnName("Image")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(255)
             .IsRequired();
 
-        builder.Property(product => product.Price)
+        builder.Property(p => p.Price)
             .HasColumnName("Price")
-            .HasColumnType("MONEY")
+            .HasColumnType("DECIMAL(10,2)")
             .IsRequired();
-        
-        builder.HasOne(product => product.Supplier)
-            .WithMany(supplier => supplier.Products)
-            .HasForeignKey(product => product.SupplierId)
-            .HasConstraintName("FK_Product_Supplier_SupplierId")
-            .OnDelete(DeleteBehavior.SetNull);
 
-        builder.HasIndex(product => product.Id, "IX_Product_Id")
+        builder.Property(s => s.CreatedAt)
+            .HasColumnName("CreatedAt")
+            .HasColumnType("DATETIME")
+            .IsRequired();
+
+        builder.Property(s => s.LastUpdatedAt)
+            .HasColumnName("LastUpdatedAt")
+            .HasColumnType("DATETIME")
+            .IsRequired(false);
+
+        builder.HasIndex(s => s.Id, "IX_Product_Id")
             .IsUnique();
-        
+
         builder.HasIndex(product => product.Name, "IX_Product_Name")
             .IsUnique();
     }

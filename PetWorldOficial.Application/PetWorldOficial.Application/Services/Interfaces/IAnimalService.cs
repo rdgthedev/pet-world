@@ -1,22 +1,16 @@
-﻿using PetWorldOficial.Application.DTOs.Animal.Input;
-using PetWorldOficial.Application.DTOs.Animal.Output;
+﻿using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.ViewModels.Animal;
-using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IAnimalService
 {
-    public Task<IEnumerable<AnimalDetailsViewModel>> GetAll();
-
-    public Task<AnimalDetailsViewModel?> GetById(int id);
-
-    public Task Update(UpdateAnimalViewModel animalDto);
-
-    public Task Delete(DeleteAnimalViewModel animalDto);
-
-    public Task Create(CreateAnimalViewModel animalDto);
-
-    public Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserId(int id);
-    public Task<IEnumerable<AnimalDetailsViewModel?>> GetWithUser();
+    public Task<IEnumerable<AnimalDetailsViewModel>> GetAll(CancellationToken cancellationToken);
+    public Task<AnimalDetailsViewModel?> GetById(int id, CancellationToken cancellationToken);
+    public Task Update(UpdateAnimalCommand command, CancellationToken cancellationToken);
+    public Task Delete(DeleteAnimalCommand command, CancellationToken cancellationToken);
+    public Task Create(RegisterAnimalCommand command, CancellationToken cancellationToken);
+    public Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserIdWithOwnerAndRace(int id, CancellationToken cancellationToken);
+    public Task<IEnumerable<AnimalDetailsViewModel?>> GetWithOwnerAndRace(CancellationToken cancellationToken);
+    public Task<AnimalDetailsViewModel?> GetByIdWithOwnerAndCategoryAndRaceAsync(int id, CancellationToken cancellationToken);
 }

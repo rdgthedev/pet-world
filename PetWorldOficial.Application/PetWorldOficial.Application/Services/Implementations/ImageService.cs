@@ -1,7 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
-using PetWorldOficial.Domain.Interfaces.ApplicationServices;
 
 namespace PetWorldOficial.Application.Services.Implementations;
 
@@ -10,12 +9,14 @@ public class ImageService : IImageService
     public string ExtensionValidator(string fileName)
     {
         HashSet<string> extensions = [".jpg", ".png", ".jpeg"];
+
         var imageExtension = Path.GetExtension(fileName);
-        
+
         if (string.IsNullOrEmpty(extensions.FirstOrDefault(extension => extension.Equals(imageExtension))))
-            throw new InvalidExtensionException("O Tipo do arquivo é inválido! Certifique-se de que a imagem é do tipo " +
-                                                    ".jpg\", \".png\" ou \".jpeg");
-        
+            throw new InvalidExtensionException(
+                "O Tipo do arquivo é inválido! Certifique-se de que a imagem é do tipo " +
+                ".jpg\", \".png\" ou \".jpeg");
+
         return imageExtension;
     }
 
@@ -26,9 +27,10 @@ public class ImageService : IImageService
     public async Task SaveImage(IFormFile file, string path, string imageUrl)
     {
         var filePath = Path.Combine(path, "Images");
-        
-        if (!DirectoryValidator(filePath)) throw new NotFoundException("Este diretório não existe ou está incorreto!");
-        
+
+        if (!DirectoryValidator(filePath))
+            throw new NotFoundException("Este diretório não existe ou está incorreto!");
+
         await using var imageFileStream = new FileStream(Path.Combine(filePath, imageUrl), FileMode.Create);
         await file.CopyToAsync(imageFileStream);
     }

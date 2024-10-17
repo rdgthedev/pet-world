@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model PetWorldOficial.Application.ViewModels.Schedule.CreateScheduleViewModel
+@model PetWorldOficial.Application.Commands.Schedule.CreateScheduleCommand
 
 @{
     ViewData["Title"] = "Agendar";
@@ -8,7 +8,9 @@
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw"><img src="/Images/agendamentoDeServicos.png" alt=""></h2>
+    <h2 class="text-center">
+        Agendamento de Serviços
+    </h2>
     <br>
 </div>
 
@@ -25,7 +27,7 @@
                     <p>Você não possui um pet registrado! Para registrar um pet clique em continuar.</p>
                 </div>
                 <div class="modal-footer">
-                    <a asp-controller="Service" asp-action="Index" class="btn btn-secondary shadow-none">Fechar</a>
+                    <a asp-controller="Service" asp-action="Index" class="btn btn-secondary shadow-none">Voltar</a>
                     <a asp-controller="Animal" asp-action="Register" class="btn btn-primary shadow-none">Continuar</a>
                 </div>
             </div>
@@ -60,21 +62,30 @@ else if (TempData["SuccessMessage"] != null)
 
 <div class="container">
     <form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="Schedule" asp-action="Create" method="post">
-        <input type="hidden" asp-for="@Model.ServiceId" value="@Model.Service!.Id">
-        <input type="hidden" asp-for="@Model.UserId">
+        <input type="hidden" asp-for="@Model.ServiceId" value="@Model.ServiceId">
+        <input type="hidden" asp-for="@Model.ServicePrice" value="@Model.ServicePrice">
+        <input type="hidden" asp-for="@Model.UserId" value="@Model.UserId">
+        <input type="hidden" id="durationInMinutes" asp-for="@Model.DurationInMinutes" value="@Model.DurationInMinutes">
+        <input type="hidden" id="categoryName" asp-for="@Model.CategoryName" value="@Model.CategoryName">
+        <input type="hidden" asp-for="EmployeeId" id="employeeId" name="employeeId">
+
 
         <div class="col-md-4">
             <label asp-for="@Model.Date" class="form-label">Data <span style="color: red;">*</span></label>
-            <input asp-for="@Model.Date" id="date" class="form-control shadow-none" type="date"
+            <input asp-for="@Model.Date" id="date" class="form-control shadow-none" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")"
                    min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddDays(20).ToString("yyyy-MM-dd")" asp-format="{0:dd/mm/aaaa}">
             <span asp-validation-for="@Model.Date" class="text-danger"></span>
         </div>
 
         <div class="col-md-4">
             <label asp-for="@Model.Time" class="form-label">Horário <span style="color: red;">*</span></label>
-            <input asp-for="@Model.Time" id="time" class="form-control shadow-none" type="time">
+            <select asp-for="@Model.Time" id="time" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione um horário</option>
+                <!-- Horários disponíveis serão preenchidos aqui via AJAX -->
+            </select>
             <span asp-validation-for="@Model.Time" class="text-danger"></span>
         </div>
+
 
         <div class="col-md-8">
             <label asp-for="@Model.AnimalId" class="form-label">Pets<span style="color: red;">*</span></label>
@@ -82,22 +93,37 @@ else if (TempData["SuccessMessage"] != null)
                 <option value="" selected disabled>Selecione um pet</option>
                 @foreach (var animal in Model.Animals!)
                 {
-                    <option value="@animal.Id">@animal.Name</option>
+                    <option value="@animal!.Id">@animal.Name</option>
                 }
             </select>
             <span asp-validation-for="@Model.AnimalId" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Service.Name" class="form-label">Serviço <span style="color: red;">*</span></label>
-            <input asp-for="@Model.Service.Name" class="form-control shadow-none" type="text" readonly>
-            <span asp-validation-for="@Model.Service.Name" class="text-danger"></span>
+            <label asp-for="@Model.EmployeeId" class="form-label">Funcionário <span style="color: red;">*</span></label>
+            <select asp-for="@Model.EmployeeId" id="employee" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione um funcionário</option>
+                <!-- Horários disponíveis serão preenchidos aqui via AJAX -->
+            </select>
+            <span asp-validation-for="@Model.EmployeeId" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Service.Price" class="form-label">Preço <span style="color: red;">*</span></label>
-            <input asp-for="@Model.Service.Price" class="form-control shadow-none" type="text" value="@Model.Service.Price.ToString("C")" readonly>
-            <span asp-validation-for="@Model.Service.Price" class="text-danger"></span>
+            <label asp-for="@Model.ServiceName" class="form-label">Serviço <span style="color: red;">*</span></label>
+            <input asp-for="@Model.ServiceName" id="serviceName" class="form-control shadow-none" type="text" readonly>
+            <span asp-validation-for="@Model.ServiceName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.ServicePrice" class="form-label">Preço <span style="color: red;">*</span></label>
+            <input asp-for="@Model.ServicePrice" class="form-control shadow-none" type="text" value="@Model.ServicePrice.ToString("C")" readonly>
+            <span asp-validation-for="@Model.ServicePrice" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.DurationInMinutes" class="form-label">Duração em minutos <span style="color: red;">*</span></label>
+            <input asp-for="@Model.DurationInMinutes" class="form-control shadow-none" type="text" value="@Model.DurationInMinutes" readonly>
+            <span asp-validation-for="@Model.DurationInMinutes" class="text-danger"></span>
         </div>
 
         <div class="col-md-8">
@@ -105,12 +131,156 @@ else if (TempData["SuccessMessage"] != null)
             <textarea asp-for="@Model.Observation" class="form-control shadow-none" placeholder="Escreva uma observação" style="height: 100px"></textarea>
             <span asp-validation-for="@Model.Observation" class="text-danger"></span>
         </div>
+
         <div class="col-md-5 d-grid gap-2 col-4 mx-auto">
             <br>
             <button class="btn btn-dark btn-lg shadow-none" type="submit">Agendar</button>
         </div>
     </form>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    let isSubmitting = false;
+
+    // Função para buscar horários disponíveis
+    function fetchTimesGenerator() {
+        var selectedDate = $('#date').val();
+        var durationInMinutes = $('#durationInMinutes').val();
+        var serviceName = $('#serviceName').val();
+        var categoryName = $('#categoryName').val();
+
+        if (selectedDate && !isSubmitting) {
+            $.ajax({
+                url: '@Url.Action("GetAvailableTimes", "Schedule")',
+                type: 'GET',
+                data: {
+                    date: selectedDate,
+                    durationInMinutes: durationInMinutes,
+                    serviceName: serviceName,
+                    categoryName: categoryName
+                },
+                success: function (data) {
+                    var timeSelect = $('#time');
+                    timeSelect.empty(); // Limpa os horários atuais
+                    timeSelect.append('<option value="" selected disabled>Selecione um horário</option>');
+
+                    let firstAvailableTime = null;
+                    let allTimesDisabled = true; // Assume que todos os horários estão preenchidos
+
+                    $.each(data, function (index, timeDTO) {
+                        var option = $('<option></option>')
+                            .attr('value', timeDTO.time)
+                            .text(timeDTO.time);
+
+                        if (!timeDTO.status) {
+                            option.attr('disabled', 'disabled'); // Desabilita horários não disponíveis
+                        } else {
+                            allTimesDisabled = false; // Pelo menos um horário disponível
+                            if (firstAvailableTime === null) {
+                                firstAvailableTime = timeDTO.time;
+                            }
+                        }
+
+                        timeSelect.append(option);
+                    });
+
+                    // Define o primeiro horário disponível, se houver
+                    if (firstAvailableTime) {
+                        timeSelect.val(firstAvailableTime);
+                    }
+
+                    // Verifica se todos os horários estão ocupados e desabilita funcionários se for o caso
+                    if (allTimesDisabled) {
+                        console.log('Todos os horários estão ocupados. Desabilitando funcionários.');
+                        $('#employee').prop('disabled', true); // Desabilita o campo de funcionários
+                    } else {
+                        console.log('Existem horários disponíveis. Habilitando funcionários.');
+                        $('#employee').prop('disabled', false); // Habilita o campo de funcionários
+                        fetchAvailableEmployees(); // Busca os funcionários disponíveis
+                    }
+
+                    // Para depuração
+                    console.log('Horários Disponíveis:', data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Erro ao buscar horários disponíveis:', error);
+                }
+            });
+        }
+    }
+
+    // Função para buscar funcionários disponíveis
+    function fetchAvailableEmployees() {
+        var selectedDate = $('#date').val();
+        var selectedTime = $('#time').val();
+        var durationInMinutes = $('#durationInMinutes').val();
+        var serviceName = $('#serviceName').val();
+        var categoryName = $('#categoryName').val();
+
+        // Verifica se a data e o horário foram selecionados e o formulário não está sendo enviado
+        if (selectedDate && selectedTime && !isSubmitting) {
+            $.ajax({
+                url: '@Url.Action("GetAvailableEmployees", "Schedule")',
+                type: 'GET',
+                data: {
+                    CategoryName: categoryName,
+                    ServiceName: serviceName,
+                    SchedulingDate: selectedDate,
+                    SchedulingTime: selectedTime,
+                    DurationInMinutes: durationInMinutes
+                },
+                success: function (data) {
+                    var employeeSelect = $('#employee');
+                    employeeSelect.empty(); // Limpa os funcionários atuais
+                    employeeSelect.append('<option value="" selected disabled>Selecione um funcionário</option>');
+
+                    $.each(data, function (index, employee) {
+                        var option = $('<option></option>')
+                            .attr('value', employee.item1) // item1 para o ID do funcionário
+                            .text(employee.item2); // item2 para o nome do funcionário
+
+                        if (!employee.item3) {
+                            option.attr('disabled', 'disabled'); // Desabilita se o status for falso
+                        }
+
+                        employeeSelect.append(option);
+                    });
+
+                    // Para depuração
+                    console.log('Funcionários Disponíveis:', data);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Erro ao buscar funcionários disponíveis:', error);
+                }
+            });
+        }
+    }
+
+    // Chama a função para buscar os horários ao carregar a página
+    fetchTimesGenerator();
+
+    // Reexecuta a função ao alterar a data
+    $('#date').change(function () {
+        fetchTimesGenerator();
+    });
+
+    // Reexecuta a função ao alterar o horário
+    $('#time').change(function () {
+        fetchAvailableEmployees();
+    });
+
+    // Marca quando o formulário está sendo submetido
+    $('form').on('submit', function (event) {
+        isSubmitting = true;
+        var selectedEmployeeId = $('#employee').val();
+        $('#employeeId').val(selectedEmployeeId); // Preenche o campo oculto com o ID selecionado
+    });
+});
+</script>
+
+
 <footer>
 
 </footer>

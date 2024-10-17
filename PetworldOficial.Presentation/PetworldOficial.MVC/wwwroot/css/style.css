@@ -1,11 +1,27 @@
-﻿.navbar .navbar-nav .nav-item a{
+﻿.navbar .navbar-nav .nav-item a {
     padding: 20px;
 }
 
-.navbar .navbar-nav .nav-but{
+.navbar .navbar-nav .nav-but {
     padding: 7px;
 }
-.navbar .navbar-nav .nav-user{
+
+.navbar .navbar-nav .nav-user {
     padding: 6px;
 }
 
+h1 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #333;
+}
+
+h2 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #333;
+}

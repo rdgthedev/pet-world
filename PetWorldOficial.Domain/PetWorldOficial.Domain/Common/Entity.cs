@@ -2,9 +2,9 @@
 
 public abstract class Entity
 {
-    public Entity(){ }
-    
-    public Entity(int id) => Id = id;
-    
+    public Entity()
+    {
+        
+    }
     public int Id { get; private set; }
 }

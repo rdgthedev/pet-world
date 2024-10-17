@@ -1,6 +1,7 @@
 ﻿@using PetWorldOficial.Domain.Enums
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model PetWorldOficial.Application.ViewModels.Animal.CreateAnimalViewModel
+@using PetworldOficial.MVC.Utils
+@model PetWorldOficial.Application.Commands.Animal.RegisterAnimalCommand
 
 @{
     Layout = "_Layout";
@@ -9,7 +10,9 @@
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw"><img src="/Images/DadosDoPet.png" alt=""></h2>
+    <h2 class="text-center">
+        Dados do Pet
+    </h2>
     <br>
 </div>
 
@@ -33,31 +36,31 @@ else if (TempData["SuccessMessage"] != null)
 }
 
 <div class="container">
-    <form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="Animal" asp-action="Register" method="post">
+    <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Animal" asp-action="Register" method="post">
         @if (User.IsInRole(ERole.User.ToString()))
         {
             <input type="hidden" asp-for="@Model.UserId">
         }
 
-        <div class="col-md-5">
+        <div class="col-md-6">
             <label asp-for="@Model.Name" class="form-label">Nome<span style="color: red;">*</span></label>
             <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Digite o nome">
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
 
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label asp-for="@Model.Gender" class="form-label">Gênero <span style="color: red;">*</span></label>
             <select asp-for="@Model.Gender" class="form-select shadow-none">
                 <option value="" selected disabled>Selecione o gênero</option>
-                @foreach (var gender in Enum.GetValues(typeof(EGender)))
+                @foreach (EGender gender in Enum.GetValues(typeof(EGender)))
                 {
-                    <option value="@gender">@gender</option>
+                    <option value="@gender">@gender.GetDisplayName()</option>
                 }
             </select>
             <span asp-validation-for="Gender" class="text-danger"></span>
         </div>
 
-        @if (Model.Users.Any())
+        @if (Model != null && Model.Users.Count() > 0)
         {
             <div class="col-md-8">
                 <label asp-for="@Model.UserId" class="form-label">Dono <span style="color: red;">*</span></label>
@@ -65,30 +68,53 @@ else if (TempData["SuccessMessage"] != null)
                     <option value="" selected disabled>Selecione o dono</option>
                     @foreach (var user in Model.Users)
                     {
-                        <option value="@user!.Id">@user.Email</option>
+                        <option value="@user!.Id">@user!.Email</option>
                     }
                 </select>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
         }
 
-        <div class="col-md-8">
-            <label asp-for="@Model.Species" class="form-label">Espécie<span style="color: red;">*</span></label>
-            <input asp-for="@Model.Species" type="text" class="form-control shadow-none" placeholder="Digite a espécie">
-            <span asp-validation-for="Species" class="text-danger"></span>
+        <div class="col-md-6">
+            <label asp-for="@Model.RaceId" class="form-label">Raça <span style="color: red;">*</span></label>
+            <select asp-for="@Model.RaceId" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione a raça</option>
+                @foreach (var race in Model.Races)
+                {
+                    <option value="@race!.Id">@race.Name</option>
+                }
+            </select>
+            <span asp-validation-for="RaceId" class="text-danger"></span>
         </div>
-        <div class="col-md-8">
-            <label asp-for="@Model.Race" class="form-label">Raça<span style="color: red;">*</span></label>
-            <input asp-for="@Model.Race" type="text" class="form-control shadow-none" placeholder="Digite a raça">
-            <span asp-validation-for="Race" class="text-danger"></span>
+
+        <div class="col-md-2">
+            <label asp-for="@Model!.BirthDate" class="form-label">Data de Nascimento</label>
+            <input asp-for="@Model!.BirthDate" type="date" min="@DateTime.Today.AddYears(-20).ToString("yyyy-MM-dd")" max="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control shadow-none" placeholder="Digite a data de nasc.">
         </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.CategoryId" class="form-label">Categoria <span style="color: red;">*</span></label>
+            <select asp-for="@Model.CategoryId" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione a categoria</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category!.Id">@category.Title</option>
+                }
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="@Model.File" class="form-label">Imagem <span style="color: red;">*</span></label>
+            <input asp-for="@Model.File" type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
+            <span asp-validation-for="File" class="text-danger"></span>
+        </div>
+
         <div class="d-grid gap-2 col-4 mx-auto col-md-5">
             <br>
             <button class="btn btn-dark btn-lg" type="submit">Cadastrar</button>
         </div>
     </form>
-
     <footer>
-
     </footer>
 </div>

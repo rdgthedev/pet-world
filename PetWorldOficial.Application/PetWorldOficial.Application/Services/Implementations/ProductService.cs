@@ -1,55 +1,40 @@
 ﻿using AutoMapper;
-using PetWorldOficial.Application.DTOs.Product;
-using PetWorldOficial.Application.DTOs.Product.Output;
+using PetWorldOficial.Application.Commands.Product;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Product;
 using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Application.Services.Implementations;
 
-public class ProductService : IProductService
+public class ProductService(
+    IProductRepository productRepository,
+    IMapper mapper) : IProductService
 {
-    private readonly IProductRepository _productRepository;
-    private readonly IMapper _mapper;
-    
-    public ProductService(
-        IProductRepository productRepository,
-        IMapper mapper)
+    public async Task<IEnumerable<ProductDetailsViewModel>> GetAll(CancellationToken cancellationToken)
+        => mapper.Map<IEnumerable<ProductDetailsViewModel>>(await productRepository.GetAllAsync(cancellationToken));
+
+    public async Task<ProductDetailsViewModel> GetById(int id, CancellationToken cancellationToken)
+        => mapper.Map<ProductDetailsViewModel>(await productRepository.GetByIdAsync(id, cancellationToken));
+
+    public async Task<ProductDetailsViewModel> GetByName(string productName, CancellationToken cancellationToken)
+        => mapper.Map<ProductDetailsViewModel>(await productRepository.GetByNameAsync(productName, cancellationToken));
+
+    public async Task Create(CreateProductCommand command, CancellationToken cancellationToken)
     {
-        _productRepository = productRepository;
-        _mapper = mapper;
-    }
-    
-    public async Task<IEnumerable<OutputProductDTO>> GetAll()
-    {
-        var products = _mapper.Map<IEnumerable<OutputProductDTO>>(await _productRepository.GetAllAsync());
-        if (products == null) throw new NotFoundException("Nenhum produto encontrado!");
-        return products;
+        var product = mapper.Map<Product>(command);
+        await productRepository.CreateAsync(product, cancellationToken);
     }
 
-    public async Task<OutputProductDTO> GetById(int id)
+    public async Task Update(UpdateProductCommand command, CancellationToken cancellationToken)
     {
-        var product = _mapper.Map<OutputProductDTO>(await _productRepository.GetByIdAsync(id));
-        if (product == null) throw new NotFoundException("Produto não encontrado");
-        return product;
+        var product = mapper.Map<Product>(command);
+        await productRepository.UpdateAsync(product, cancellationToken);
     }
 
-    public async Task Create(RegisterProductDTO productRegisterDto)
+    public async Task Delete(DeleteProductCommand command, CancellationToken cancellationToken)
     {
-        var product = _mapper.Map<Product>(productRegisterDto);
-        await _productRepository.CreateAsync(product);
-    }
-
-    public async Task Update(UpdateProductDTO updateProductDto)
-    {
-        var product = _mapper.Map<Product>(updateProductDto);
-        await _productRepository.UpdateAsync(product);
-    }
-
-    public async Task Delete(DeleteProductDTO deleteProductDto)
-    {
-        var product = _mapper.Map<Product>(deleteProductDto);
-        await _productRepository.DeleteAsync(product);
+        var product = mapper.Map<Product>(command);
+        await productRepository.DeleteAsync(product, cancellationToken);
     }
 }

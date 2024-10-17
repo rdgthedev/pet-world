@@ -1,13 +1,16 @@
-﻿*{
+﻿* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
-body{
+
+body {
     color: white;
     font-weight: 500;
+    overflow-y: hidden !important;
 }
-.container{
+
+.container {
     background-image: url("../Images/BackgroundLogin.jpg");
     height: 100vh !important;
     width: 100vw !important;
@@ -17,9 +20,10 @@ body{
     background-size: cover;
     position: relative;
 }
-.w-50{
+
+.w-50 {
     margin: auto !important;
-    background-color: rgba(80,80,80,0.7);
+    background-color: rgba(80, 80, 80, 0.7);
     width: 30% !important;
     position: absolute !important;
     top: 120px !important;

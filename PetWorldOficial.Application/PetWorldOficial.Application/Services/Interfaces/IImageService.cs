@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace PetWorldOficial.Domain.Interfaces.ApplicationServices;
+namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IImageService
 {

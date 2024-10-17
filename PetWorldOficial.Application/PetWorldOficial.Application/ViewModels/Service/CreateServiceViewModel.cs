@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
-namespace PetworldOficial.MVC.ViewModels.Service;
+namespace PetWorldOficial.Application.ViewModels.Service;
 
 public class CreateServiceViewModel
 {

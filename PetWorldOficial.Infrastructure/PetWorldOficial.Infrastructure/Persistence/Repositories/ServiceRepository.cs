@@ -1,46 +1,55 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
-public class ServiceRepository : IServiceRepository
+public class ServiceRepository(AppDbContext context) : IServiceRepository
 {
-    private readonly AppDbContext _context;
-
-    public ServiceRepository(AppDbContext context) => _context = context;
-    
-    public async Task<IEnumerable<Service>> GetAllAsync()
+    public async Task<IEnumerable<Service>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Services.AsNoTracking().ToListAsync();
+        return await context
+            .Services
+            .AsNoTracking()
+            .Include(s => s.Category)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<Service?> GetByIdAsync(int id)
+    public async Task<Service?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
-    }
-    
-    public async Task<Service?> GetByNameAsync(string name)
-    {
-        return await _context.Services.AsNoTracking().FirstOrDefaultAsync(s => s.Name == name);
-    }
-
-    public async Task CreateAsync(Service service)
-    {
-        await _context.AddAsync(service);
-        await _context.SaveChangesAsync();
+        return await context
+            .Services
+            .AsNoTracking()
+            .Include(s => s.Category)
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
-    public async Task UpdateAsync(Service service)
+    public async Task<Service?> GetByNameAsync(string name, CancellationToken cancellationToken)
     {
-        _context.Update(service);
-        await _context.SaveChangesAsync();
+        return await context
+            .Services
+            .Include(s => s.Category)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
     }
 
-    public async Task DeleteAsync(Service service)
+    public async Task CreateAsync(Service service, CancellationToken cancellationToken)
     {
-        _context.Remove(service);
-        await _context.SaveChangesAsync();
+        await context.AddAsync(service, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(Service service, CancellationToken cancellationToken)
+    {
+        context.Update(service);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(Service service, CancellationToken cancellationToken)
+    {
+        context.Remove(service);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

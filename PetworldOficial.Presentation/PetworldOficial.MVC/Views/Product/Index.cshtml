@@ -1,22 +1,107 @@
-﻿@model IEnumerable<OutputProductDTO>
+﻿@using PetWorldOficial.Domain.Enums
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<PetWorldOficial.Application.ViewModels.Product.ProductDetailsViewModel>
 
 @{
     ViewData["Title"] = "Produtos";
     Layout = "_Layout";
 }
 
-@foreach (var product in Model)
+<div class="container-fluid text-black py-3">
+    <br>
+    <h2 class="text-center">
+        Produtos
+    </h2>
+    <br>
+</div>
 
+@if (TempData["ErrorMessage"] != null)
 {
-    <div class="card" style="width: 18rem;">
-        <img src="..." class="card-img-top" alt="...">
-        <div class="card-body">
-            <p class="card-text">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam
-                architecto culpa dolorum esse eveniet facere fuga harum incidunt molestias nam nisi
-                officiis perspiciatis quisquam, ratione recusandae reiciendis totam, ut voluptatibus!
-            </p>
-            <a href="#" class="btn btn-primary d-flex justify-content-center align-items-center">Adicionar ao carrinho</a>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (Model.Any())
+{
+    <div class="container">
+        @if (User.IsInRole(ERole.Admin.ToString()))
+        {
+            <div class="pb-2">
+                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
+                    <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Produto
+                </a>
+            </div>
+        }
+        <div class="row">
+            @foreach (var product in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="/Images/@product.ImageUrl" class="ImagemCard card-img-top" alt="..." style="height: 200px; object-fit: cover; width: 100%">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@product.Name</h5>
+                            <br>
+                            <div>
+                                <b>Valor:</b> @product.Price.ToString("C")
+                            </div>
+                            <br>
+
+                            @if (!User.IsInRole(ERole.Admin.ToString()))
+                            {
+                                <div class="d-grid gap-2">
+                                    <a class="btn btn-dark" asp-route-id="@product.Id">Adicionar ao carrinho</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <div style="padding-right: 15px">
+                                        <a style="width: 100px;" class="btn btn-dark me-2 shadow-none" asp-route-id="@product.Id" asp-controller="Product" asp-action="Update">Editar</a>
+                                    </div>
+                                    <div style="padding-left: 15px">
+                                        <a style="width: 100px" class="btn btn-danger shadow-none" asp-route-id="@product.Id" asp-controller="Product" asp-action="Delete">
+                                            Excluir
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
+            @TempData["ProductNotFound"]
+        </h2>
+        <br>
+        @if (User.IsInRole(ERole.Admin.ToString()))
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
+                    Adicionar Produto
+                </a>
+            </div>
+        }
+    </div>
+
 }

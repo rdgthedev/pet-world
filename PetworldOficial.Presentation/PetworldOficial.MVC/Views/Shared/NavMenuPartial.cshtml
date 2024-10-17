@@ -1,4 +1,5 @@
 ﻿@using PetWorldOficial.Domain.Enums
+@using System.Security.Claims
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -12,9 +13,11 @@
                 @* <li class="nav-item"> *@
                 @*     <a class="nav-link active" asp-controller="Home" asp-action="Index">Página Inicial</a> *@
                 @* </li> *@
-                @* <li class="nav-item "> *@
-                @*     <a class="nav-link active" asp-controller="Product" asp-action="Index">Produtos</a> *@
-                @* </li> *@
+                
+                <li class="nav-item ">
+                    <a class="nav-link active" asp-controller="Product" asp-action="Index">Produtos</a>
+                </li>
+                
                 <li class="nav-item">
                     <a class="nav-link active" asp-controller="Service" asp-action="Index">Serviços</a>
                 </li>
@@ -57,7 +60,7 @@
             {
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="cursor: pointer">
                     <li class="nav-item text-light" style="margin-top: 14px; padding-right: 7px">
-                        <p style="font-weight: 400">Olá, @User.Identity!.Name</p>
+                        <p style="font-weight: 400">Olá, @User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value</p>
                     </li>
                     <li style="margin-top: 10px; padding-right: 10px">
                         <div class="d-flex">

@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PetWorldOficial.Application.Commands;
+using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
@@ -9,31 +12,24 @@ using PetWorldOficial.Domain.Exceptions;
 namespace PetworldOficial.MVC.Controllers;
 
 public class AuthController(
-    IAuthService _authService,
-    IUserService _userService,
-    IMapper _mapper)
-    : Controller
+    IMapper _mapper,
+    IMediator mediator) : Controller
 {
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Login() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromForm] UserLoginViewModel model)
+    public async Task<IActionResult> Login(
+        [FromForm] LoginUserCommand command,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View(command);
 
         try
         {
-            var user = await _userService.GetByUserName(model.UserName);
-
-            if (user is null)
-                throw new LoginInvalidException("Login ou senha inválidos!");
-
-            if (!await _authService.Login(_mapper.Map<User>(user), model.Password))
-                throw new LoginInvalidException("Login ou senha inválidos!");
-
+            await mediator.Send(command, cancellationToken);
             return RedirectToAction("Index", "Home");
         }
         catch (LoginInvalidException e)
@@ -44,8 +40,8 @@ public class AuthController(
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
         }
-        
-        return View(model);
+
+        return View(command);
     }
 
     [HttpGet]
@@ -53,24 +49,17 @@ public class AuthController(
     public IActionResult Register() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromForm] RegisterUserViewModel model)
+    public async Task<IActionResult> Register([FromForm] RegisterUserCommand command,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View(command);
 
         try
         {
-            if (await _userService.UserExists(_mapper.Map<User>(model)))
-                throw new UserAlreadyExistsException("Usuário já existe!");
-
-            var user = await _authService.Register(model);
-
-            if (user is null)
-                throw new UnableToRegisterUserException("Não foi possível registrar o usuário!");
-            
-            
-            await _authService.Login(user, model.Password);
-            return RedirectToAction("Index", "Home");
+            await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = "Cadastrado com sucesso!";
+            return View();
         }
         catch (UserAlreadyExistsException e)
         {
@@ -85,16 +74,16 @@ public class AuthController(
             TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o seu cadastro!";
         }
 
-        return View(model);
+        return View(command);
     }
 
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
     {
         try
         {
-            await _authService.Logout();
+            await mediator.Send(new LogoutUserCommand(), cancellationToken);
             return RedirectToAction("Index", "Home");
         }
         catch (Exception)

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ScheduleDatailsViewModel>
+﻿@model IEnumerable<ScheduleDetailsViewModel>
 
 @{
     ViewData["Title"] = "Agendamentos";
@@ -9,7 +9,7 @@
 {
     <div class="container-fluid text-black py-3">
         <br>
-        <h1 class="display-6 text-center fw-normal">Agendamentos</h1>
+        <h1 class="text-center">Agendamentos</h1>
         <br>
     </div>
 }
@@ -17,7 +17,9 @@ else
 {
     <div class="container-fluid text-black py-3">
         <br>
-        <h1 class="display-6 text-center fw-normal"><img src="/Images/MeusAgendamentos.png" alt=""></h1>
+        <h1 class="text-center">
+            Meus Agendamentos
+        </h1>
         <br>
     </div>
 }
@@ -41,7 +43,7 @@ else if (TempData["SuccessMessage"] != null)
     </div>
 }
 
-@if (Model.Any())
+@if (Model is not null && Model.Any())
 {
     <table class="table-dark table table-hover">
         <thead>

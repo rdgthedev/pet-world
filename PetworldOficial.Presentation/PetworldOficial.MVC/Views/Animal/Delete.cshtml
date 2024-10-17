@@ -1,13 +1,19 @@
-﻿@model DeleteAnimalViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetWorldOficial.Domain.Enums
+@using PetworldOficial.MVC.Utils
+@model PetWorldOficial.Application.Commands.Animal.DeleteAnimalCommand
 
 @{
     ViewData["Title"] = "Deletar Pet";
     Layout = "_Layout";
+    var gender = (EGender)Enum.Parse(typeof(EGender), Model.Gender);
 }
 
 <div class="container-fluid text-black py-3">
     <br>
-    <h2 class="display-6 text-center fw"><img src="/Images/DadosDoPet.png" alt=""></h2>
+    <h2 class="display-6 text-center fw">
+        <img src="/Images/DadosDoPet.png" alt="">
+    </h2>
     <br>
 </div>
 
@@ -34,25 +40,28 @@
     <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Animal" asp-action="Delete" method="post">
         <input type="hidden" asp-for="@Model.Id">
         <input type="hidden" asp-for="@Model.UserId">
+        <input type="hidden" asp-for="@Model.CategoryId">
+        <input type="hidden" asp-for="@Model.RaceId">
+        <input type="hidden" asp-for="@Model.Gender" value="@Model.Gender"/>
 
-        <div class="col-md-8">
+        <div class="col-md-6">
             <label asp-for="@Model.Name" class="form-label">Nome</label>
             <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
         </div>
 
-        <div class="col-md-8">
-            <label asp-for="@Model.Gender" class="form-label">Gênero</label>
-            <input asp-for="@Model.Gender" type="text" class="form-control shadow-none" placeholder="Descrição" readonly>
+        <div class="col-md-2">
+            <label asp-for="Gender" class="form-label">Gênero</label>
+            <input type="text" class="form-control shadow-none" placeholder="Descrição" value="@gender.GetDisplayName()" readonly/>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Species" class="form-label">Espécie</label>
-            <input asp-for="@Model.Species" type="text" class="form-control shadow-none" placeholder="Descrição" readonly>
+            <label asp-for="@Model.RaceName" class="form-label">Raça</label>
+            <input asp-for="@Model.RaceName" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model.Race" class="form-label">Raça</label>
-            <input asp-for="@Model.Race" type="text" class="form-control shadow-none" placeholder="Preço" readonly>
+            <label asp-for="@Model.CategoryName" class="form-label">Categoria</label>
+            <input asp-for="@Model.CategoryName" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
         </div>
 
         <div class="d-grid gap-2 col-4 mx-auto col-md-5">

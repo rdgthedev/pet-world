@@ -1,50 +1,41 @@
-﻿using AutoMapper;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PetWorldOficial.Application.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
+using PetWorldOficial.Application.Commands.Animal;
+using PetWorldOficial.Application.Queries.Animal;
+using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Animal;
-using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Domain.Enums;
+using PetWorldOficial.Application.ViewModels.Race;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
 
 public class AnimalController(
-    IAnimalService _animalService,
-    IUserService _userService,
-    IMapper _mapper) : Controller
+    IMediator mediator,
+    IMemoryCache cache,
+    IWebHostEnvironment webHostEnvironment) : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        IEnumerable<AnimalDetailsViewModel?> animals = null!;
+        var animals = Enumerable.Empty<AnimalDetailsViewModel>();
 
         try
         {
-            var user = await _userService.GetByUserName(User.Identity?.Name!);
-
-            if (user is null)
-                throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
-
-            var role = User.IsInRole(ERole.Admin.ToString()) ? ERole.Admin : ERole.User;
-
-            animals = role switch
-            {
-                ERole.Admin => await _animalService.GetWithUser(),
-                ERole.User => await _animalService.GetByUserId(user.Id)
-            };
-
-            var animalDetailsViewModels = animals.ToArray();
-
-            return View(animalDetailsViewModels.Length != 0
-                ? animalDetailsViewModels
-                : throw new NotFoundException("Nenhum pet encontrado!"));
+            animals = await mediator.Send(new GetAllAnimalsQuery(User), cancellationToken);
+            return View(animals);
         }
         catch (UserNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
             return RedirectToAction("Login", "Auth");
+        }
+        catch (UnauthorizedUserException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Home");
         }
         catch (NotFoundException e)
         {
@@ -60,20 +51,14 @@ public class AnimalController(
 
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Register()
+    public async Task<IActionResult> Register(CancellationToken cancellationToken)
     {
+        RegisterAnimalCommand result = null!;
+
         try
         {
-            var user = await _userService.GetByUserName(User.Identity?.Name!);
-
-            if (user is null)
-                throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
-
-            if (User.IsInRole(ERole.Admin.ToString()))
-                return View(new CreateAnimalViewModel
-                    { Users = _mapper.Map<IEnumerable<User>>(await _userService.GetAll()) });
-
-            return View(new CreateAnimalViewModel { UserId = user.Id });
+            result = await mediator.Send(new RegisterAnimalCommand { UserPrincipal = User }, cancellationToken);
+            return View(result);
         }
         catch (UserNotFoundException e)
         {
@@ -82,31 +67,32 @@ public class AnimalController(
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o cadastro do pet!";
+            TempData["ErrorMessage"] = result.Message;
             return RedirectToAction("Index");
         }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(CreateAnimalViewModel model)
+    public async Task<IActionResult> Register(RegisterAnimalCommand command, CancellationToken cancellationToken)
     {
+        command.UserPrincipal = User;
+
         if (!ModelState.IsValid)
-            return View(model);
+        {
+            if (cache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                command.Races = races!;
+
+            if (cache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                command.Categories = categories!;
+
+            return View(command);
+        }
 
         try
         {
-            var user = await _userService.GetByUserName(User.Identity?.Name!);
-
-            if (user is null)
-                throw new UserNotFoundException("Usuário não encontrado!");
-
-            var animals = await _animalService.GetByUserId(user.Id);
-
-            if (animals.Any(a => a!.Name == model.Name))
-                throw new AnimalAlreadyExistsException("Este pet já está cadastrado!");
-
-            await _animalService.Create(model);
-            TempData["SuccessMessage"] = "Pet cadastrado com sucesso!";
+            command.BaseUrl = webHostEnvironment.ContentRootPath;
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
         }
         catch (AnimalAlreadyExistsException e)
@@ -116,10 +102,12 @@ public class AnimalController(
         catch (UserNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Login", "Auth");
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o cadastro do pet!";
+            return View();
         }
 
         return RedirectToAction("Index");
@@ -127,92 +115,12 @@ public class AnimalController(
 
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Update(int id)
+    public async Task<IActionResult> Update(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userService.GetByUserName(User.Identity?.Name!);
-
-            if (user is null)
-                throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
-
-            var animal = await _animalService.GetById(id);
-
-            if (animal is null)
-                throw new AnimalNotFoundException("Pet não encontrado!");
-
-            return View(new UpdateAnimalViewModel
-            {
-                Id = animal.Id,
-                Name = animal.Name,
-                Gender = animal.Gender,
-                Race = animal.Race,
-                Species = animal.Species,
-                UserId = user.Id
-            });
-        }
-        catch (AnimalNotFoundException e)
-        {
-            TempData["ErrorMessage"] =
-                $"{e.Message}. Ocorreu um erro, tente de novo ou faça novamente o login no site!";
-        }
-        catch (Exception)
-        {
-            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-        }
-
-        return RedirectToAction("Index");
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Update(UpdateAnimalViewModel model)
-    {
-        if (!ModelState.IsValid)
-            return View(model);
-
-        try
-        {
-            await _animalService.Update(model);
-            TempData["SuccessMessage"] = "Pet alterado com sucesso!";
-            return RedirectToAction("Index");
-        }
-        catch (Exception)
-        {
-            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return RedirectToAction("Index");
-        }
-    }
-
-    [HttpGet]
-    [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var user = await _userService.GetByUserName(User.Identity?.Name!);
-
-            if (user is null)
-                throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
-
-            var animal = await _animalService.GetById(id);
-
-            if (animal is null)
-                throw new AnimalNotFoundException("Pet não encontrado!");
-
-            return View(new DeleteAnimalViewModel
-            {
-                Id = animal.Id,
-                Name = animal.Name,
-                Gender = animal.Gender,
-                Race = animal.Race,
-                Species = animal.Species,
-                UserId = user.Id
-            });
-        }
-        catch (UserNotFoundException e)
-        {
-            TempData["ErrorMessage"] = $"Ocorreu um erro. {e.Message}";
-            return RedirectToAction("Login", "Auth");
+            var result = await mediator.Send(new UpdateAnimalCommand(id) { UserPrincipal = User }, cancellationToken);
+            return View(result);
         }
         catch (AnimalNotFoundException e)
         {
@@ -227,15 +135,76 @@ public class AnimalController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete(DeleteAnimalViewModel model)
+    public async Task<IActionResult> Update(UpdateAnimalCommand command, CancellationToken cancellationToken)
     {
+        command.UserPrincipal = User;
+
         if (!ModelState.IsValid)
-            throw new Exception();
+        {
+            if (cache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                command.Races = races!;
+
+            if (cache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                command.Categories = categories!;
+
+            return View(command);
+        }
 
         try
         {
-            await _animalService.Delete(model);
-            TempData["SuccessMessage"] = "Pet excluído com sucesso!";
+            command.BaseUrl = webHostEnvironment.ContentRootPath;
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
+            return RedirectToAction("Index");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("Index");
+        }
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin, User")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await mediator.Send(new DeleteAnimalCommand(id) { UserPrincipal = User }, cancellationToken);
+            return View(result);
+        }
+        catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = $"Ocorreu um erro. {e.Message}";
+            return RedirectToAction("Login", "Auth");
+        }
+
+        catch (AnimalNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(DeleteAnimalCommand command, CancellationToken cancellationToken)
+    {
+        command.UserPrincipal = User;
+
+        if (!ModelState.IsValid)
+            return View(command);
+
+        DeleteAnimalCommand result = null!;
+        try
+        {
+            result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
         }
         catch (Exception)

@@ -1,30 +1,31 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Application.ViewModels.User;
+using PetWorldOficial.Application.Commands.User;
+using PetWorldOficial.Application.Queries.User;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
 
 public class UserController(
-    IUserService _userService,
-    IMapper _mapper) : Controller
+    IMediator mediator,
+    IMapper mapper) : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         try
         {
-            var users = await _userService.GetAll();
-
-            if (users is null)
-                throw new UserNotFoundException("Nenhum usuário encontrado!");
-
+            var users = await mediator.Send(new GetAllUsersExceptCurrentQuery(User), cancellationToken);
             return View(users);
         }
         catch (UserNotFoundException e)
+        {
+            TempData["UserNotFoundMessage"] = e.Message;
+        }
+        catch (AccessFailureException e)
         {
             TempData["UserNotFoundMessage"] = e.Message;
         }
@@ -38,33 +39,12 @@ public class UserController(
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Update(int id)
+    public async Task<IActionResult> Update(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userService.GetById(id);
-
-            if (user is null)
-                throw new UserNotFoundException("Usuário não encontrado!");
-
-            return View(new UpdateUserViewModel
-            {
-                Id = user.Id,
-                Name = user.Name,
-                UserName = user.UserName!,
-                Gender = user.Gender,
-                Document = user.Document,
-                BirthDate = user.BirthDate!,
-                Email = user.Email!,
-                PhoneNumber = user.PhoneNumber!,
-                Street = user.Street,
-                Number = user.Number,
-                Complement = user.Complement,
-                PostalCode = user.PostalCode,
-                Neighborhood = user.Neighborhood,
-                City = user.City,
-                State = user.State
-            });
+            var user = await mediator.Send(new GetUserByIdQuery(id), cancellationToken);
+            return View(mapper.Map<UpdateUserCommand>(user));
         }
         catch (UserNotFoundException e)
         {
@@ -79,14 +59,16 @@ public class UserController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update([FromForm] UpdateUserViewModel model)
+    public async Task<IActionResult> Update(
+        [FromForm] UpdateUserCommand command,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View(command);
 
         try
         {
-            await _userService.Update(model);
+            await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = "Usuário alterado com sucesso!";
 
             return RedirectToAction("Index");
@@ -105,48 +87,37 @@ public class UserController(
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _userService.GetById(id);
-
-            if (user is null)
-                throw new UserNotFoundException("Usuário não encontrado!");
-
-            return View(new DeleteUserViewModel
-            {
-                Id = user.Id,
-                Name = user.Name,
-                UserName = user.UserName!,
-                BirthDate = user.BirthDate,
-                Email = user.Email!,
-                PhoneNumber = user.PhoneNumber!
-            });
+            var user = await mediator.Send(new GetUserByIdQuery(id), cancellationToken);
+            return View(mapper.Map<DeleteUserCommand>(user));
         }
         catch (UserNotFoundException e)
         {
-            Console.WriteLine(e);
-            throw;
+            TempData["ErrorMessage"] = e.Message;
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
         }
+
+        return RedirectToAction("Index");
     }
-    
+
     [HttpPost]
-    public async Task<IActionResult> Delete([FromForm] DeleteUserViewModel model)
+    public async Task<IActionResult> Delete(
+        [FromForm] DeleteUserCommand command,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
-            return View(model);
+            return View(command);
 
         try
         {
-            await _userService.Delete(model);
+            await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = "Usuário deletado com sucesso!";
-
             return RedirectToAction("Index");
         }
         catch (UserNotFoundException e)
