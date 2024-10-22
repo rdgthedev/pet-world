@@ -7,14 +7,17 @@ using PetWorldOficial.Application.Queries.Animal;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Application.ViewModels.Race;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
+using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetworldOficial.MVC.Controllers;
 
 public class AnimalController(
     IMediator mediator,
     IMemoryCache cache,
-    IWebHostEnvironment webHostEnvironment) : Controller
+    IWebHostEnvironment webHostEnvironment,
+    IAnimalRepository animalRepository) : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
@@ -26,6 +29,38 @@ public class AnimalController(
         {
             animals = await mediator.Send(new GetAllAnimalsQuery(User), cancellationToken);
             return View(animals);
+        }
+        catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Login", "Auth");
+        }
+        catch (UnauthorizedUserException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Home");
+        }
+        catch (NotFoundException e)
+        {
+            TempData["NotFoundPetMessage"] = e.Message;
+            return View(animals);
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return View(animals);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetByOwnerId([FromQuery] int id, CancellationToken cancellationToken)
+    {
+        var animals = Enumerable.Empty<Animal>();
+
+        try
+        {
+            animals = await animalRepository.GetByUserIdWithOwnerAndRaceAsync(id, cancellationToken);
+            return Ok(animals);
         }
         catch (UserNotFoundException e)
         {

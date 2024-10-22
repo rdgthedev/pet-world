@@ -71,7 +71,7 @@ public class ServiceController(
 
     [HttpPost]
     public async Task<IActionResult> Create(
-        CreateServiceCommand command, 
+        CreateServiceCommand command,
         CancellationToken cancellationToken)
     {
         command.GetCategories(cache);
@@ -192,7 +192,6 @@ public class ServiceController(
         try
         {
             var result = await mediator.Send(command, cancellationToken);
-
             TempData["SuccessMessage"] = "Serviço deletado com sucesso!";
 
             return RedirectToAction("Index");

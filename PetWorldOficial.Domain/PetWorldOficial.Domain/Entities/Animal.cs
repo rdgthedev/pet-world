@@ -25,7 +25,7 @@ public class Animal : Entity
         CreatedAt = DateTime.Now;
         Schedullings = new();
     }
-
+    
     public string Name { get; private set; }
     public DateTime? BirthDate { get; private set; }
     public EGender Gender { get; private set; }

@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
@@ -13,7 +12,6 @@ public class CreateScheduleCommanHandler(
     IUserService userService,
     IAnimalService animalService,
     IServiceService serviceService,
-    IMemoryCache memoryCache,
     IOptions<Settings.Settings> options) : IRequestHandler<CreateScheduleCommand, CreateScheduleCommand>
 {
     private readonly int _defaultRange = options.Value.Range.DefaultRangeServices;
@@ -22,20 +20,16 @@ public class CreateScheduleCommanHandler(
     {
         try
         {
-            if (request.Animals is null || !request.Animals.Any())
+            if (request.AnimalId is null or 0)
             {
                 var user = await userService.GetByUserNameAsync(
                     request.UserPrincipal?.Identity?.Name!,
                     cancellationToken);
-
+                
                 if (user is null)
                     throw new UserNotFoundException("Ocorreu um erro! Por favor tente se reconectar.");
 
-                request.Animals = await memoryCache.GetOrCreateAsync("Animals", async entry =>
-                {
-                    entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
-                    return await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
-                });
+                request.Animals = await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
 
                 var service = await serviceService.GetById(request.ServiceId, cancellationToken);
 
@@ -46,6 +40,7 @@ public class CreateScheduleCommanHandler(
                 request.ServicePrice = service.Price;
                 request.DurationInMinutes = service.DurationInMinutes;
                 request.CategoryName = service.Category.Title;
+                request.UserId = user.Id;
 
                 return request;
             }

@@ -2,170 +2,173 @@
 @model IEnumerable<AnimalDetailsViewModel>
 
 @{
-if (User.IsInRole("Admin"))
-{
-ViewData["Title"] = "Lista de Pets";
-}
-else
-{
-ViewData["Title"] = "Meus Pets";
-}
-
-Layout = "_Layout";
-}
-
-<div class="container-fluid text-black py-3 d-flex justify-content-center align-items-center">
-    <br>
-    @if (User.IsInRole(ERole.Admin.ToString()))
+    if (User.IsInRole("Admin"))
     {
-    <div class="container-fluid text-black py-3">
-        <br>
-        <h2 class="text-center">
-            Lista de Pets
-        </h2>
-        <br>
-    </div>
+        ViewData["Title"] = "Lista de Pets";
     }
     else
     {
-    <div class="container-fluid text-black py-3">
-        <br>
-        <h2 class="text-center">
-            Meus Pets
-        </h2>
-        <br>
-    </div>
+        ViewData["Title"] = "Meus Pets";
+    }
+
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-3 d-flex justify-content-center align-items-center">
+    <br>
+    @if (User.IsInRole(ERole.Admin.ToString()))
+    {
+        <div class="container-fluid py-3">
+            <br>
+            <h2 class="text-center">
+                Lista de Pets
+            </h2>
+            <br>
+        </div>
+    }
+    else
+    {
+        <div class="container-fluid py-3">
+            <br>
+            <h2 class="text-center">
+                Meus Pets
+            </h2>
+            <br>
+        </div>
     }
     <br>
 </div>
 
 @if (TempData["ErrorMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
-                data-bs-dismiss="alert" aria-label="Close">
-        </button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
-</div>
 }
 else if (TempData["SuccessMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
-                data-bs-dismiss="alert" aria-label="Close">
-        </button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
-</div>
 }
 
 @if (Model.Any())
 {
-<div class="container">
-    <div class="pb-2">
-        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
-            <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
-        </a>
-    </div>
+    <div class="container">
+        <div class="pb-2">
+            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
+                <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
+            </a>
+        </div>
 
-    <div class="row">
-        @foreach (var animal in Model)
-        {
-        <div class="col-md-4 mb-4">
-            <div class="card h-100" style="padding: 15px">
-                @if (animal.ImageUrl != null)
-                {
-                <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
-                    <img style="width: min-content; height: 250px" src="/Images/@animal.ImageUrl"
-                         class="card-img-top"
-                         alt="...">
-                </div>
-                }
-                else
-                {
-                <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
-                    <img style="width: min-content; height: 250px " src="/Images/PetImage.jpg"
-                         class="card-img-top"
-                         alt="...">
-                </div>
-                }
+        <div class="row">
+            @foreach (var animal in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100" style="padding: 15px">
+                        @if (animal.ImageUrl != null)
+                        {
+                            <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
+                                <img style="width: min-content; height: 250px" src="/Images/@animal.ImageUrl"
+                                     class="card-img-top"
+                                     alt="...">
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
+                                <img style="width: min-content; height: 250px " src="/Images/PetImage.jpg"
+                                     class="card-img-top"
+                                     alt="...">
+                            </div>
+                        }
 
-                <div class="card-body" style="padding: 10px 0 0;">
-                    @if (animal.Gender.Equals(EGender.Female.ToString()))
-                    {
-                    <h5 class="card-title">
-                        <img style="width: 20px" src="/Images/female-svgrepo-com.svg" alt=""> @animal.Name
-                    </h5>
-                    }
-                    else
-                    {
-                    <h5 class="card-title">
-                        <img style="width: 20px" src="/Images/male-svgrepo-com.svg" alt=""> @animal.Name
-                    </h5>
-                    }
-                    <br>
+                        <div class="card-body" style="padding: 10px 0 0;">
+                            @if (animal.Gender.Equals(EGender.Female.ToString()))
+                            {
+                                <h5 class="card-title">
+                                    <img style="width: 20px" src="/Images/female-svgrepo-com.svg" alt=""> @animal.Name
+                                </h5>
+                            }
+                            else
+                            {
+                                <h5 class="card-title">
+                                    <img style="width: 20px" src="/Images/male-svgrepo-com.svg" alt=""> @animal.Name
+                                </h5>
+                            }
+                            <br>
 
-                    @if (User.IsInRole(ERole.Admin.ToString()))
-                    {
-                    <p>
-                        <b>Dono:</b> @animal.Owner!.Name
-                    </p>
-                    }
+                            @if (User.IsInRole(ERole.Admin.ToString()))
+                            {
+                                <p>
+                                    <b>Dono:</b> @animal.Owner!.Name
+                                </p>
+                            }
 
-                    <p>
-                        <b>Raça:</b> @animal.Race.Name
-                    </p>
+                            <p>
+                                <b>Raça:</b> @animal.Race.Name
+                            </p>
 
-                    @if (animal.BirthDate != null)
-                    {
-                    <p>
-                        <b>Idade:</b> @(DateTime.Now.Year - animal.BirthDate!.Value.Year) anos
-                    </p>
-                    }
-                    else
-                    {
-                    <p>
-                        <b>Idade:</b> Não consta.
-                    </p>
-                    }
-                    <br>
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div style="padding-right: 15px">
-                            <a style="width: 100px;" class="btn btn-dark me-2 shadow-none" asp-controller="Animal"
-                               asp-action="Update" asp-route-id="@animal.Id">
-                                Editar
-                            </a>
-                        </div>
-                        <div style="padding-left: 15px">
-                            <a style="width: 100px" class="btn btn-danger shadow-none"
-                               asp-controller="Animal" asp-action="Delete" asp-route-id="@animal.Id">
-                                Excluir
-                            </a>
+                            @if (animal.BirthDate != null)
+                            {
+                                <p>
+                                    <b>Idade:</b> @(DateTime.Now.Year - animal.BirthDate!.Value.Year) anos
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    <b>Idade:</b> Não consta.
+                                </p>
+                            }
+                            <br>
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div style="padding-right: 15px">
+                                    <a style="width: 100px;" class="btn btn-dark me-2 shadow-none" asp-controller="Animal"
+                                       asp-action="Update" asp-route-id="@animal.Id">
+                                        Editar
+                                    </a>
+                                </div>
+                                <div style="padding-left: 15px">
+                                    <a style="width: 100px" class="btn btn-danger shadow-none"
+                                       asp-controller="Animal" asp-action="Delete" asp-route-id="@animal.Id">
+                                        Excluir
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
-        }
     </div>
-</div>
 }
 else
 {
-<div class="container-fluid text-black py-3">
-    <br>
-    <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
-        @TempData["NotFoundPetMessage"]
-    </h2>
-    <br>
+    <div class="container-fluid py-3">
+        <br>
+        <div class="container-fluid py-3">
+            <br>
+            <h2 class="text-center">
+                @TempData["NotFoundPetMessage"]
+            </h2>
+        </div>
+        <br>
 
-    <div class="d-flex justify-content-center align-items-center">
-        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
-            <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
-        </a>
+        <div class="d-flex justify-content-center align-items-center">
+            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
+                <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
+            </a>
+        </div>
     </div>
-</div>
 }

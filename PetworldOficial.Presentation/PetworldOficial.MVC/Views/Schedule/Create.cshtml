@@ -14,7 +14,7 @@
     <br>
 </div>
 
-@if (!Model.Animals!.Any())
+@if (Model.Animals is null || !Model.Animals!.Any())
 {
     <div class="modal d-flex justify-content-center align-items-center" id="animalModal" tabindex="-1" aria-labelledby="animalModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -68,7 +68,6 @@ else if (TempData["SuccessMessage"] != null)
         <input type="hidden" id="durationInMinutes" asp-for="@Model.DurationInMinutes" value="@Model.DurationInMinutes">
         <input type="hidden" id="categoryName" asp-for="@Model.CategoryName" value="@Model.CategoryName">
         <input type="hidden" asp-for="EmployeeId" id="employeeId" name="employeeId">
-
 
         <div class="col-md-4">
             <label asp-for="@Model.Date" class="form-label">Data <span style="color: red;">*</span></label>
