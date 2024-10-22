@@ -1,12 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PetworldOficial.MVC.Controllers;
 
-public class CartController : Controller
+public class CartController(
+	IMediator mediator) : Controller
 {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index(int? productId, CancellationToken cancellationToken)
     {
-        return View();
+		try
+		{
+
+		}
+		catch (Exception)
+		{
+			throw;
+		}
+
+		return View();
     }
 }

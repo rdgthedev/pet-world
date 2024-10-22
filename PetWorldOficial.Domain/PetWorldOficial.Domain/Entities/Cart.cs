@@ -9,15 +9,10 @@ public class Cart : Entity
         CreatedAt = DateTime.Now;
         ExpiresDate = CreatedAt.AddDays(3);
         Items = new();
+        TotalValue();
     }
 
-    public Cart(CartItem cartItem)
-    {
-        CreatedAt = DateTime.Now;
-        ExpiresDate = CreatedAt.AddDays(3);
-        Items.Add(cartItem);
-    }
-
+    public int ClientId { get; set; }
     public User Client { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
@@ -30,11 +25,17 @@ public class Cart : Entity
         if (!Items.Any())
             return;
 
-        Items.ForEach(ci => TotalPrice += ci.TotalPrice);
+        TotalPrice = Items.Sum(x => x.Price);
     }
 
-    public void AddItem(CartItem item)
+    public void AddItem(CartItem? item)
     {
+        if (item is null)
+            return;
+
         Items.Add(item);
+        TotalValue();
     }
+
+    public bool ValidateExpiresDate() => ExpiresDate < DateTime.Now;
 }

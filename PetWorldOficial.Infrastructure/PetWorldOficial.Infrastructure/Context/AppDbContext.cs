@@ -16,6 +16,8 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Race> Races { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Stock> Stocks { get; set; }
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<Order> Orders { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
