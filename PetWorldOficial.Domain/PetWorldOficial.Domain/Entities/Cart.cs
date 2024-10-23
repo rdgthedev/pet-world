@@ -12,8 +12,8 @@ public class Cart : Entity
         TotalValue();
     }
 
-    public int ClientId { get; set; }
-    public User Client { get; private set; }
+    public int? ClientId { get; private set; }
+    public User? Client { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public DateTime ExpiresDate { get; private set; }

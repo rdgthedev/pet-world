@@ -2,40 +2,39 @@
 using Microsoft.AspNetCore.Http;
 using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Application.ViewModels;
-using PetWorldOficial.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using PetWorldOficial.Application.ViewModels.Cart;
 
 namespace PetWorldOficial.Application.Handlers.Cart
 {
     public class CreateCartCommandHandler(
         ICartService cartService,
-        HttpContextAccessor httpContextAccessor) : IRequestHandler<CreateCartCommand, CartDetailsViewModel?>
+        IHttpContextAccessor httpContextAccessor) : IRequestHandler<CreateCartCommand, CartDetailsViewModel?>
     {
+        private const string _cartKeyCookie = "CartId";
+
         public async Task<CartDetailsViewModel?> Handle(CreateCartCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var context = httpContextAccessor.HttpContext;  
-
-                if(context.Request.Cookies.TryGetValue("CartId", out var value))
+                if (httpContextAccessor.HttpContext.Request.Cookies.TryGetValue(_cartKeyCookie, out var value))
                 {
-                }
+                    var cartId = Convert.ToInt32(value);
+                    var cartResult = await cartService.GetByIdAsync(cartId, cancellationToken);
 
-                var cart = new Domain.Entities.Cart { };
+                    if (cartResult is not null && cartResult.ExpiresDate >= DateTime.Now)
+                        return cartResult;
+
+                    //Setar as propriedades do DeleteCartCommand
+                    await cartService.DeleteAsync(new DeleteCartCommand { }, cancellationToken);
+                    SetCartCookie(Convert.ToInt32(value), -1);
+                }
 
                 var cartCreated = await cartService.CreateAsync(request, cancellationToken);
 
                 if (cartCreated is null)
-                    throw new Exception();
+                    throw new Exception("Ocorreu um erro interno!");
 
-                SetCartCookie(cartCreated.Id);
+                SetCartCookie(cartCreated.Id, 3);
 
                 return cartCreated;
             }
@@ -44,16 +43,17 @@ namespace PetWorldOficial.Application.Handlers.Cart
                 throw;
             }
         }
-        private void SetCartCookie(int cartId, HttpContext context)
+
+        private void SetCartCookie(int cartId, int expiresDays)
         {
             var cookieOptons = new CookieOptions
             {
                 Secure = false,
-                Expires = DateTimeOffset.Now.AddDays(3),
+                Expires = DateTimeOffset.Now.AddDays(expiresDays),
                 HttpOnly = true
             };
 
-            context.Response.Cookies.Append("CartId", cartId.ToString(), cookieOptons);
+            httpContextAccessor.HttpContext.Response.Cookies.Append(_cartKeyCookie, cartId.ToString(), cookieOptons);
         }
     }
 }

@@ -1,23 +1,25 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PetWorldOficial.Application.Commands.Cart;
 
 namespace PetworldOficial.MVC.Controllers;
 
 public class CartController(
-	IMediator mediator) : Controller
+    IMediator mediator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(int? productId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-		try
-		{
+        try
+        {
+            var result = await mediator.Send(new CreateCartCommand(), cancellationToken);
+            return View(result);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
 
-		}
-		catch (Exception)
-		{
-			throw;
-		}
-
-		return View();
+        return View();
     }
 }

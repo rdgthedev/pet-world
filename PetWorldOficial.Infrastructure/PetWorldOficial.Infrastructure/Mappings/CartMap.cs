@@ -17,12 +17,12 @@ public class CartMap : IEntityTypeConfiguration<Cart>
             .UseIdentityColumn()
             .IsRequired();
 
-        // builder.HasOne(c => c.Client)
-        //     .WithOne()
-        //     .HasConstraintName("FK_Cart_User_ClientId")
-        //     .HasForeignKey<Cart>(c => c.ClientId)
-        //     .OnDelete(DeleteBehavior.NoAction)
-        //     .IsRequired();
+        builder.HasOne(c => c.Client)
+            .WithOne()
+            .HasConstraintName("FK_Cart_User_ClientId")
+            .HasForeignKey<Cart>(c => c.ClientId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
 
         builder.Property(s => s.CreatedAt)
             .HasColumnName("CreatedAt")

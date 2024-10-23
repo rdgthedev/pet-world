@@ -29,5 +29,12 @@ public class UserMap : IEntityTypeConfiguration<User>
             .HasForeignKey(s => s.EmployeeId)
             .OnDelete(DeleteBehavior.NoAction)
             .IsRequired();
+        
+        builder.HasOne(u => u.Cart)
+            .WithOne(c => c.Client)
+            .HasConstraintName("FK_Cart_User_ClientId")
+            .HasForeignKey<Cart>(c => c.ClientId)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(false);
     }
 }

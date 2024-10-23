@@ -16,6 +16,7 @@ using UserService = PetWorldOficial.Application.Services.Implementations.UserSer
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options => { options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; })
@@ -64,8 +65,10 @@ builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IRaceService, RaceService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddTransient<IImageService, ImageService>();
-builder.Services.AddTransient<IStockService, StockService>();
+
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -76,7 +79,7 @@ builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddScoped<IRaceRepository, RaceRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
-builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddAutoMapper(typeof(CreateServiceCommand));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateServiceCommand).Assembly));

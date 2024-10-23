@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PetWorldOficial.Infrastructure.Context;
 
@@ -11,9 +12,11 @@ using PetWorldOficial.Infrastructure.Context;
 namespace PetWorldOficial.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241023045150_ClientIdNullableInCartTable")]
+    partial class ClientIdNullableInCartTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,7 +199,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ClientId")
+                    b.Property<int>("ClientId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -218,8 +221,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId")
-                        .IsUnique()
-                        .HasFilter("[ClientId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Cart", (string)null);
                 });
@@ -901,7 +903,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Cart", b =>
                 {
                     b.HasOne("PetWorldOficial.Domain.Entities.User", "Client")
-                        .WithOne("Cart")
+                        .WithOne()
                         .HasForeignKey("PetWorldOficial.Domain.Entities.Cart", "ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_Cart_User_ClientId");
@@ -1073,9 +1075,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.User", b =>
                 {
                     b.Navigation("Animals");
-
-                    b.Navigation("Cart")
-                        .IsRequired();
 
                     b.Navigation("Schedullings");
                 });

@@ -30,7 +30,7 @@ public class CartItemMap : IEntityTypeConfiguration<Domain.Entities.CartItem>
             .WithMany(o => o.Items)
             .HasConstraintName("FK_CartItem_Order_OrderId")
             .HasForeignKey(ci => ci.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(s => s.Quantity)
             .HasColumnName("Quantity")

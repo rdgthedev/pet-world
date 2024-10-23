@@ -57,6 +57,13 @@ public class OrderMap : IEntityTypeConfiguration<Order>
                 os => (EOrderStatus)Enum.Parse(typeof(EOrderStatus), os)
             )
             .IsRequired();
+        
+        // Correção do relacionamento com CartItem
+        builder.HasMany(o => o.Items) // Mudado para HasMany
+            .WithOne(ci => ci.Order) // Com um CartItem
+            .HasConstraintName("FK_CartItem_Order_OrderId")
+            .HasForeignKey(ci => ci.OrderId)
+            .OnDelete(DeleteBehavior.NoAction); // Permitir exclusão em cascata
 
         builder.HasIndex(o => o.Id, "IX_Order_Id");
         builder.HasIndex(o => o.Code, "IX_Order_Code");
