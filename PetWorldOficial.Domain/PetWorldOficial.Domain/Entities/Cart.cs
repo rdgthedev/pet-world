@@ -4,8 +4,11 @@ namespace PetWorldOficial.Domain.Entities;
 
 public class Cart : Entity
 {
-    public Cart()
+    public Cart(int? clientId)
     {
+        if (clientId.HasValue)
+            ClientId = clientId;
+        
         CreatedAt = DateTime.Now;
         ExpiresDate = CreatedAt.AddDays(3);
         Items = new();

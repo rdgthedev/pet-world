@@ -16,7 +16,7 @@ namespace PetWorldOficial.Application.Services.Implementations
             CreateCartCommand command,
             CancellationToken cancellationToken)
         {
-            var cart = await cartRepository.AddAsync(new Cart(), cancellationToken);
+            var cart = await cartRepository.AddAsync(new Cart(null!), cancellationToken);
 
             return new CartDetailsViewModel
             {

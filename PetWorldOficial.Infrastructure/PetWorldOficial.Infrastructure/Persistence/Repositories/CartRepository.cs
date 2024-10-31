@@ -22,7 +22,10 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
 
         public async Task<Cart?> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
-            return await context.Carts.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+            return await context
+                .Carts
+                .Include(c => c.Client)
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
         public async Task UpdateAsync(Cart cart, CancellationToken cancellationToken)
