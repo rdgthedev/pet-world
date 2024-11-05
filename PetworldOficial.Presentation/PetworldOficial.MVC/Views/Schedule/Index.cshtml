@@ -1,4 +1,5 @@
-﻿@model IEnumerable<ScheduleDetailsViewModel>
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<PetWorldOficial.Application.ViewModels.Schedule.ScheduleDetailsViewModel>
 
 @{
 Layout = "_Layout";
@@ -60,7 +61,7 @@ else if (TempData["SuccessMessage"] != null)
                                 src="/Images/@schedule.Animal.ImageUrl"
                                 alt="Animal"
                                 class="img-fluid me-4"
-                                style="width: 100px;" />
+                                style="width: 100px; object-fit: cover" />
                             <div>
                                 <h5 class="card-title">@schedule.Animal.Name</h5>
                                 <p class="card-text">Serviço: @schedule.Service.Name</p>

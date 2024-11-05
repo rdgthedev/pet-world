@@ -5,6 +5,7 @@ using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Schedule;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
@@ -12,7 +13,8 @@ namespace PetworldOficial.MVC.Controllers;
 public class ScheduleController(
     IScheduleService _scheduleService,
     IMediator mediator,
-    IAnimalService animalService) : Controller
+    IAnimalService animalService,
+    IUserService userService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> GetAvailableTimes(
@@ -122,7 +124,12 @@ public class ScheduleController(
     {
         try
         {
-            command.Animals = await animalService.GetByUserIdWithOwnerAndRace(command.UserId!.Value, cancellationToken);
+            command.Animals = User.IsInRole(ERole.User.ToString())
+                ? await animalService.GetByUserIdWithOwnerAndRace(command.UserId!.Value, cancellationToken)
+                : await animalService.GetWithOwnerAndRace(cancellationToken);
+
+            // if(User.IsInRole(ERole.Admin.ToString()))
+            //     command.Users = await userService.GetAllUsersExceptCurrentAsync()
 
             if (!ModelState.IsValid)
             {

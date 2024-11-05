@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+using MediatR;
 using PetWorldOficial.Application.Queries.Animal;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Animal;
@@ -16,14 +17,14 @@ public class GetAllAnimalsQueryHandler(
     {
         try
         {
-            var user = await userService.GetByUserNameAsync(request.User.Identity?.Name!, cancellationToken);
+            var email = request.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var user = await userService.GetByEmailAsync(
+                email!,
+                cancellationToken);
 
             if (user is null)
                 throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
-
-            var role = request.User.IsInRole(ERole.Admin.ToString())
-                ? ERole.Admin
-                : ERole.User;
 
             var animals = Enumerable.Empty<AnimalDetailsViewModel?>();
 

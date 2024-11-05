@@ -7,6 +7,7 @@ using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
@@ -59,7 +60,11 @@ public class AuthController(
         {
             await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = "Cadastrado com sucesso!";
-            return View();
+
+            if (User.IsInRole(ERole.Admin.ToString()))
+                return View();
+
+            return RedirectToAction("Index", "Home");
         }
         catch (UserAlreadyExistsException e)
         {

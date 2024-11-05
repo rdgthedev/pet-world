@@ -10,6 +10,7 @@ public interface IUserService
     Task<IEnumerable<UserDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken);
     Task<UserDetailsViewModel> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<UserDetailsViewModel?> GetByUserNameAsync(string userName, CancellationToken cancellationToken);
+    Task<UserDetailsViewModel?> GetByEmailAsync(string email, CancellationToken cancellationToken);
 
     Task<UserExistsViewModel> UserExistsAsync(
         string? userName,

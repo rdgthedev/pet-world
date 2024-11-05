@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<PetWorldOficial.Application.ViewModels.Supplier.SupplierDetailsViewModel?>
+
+@{
+    ViewData["Title"] = "Fornecedores";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid tpy-3">
+    <br>
+    <h1 class="text-center">
+        Lista de Fornecedores
+    </h1>
+    <br>
+</div>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+
+@if (Model is not null && Model.Count() != 0)
+{
+    <section class="my-5">
+        <div class="container">
+            <div class="pb-2">
+                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Supplier" asp-action="Register">
+                    <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Fornecedor
+                </a>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var supplier in Model)
+                        {
+                            <div class="card cart-card mb-3">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img
+                                            src="/Images/supplier_7988637.png"
+                                            alt="Imagem fornecedor"
+                                            class="img-fluid me-4"
+                                            style="width: 100px; object-fit: cover"/>
+                                        <div>
+                                            <h5 class="card-title">@supplier!.Id - @supplier.Name</h5>
+                                            <p class="card-text">
+                                                <strong>Telefone:</strong> @supplier.CellPhone
+                                            </p>
+                                            <p class="card-text">
+                                                <strong>Email:</strong> @supplier.Email
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <a href="@Url.Action("Update", "Supplier", new { id = supplier.Id })" class="btn btn-warning mb-2">Editar</a>
+                                        <a href="@Url.Action("Delete", "Supplier", new { id = supplier.Id })" class="btn btn-danger">Deletar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
+            @TempData["NotFoundSupplier"]
+        </h2>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+        <br>
+        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Create">
+            Adicionar Fornecedor
+        </a>
+    </div>
+}

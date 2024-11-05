@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Common;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Infrastructure.Context;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
@@ -26,16 +26,17 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
         await _context.Animals.AddAsync(entity, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
     }
-    
-    public async Task<IEnumerable<Animal?>> GetByUserIdWithOwnerAndRaceAsync(int id, CancellationToken cancellationToken)
+
+    public async Task<IEnumerable<Animal?>> GetByUserIdWithOwnerAndRaceAsync(int id,
+        CancellationToken cancellationToken)
     {
         var animals = await _context
-             .Animals
-             .AsNoTracking()
-             .Include(a => a.Owner)
-             .Include(a => a.Race)
-             .Where(animal => animal.OwnerId == id)
-             .ToListAsync(cancellationToken);
+            .Animals
+            .AsNoTracking()
+            .Include(a => a.Owner)
+            .Include(a => a.Race)
+            .Where(animal => animal.OwnerId == id)
+            .ToListAsync(cancellationToken);
 
         return animals;
     }
@@ -63,12 +64,11 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
     }
 
     public async Task<Animal?> GetByIdWithOwnerAndCategoryAndRaceAsync(int id, CancellationToken cancellationToken)
-       => await _context
-        .Animals
-        .AsNoTracking()
-        .Include(a => a.Category)
-        .Include(a => a.Owner)
-        .Include(a => a.Race)
-        .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
-
+        => await _context
+            .Animals
+            .AsNoTracking()
+            .Include(a => a.Category)
+            .Include(a => a.Owner)
+            .Include(a => a.Race)
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
 }

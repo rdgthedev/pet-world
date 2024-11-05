@@ -1,67 +1,69 @@
 ﻿@model PetWorldOficial.Application.ViewModels.Cart.CartDetailsViewModel
 
 @{
-Layout = "_Layout";
+    Layout = "_Layout";
 }
 
 <!-- Seção do carrinho de compras -->
 <section class="my-5">
     <div class="container">
+        <h2 class="cart-title">Carrinho de Compras</h2>
         @if (Model.Items is not null && Model.Items.Any())
         {
-        <!-- Título do Carrinho centralizado -->
-        <h2 class="cart-title">Carrinho de Compras</h2>
-        <div class="row">
-            <div class="col-lg-8">
-                <!-- Itera sobre os itens do carrinho e exibe cada item -->
-                @foreach (var item in Model.Items)
-                {
-                <div class="card cart-card">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div class="d-flex">
-                            <img src="@item.ImageUrl" alt="@item.ProductName" class="img-fluid me-4" style="width: 100px;" />
-                            <div>
-                                <h5 class="card-title">@item.ProductName</h5>
-                                <p class="card-text">@item.Description</p>
-                                <p><strong>Preço:</strong> R$ @item.Price.ToString("F2")</p>
+            <!-- Título do Carrinho centralizado -->
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Itera sobre os itens do carrinho e exibe cada item -->
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="card cart-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div class="d-flex">
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" class="img-fluid me-4" style="width: 100px;"/>
+                                    <div>
+                                        <h5 class="card-title">@item.ProductName</h5>
+                                        <p class="card-text">@item.Description</p>
+                                        <p><strong>Preço:</strong> R$ @item.Price.ToString("F2")</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <!-- Controles de quantidade -->
+                                    <button class="btn btn-sm btn-primary me-2">-</button>
+                                    <span>@item.Quantity</span>
+                                    <button class="btn btn-sm btn-primary ms-2">+</button>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <!-- Controles de quantidade -->
-                            <button class="btn btn-sm btn-primary me-2">-</button>
-                            <span>@item.Quantity</span>
-                            <button class="btn btn-sm btn-primary ms-2">+</button>
+                    }
+                </div>
+
+                <!-- Resumo do pedido -->
+                <div class="col-lg-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h4 class="card-title">Resumo do Pedido</h4>
+                            <ul class="list-group list-group-flush mb-3">
+                                @* <li class="list-group-item d-flex justify-content-between"> *@
+                                @*     <span>Frete</span> *@
+                                @*     <strong>R$ @Model.FreightCost.ToString("F2")</strong> *@
+                                @* </li> *@
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Total</span>
+                                    <strong>R$ @Model.TotalPrice.ToString("F2")</strong>
+                                </li>
+                            </ul>
+                            <button class="btn btn-success btn-block">Finalizar Compra</button>
                         </div>
                     </div>
                 </div>
-                }
             </div>
-
-            <!-- Resumo do pedido -->
-            <div class="col-lg-4">
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <h4 class="card-title">Resumo do Pedido</h4>
-                        <ul class="list-group list-group-flush mb-3">
-                            @* <li class="list-group-item d-flex justify-content-between"> *@
-                            @*     <span>Frete</span> *@
-                            @*     <strong>R$ @Model.FreightCost.ToString("F2")</strong> *@
-                            @* </li> *@
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Total</span>
-                                <strong>R$ @Model.TotalPrice.ToString("F2")</strong>
-                            </li>
-                        </ul>
-                        <button class="btn btn-success btn-block">Finalizar Compra</button>
-                    </div>
-                </div>
-            </div>
-        </div>
         }
         else
         {
-        <!-- Mensagem para carrinho vazio -->
-        <h2 class="text-center my-5">Você não possui itens no carrinho</h2>
+            <div class="d-flex justify-content-center" style="margin-top: 100px;">
+                <h2 class="text-center">Você não possui itens no carrinho</h2>
+            </div>
         }
     </div>
 </section>

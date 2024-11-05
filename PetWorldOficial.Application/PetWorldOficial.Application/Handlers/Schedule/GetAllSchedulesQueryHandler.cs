@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+using MediatR;
 using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Schedule;
@@ -18,7 +19,11 @@ public class GetAllSchedulesQueryHandler(
     {
         try
         {
-            var user = await userService.GetByUserNameAsync(request.UserPrincipal.Identity?.Name!, cancellationToken);
+            var email = request.UserPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var user = await userService.GetByEmailAsync(
+                email!,
+                cancellationToken);
 
             if (user is null)
                 throw new UserNotFoundException("Ocorreu um erro. Tente fazer o login novamente no site." +

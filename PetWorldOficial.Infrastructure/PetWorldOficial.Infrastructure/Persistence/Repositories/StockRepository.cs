@@ -1,10 +1,11 @@
 ﻿using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PetWorldOficial.Domain.Interfaces.Repositories;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories
 {

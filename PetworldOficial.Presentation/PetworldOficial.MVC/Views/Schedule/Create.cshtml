@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetWorldOficial.Domain.Enums
 @model PetWorldOficial.Application.Commands.Schedule.CreateScheduleCommand
 
 @{
@@ -92,11 +93,32 @@ else if (TempData["SuccessMessage"] != null)
                 <option value="" selected disabled>Selecione um pet</option>
                 @foreach (var animal in Model.Animals!)
                 {
-                    <option value="@animal!.Id">@animal.Name</option>
+                    <option value="@animal!.Id">
+                        @animal.Name
+                        @if (!User.IsInRole(ERole.User.ToString()))
+                        {
+                            <span class="text-muted"> - Dono: <strong>@animal.Owner!.Name</strong> - <span class="fst-italic">@animal.Owner.Document</span></span>
+                        }
+                    </option>
                 }
             </select>
             <span asp-validation-for="@Model.AnimalId" class="text-danger"></span>
         </div>
+
+        @* @if (Model != null && Model.Users.Count() > 0) *@
+        @* { *@
+        @*     <div class="col-md-8"> *@
+        @*         <label asp-for="@Model.UserId" class="form-label">Dono <span style="color: red;">*</span></label> *@
+        @*         <select asp-for="@Model.UserId" class="form-select shadow-none"> *@
+        @*             <option value="" selected disabled>Selecione o dono</option> *@
+        @*             @foreach (var user in Model.Users) *@
+        @*             { *@
+        @*                 <option value="@user!.Id">@user!.Email</option> *@
+        @*             } *@
+        @*         </select> *@
+        @*         <span asp-validation-for="UserId" class="text-danger"></span> *@
+        @*     </div> *@
+        @* } *@
 
         <div class="col-md-8">
             <label asp-for="@Model.EmployeeId" class="form-label">Funcionário <span style="color: red;">*</span></label>

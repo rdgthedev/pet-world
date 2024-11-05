@@ -12,7 +12,7 @@ public class CartController(
     {
         try
         {
-            var result = await mediator.Send(new CreateCartCommand(), cancellationToken);
+            var result = await mediator.Send(new GetOrCreateCartCommand(), cancellationToken);
             return View(result);
         }
         catch (Exception)

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Infrastructure.Context;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories
 {
@@ -38,6 +38,16 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
         {
             context.Remove(cart);
             await context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<Cart?> GetCartByUserId(int id, CancellationToken cancellationToken)
+        {
+            var cart = await context
+                .Carts
+                .Include(c => c.Client)
+                .FirstOrDefaultAsync(c => c.ClientId == id, cancellationToken);
+
+            return cart;
         }
     }
 }

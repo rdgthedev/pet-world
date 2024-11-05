@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Services.Interfaces;
@@ -22,7 +23,10 @@ public class UpdateAnimalCommandHandler(
         {
             if (string.IsNullOrEmpty(request.Name))
             {
-                var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!,
+                var email = request.UserPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                var user = await userService.GetByEmailAsync(
+                    email!,
                     cancellationToken);
 
                 if (user is null)

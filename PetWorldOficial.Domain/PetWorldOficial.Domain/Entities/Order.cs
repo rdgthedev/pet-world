@@ -9,14 +9,12 @@ public class Order : Entity
     {
     }
 
-    public Order(
-        int clientId,
-        CartItem item)
+    public Order(int clientId)
     {
         ClientId = clientId;
         Status = EOrderStatus.WaitingPayment;
         Items = new List<CartItem>();
-        AddItems(item);
+        CalculateTotalPrice();
     }
 
     public int ClientId { get; private set; }
@@ -36,12 +34,11 @@ public class Order : Entity
             return;
 
         Items.AddRange(cartItems.ToList());
-        TotalValue();
+        CalculateTotalPrice();
     }
 
-    public void TotalValue()
+    private void CalculateTotalPrice()
     {
-
         if (!Items.Any())
             return;
 

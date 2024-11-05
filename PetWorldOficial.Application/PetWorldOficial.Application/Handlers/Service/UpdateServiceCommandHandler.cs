@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using PetWorldOficial.Application.Commands.Service;
-using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
 
@@ -8,9 +7,11 @@ namespace PetWorldOficial.Application.Handlers.Service
 {
     public class UpdateServiceCommandHandler(
         IServiceService serviceService,
+        ICategoryService categoryService,
         IImageService imageService) : IRequestHandler<UpdateServiceCommand, UpdateServiceCommand>
     {
-        public async Task<UpdateServiceCommand> Handle(UpdateServiceCommand request, CancellationToken cancellationToken)
+        public async Task<UpdateServiceCommand> Handle(UpdateServiceCommand request,
+            CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.Name))
             {
@@ -19,9 +20,18 @@ namespace PetWorldOficial.Application.Handlers.Service
                 if (serviceResult is null)
                     throw new ServiceNotFoundException("Serviço não encontrado!");
 
+                var categories = await categoryService.GetAllServiceCategories(cancellationToken);
+
+                if (!categories.Any())
+                    throw new Exception("Nenhuma categoria encontrada!");
+
                 request.Name = serviceResult.Name;
                 request.ImageUrl = serviceResult.ImageUrl;
                 request.Price = serviceResult.Price;
+                request.DurationInMinutes = serviceResult.DurationInMinutes;
+                request.Category = serviceResult.Category;
+                request.CategoryId = serviceResult.Category.Id;
+                request.Categories = categories;
 
                 return request;
             }
@@ -33,7 +43,6 @@ namespace PetWorldOficial.Application.Handlers.Service
                     await imageService.SaveImage(request.File, request.RootPath, imageUrl);
                     request.ImageUrl = imageUrl;
                     break;
-
                 default: break;
             }
 

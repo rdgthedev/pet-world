@@ -1,12 +1,14 @@
 ﻿using MediatR;
-using PetWorldOficial.Application.Commands;
+using Microsoft.AspNetCore.Http;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
 
 namespace PetWorldOficial.Application.Handlers.Auth;
 
-public class LogoutUserCommandHandler(IAuthService authService)
-    : IRequestHandler<LogoutUserCommand, Unit>
+public class LogoutUserCommandHandler(
+    IAuthService authService,
+    ICartCookieService cartCookieService,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<LogoutUserCommand, Unit>
 {
     public async Task<Unit> Handle(
         LogoutUserCommand request,
@@ -15,6 +17,7 @@ public class LogoutUserCommandHandler(IAuthService authService)
         try
         {
             await authService.Logout();
+            cartCookieService.SetCartCookie(string.Empty, DateTime.Now.AddDays(-1), httpContextAccessor.HttpContext);
             return Unit.Value;
         }
         catch (Exception)

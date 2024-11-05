@@ -6,12 +6,12 @@ public class Cart : Entity
 {
     public Cart(int? clientId)
     {
-        if (clientId.HasValue)
+        if (clientId.HasValue && clientId > 0)
             ClientId = clientId;
         
         CreatedAt = DateTime.Now;
-        ExpiresDate = CreatedAt.AddDays(3);
-        Items = new();
+        ExpiresDate = CreatedAt.AddDays(90);
+        Items = [];
         TotalValue();
     }
 

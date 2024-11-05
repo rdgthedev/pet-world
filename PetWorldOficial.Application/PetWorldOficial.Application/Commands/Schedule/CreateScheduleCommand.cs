@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using MediatR;
 using PetWorldOficial.Application.ViewModels.Animal;
+using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Commands.Schedule;
@@ -35,8 +36,9 @@ public record CreateScheduleCommand(ClaimsPrincipal? UserPrincipal) : IRequest<C
     public string CategoryName { get; set; } = string.Empty;
 
     public IEnumerable<AnimalDetailsViewModel?>? Animals { get; set; }
-    public List<Schedulling>? Schedullings { get; set; } 
+    public List<Schedulling>? Schedullings { get; set; }
     public int? UserId { get; set; }
+    [Required(ErrorMessage = "O funcionário é obrigatório!")]
     public int? EmployeeId { get; set; }
     public string Message { get; set; } = string.Empty;
 }

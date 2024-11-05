@@ -1,9 +1,4 @@
 ﻿using PetWorldOficial.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PetWorldOficial.Domain.Interfaces.Repositories
 {
@@ -14,5 +9,6 @@ namespace PetWorldOficial.Domain.Interfaces.Repositories
         Task<Cart?> GetByIdAsync(int id, CancellationToken cancellationToken);
         Task UpdateAsync(Cart cart, CancellationToken cancellationToken);
         Task DeleteAsync(Cart cart, CancellationToken cancellationToken);
+        Task<Cart?> GetCartByUserId(int id, CancellationToken cancellationToken);
     }
 }

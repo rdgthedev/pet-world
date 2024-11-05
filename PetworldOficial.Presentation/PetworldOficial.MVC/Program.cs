@@ -5,11 +5,11 @@ using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Infrastructure.Context;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
 using Newtonsoft.Json;
 using PetWorldOficial.Application.Settings;
+using PetWorldOficial.Infrastructure.Data.Context;
 using AuthService = PetWorldOficial.Infrastructure.Services.AuthService;
 using UserService = PetWorldOficial.Application.Services.Implementations.UserService;
 
@@ -23,11 +23,12 @@ builder.Services.AddControllersWithViews()
     .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 
 builder.Services.AddHttpClient();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://example.com") // Substitua pela URL da sua aplicação
+        builder => builder.WithOrigins("http://example.com")
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
@@ -53,7 +54,8 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.AccessDeniedPath = "/Auth/Login";
 });
 
-builder.Services.AddMemoryCache();
+
+#region Services
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -67,8 +69,12 @@ builder.Services.AddScoped<IRaceService, RaceService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartCookieService, CartCookieService>();
 builder.Services.AddTransient<IImageService, ImageService>();
 
+#endregion
+
+#region Repositories
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -80,6 +86,9 @@ builder.Services.AddScoped<IRaceRepository, RaceRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+#endregion
+
 
 builder.Services.AddAutoMapper(typeof(CreateServiceCommand));
 builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateServiceCommand).Assembly));

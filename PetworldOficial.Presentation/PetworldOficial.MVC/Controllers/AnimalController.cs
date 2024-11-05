@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Queries.Animal;
+using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Application.ViewModels.Race;
@@ -17,7 +18,8 @@ public class AnimalController(
     IMediator mediator,
     IMemoryCache cache,
     IWebHostEnvironment webHostEnvironment,
-    IAnimalRepository animalRepository) : Controller
+    IAnimalRepository animalRepository,
+    IUserService userService) : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
@@ -119,6 +121,9 @@ public class AnimalController(
 
             if (cache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
                 command.Categories = categories!;
+
+            if (command.AdminId.HasValue)
+                command.Users = await userService.GetAllUsersExceptCurrentAsync(command.AdminId!.Value, cancellationToken);
 
             return View(command);
         }

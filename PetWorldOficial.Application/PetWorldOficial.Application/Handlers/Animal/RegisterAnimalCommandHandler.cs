@@ -7,7 +7,7 @@ using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Race;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
-using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace PetWorldOficial.Application.Handlers.Animal;
 
@@ -27,7 +27,10 @@ public class RegisterAnimalCommandHandler(
         {
             if (string.IsNullOrEmpty(request.Name.Trim()))
             {
-                var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!,
+                var email = request.UserPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                var user = await userService.GetByEmailAsync(
+                    email!,
                     cancellationToken);
 
                 if (user is null)
@@ -50,7 +53,8 @@ public class RegisterAnimalCommandHandler(
                 if (request.UserPrincipal!.IsInRole(ERole.Admin.ToString())
                     && string.IsNullOrEmpty(request.Name.Trim()))
                 {
-                    request.Users = await userService.GetAllAsync(cancellationToken);
+                    request.Users = await userService.GetAllUsersExceptCurrentAsync(user.Id, cancellationToken);
+                    request.AdminId = user.Id;
                     return request;
                 }
 

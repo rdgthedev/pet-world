@@ -2,7 +2,7 @@
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Infrastructure.Context;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 

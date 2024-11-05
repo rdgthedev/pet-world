@@ -12,7 +12,16 @@ public class DomainToViewModel : Profile
             {
                 Id = s.Id,
                 Name = s.Name,
+                Email = s.Email,
+                CNPJ = s.CNPJ,
                 CellPhone = s.CellPhone,
+                Street = s.Street,
+                Number = s.Number,
+                Neighborhood = s.Neighborhood,
+                Complement = s.Complement,
+                PostalCode = s.PostalCode,
+                City = s.City,
+                State = s.State,
                 Status = s.Status.ToString()
             });
     }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PetWorldOficial.Application.Handlers;
+using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Application.Services.Implementations
 {

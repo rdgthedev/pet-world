@@ -8,6 +8,7 @@ public record RegisterUserCommand(
     string Gender,
     DateTime? BirthDate,
     string Document,
+    string? Role,
     string Password,
     string Email,
     string PhoneNumber,

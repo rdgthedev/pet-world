@@ -14,7 +14,7 @@ public record RegisterAnimalCommand : IRequest<RegisterAnimalCommand>
     public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "A raça é obrigatória!")]
-    public int RaceId { get; set; }
+    public int? RaceId { get; set; }
 
     [Required(ErrorMessage = "O gênero é obrigatório!")]
     public string Gender { get; set; } = string.Empty;
@@ -23,8 +23,11 @@ public record RegisterAnimalCommand : IRequest<RegisterAnimalCommand>
     public string? ImageUrl { get; set; }
     public string BaseUrl { get; set; } = string.Empty;
     public DateTime? BirthDate { get; set; }
-    public int UserId { get; set; }
-    public int CategoryId { get; set; }
+    [Required(ErrorMessage = "O dono é obrigatório!")]
+    public int? UserId { get; set; }
+    public int? AdminId { get; set; }
+    [Required(ErrorMessage = "A categoria é obrigatória!")]
+    public int? CategoryId { get; set; }
 
 
     public IEnumerable<UserDetailsViewModel?> Users { get; set; } = Enumerable.Empty<UserDetailsViewModel>();

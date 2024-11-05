@@ -1,11 +1,5 @@
-﻿using PetWorldOficial.Application.Commands.Cart;
-using PetWorldOficial.Application.ViewModels;
-using PetWorldOficial.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.ViewModels.Cart;
 
 namespace PetWorldOficial.Application.Services.Interfaces
@@ -15,7 +9,14 @@ namespace PetWorldOficial.Application.Services.Interfaces
         Task<IEnumerable<CartDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken);
         Task<CartDetailsViewModel?> GetByIdAsync(int? id, CancellationToken cancellationToken);
         Task UpdateAsync(UpdateCartCommand command, CancellationToken cancellationToken);
-        Task<CartDetailsViewModel> CreateAsync(CreateCartCommand command, CancellationToken cancellationToken);
+        Task<CartDetailsViewModel> CreateAsync(int? userId, CancellationToken cancellationToken);
         Task DeleteAsync(DeleteCartCommand command, CancellationToken cancellationToken);
+        Task<CartDetailsViewModel?> GetCartByUserId(int userId, CancellationToken cancellationToken);
+
+        Task<CartDetailsViewModel> GetOrCreateCartForUserAsync(
+            int userId,
+            CancellationToken cancellationToken);
+
+        bool CartOwnerExists(CartDetailsViewModel? cart);
     }
 }

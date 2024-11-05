@@ -31,6 +31,11 @@ public class UserService(
         return mapper.Map<UserDetailsViewModel>(await userRepository.GetByUserNameAsync(userName!, cancellationToken));
     }
 
+    public async Task<UserDetailsViewModel?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return mapper.Map<UserDetailsViewModel>(await userRepository.GetByEmailAsync(email));
+    }
+
     public async Task<UserExistsViewModel> UserExistsAsync(
         string? userName,
         string? cpf,
