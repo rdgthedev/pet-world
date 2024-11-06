@@ -98,6 +98,10 @@ public class UserService(
         if (user is null)
             throw new UserNotFoundException("Usuário não encontrado!");
 
+        if (user.Schedullings.Any())
+            throw new EmployeeHasPendingSchedulingsException("Não foi possível deletar o usuário," +
+                                                             " pois ele possui agendamentos pendentes!");
+
         await userRepository.DeleteAsync(user);
     }
 

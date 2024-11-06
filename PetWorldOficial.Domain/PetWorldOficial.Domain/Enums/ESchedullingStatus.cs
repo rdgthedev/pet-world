@@ -1,7 +1,11 @@
-﻿namespace PetWorldOficial.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PetWorldOficial.Domain.Enums;
 
 public enum ESchedullingStatus
 {
-    Created = 0,
+    [Display(Name = "Pendente")]
+    Pending = 0,
+    [Display(Name = "Finalizado")]
     Completed = 1
 }

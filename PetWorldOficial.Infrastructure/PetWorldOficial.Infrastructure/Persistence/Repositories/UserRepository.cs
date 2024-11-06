@@ -20,6 +20,7 @@ public class UserRepository(
     public async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await userManager
             .Users
+            .Include(u => u.Schedullings)
             .FirstOrDefaultAsync(user => user.Id == id, cancellationToken);
 
     public async Task<IEnumerable<User>> GetAllUsersExceptCurrentAsync(int userId, CancellationToken cancellationToken)

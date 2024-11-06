@@ -124,6 +124,10 @@ public class UserController(
         {
             TempData["ErrorMessage"] = e.Message;
         }
+        catch (EmployeeHasPendingSchedulingsException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";

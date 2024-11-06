@@ -15,9 +15,9 @@ public class LoginUserCommanHandler(
     {
         try
         {
-            var result = await authService.Login(request);
+            var user = await authService.Login(request);
 
-            if (!result)
+            if (user is null)
                 throw new LoginInvalidException("Login ou senha inválidos!");
 
             return Unit.Value;

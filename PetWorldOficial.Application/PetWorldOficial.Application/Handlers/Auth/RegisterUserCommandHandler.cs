@@ -29,9 +29,10 @@ public class RegisterUserCommandHandler(
             var user = mapper.Map<Domain.Entities.User>(request);
             var userRegistered = await authService.Register(user, request.Role, request.Password);
 
-            if (!userRegistered)
+            if (userRegistered is null)
                 throw new UnableToRegisterUserException("Não foi possível registrar o usuário!");
 
+            await authService.SignIn(user);
             return Unit.Value;
         }
         catch (Exception)

@@ -23,7 +23,7 @@ public class Schedulling : Entity
         Date = date;
         Time = time;
         Observation = observation;
-        Status = ESchedullingStatus.Created;
+        Status = ESchedullingStatus.Pending;
         CreatedAt = DateTime.Now;
         Code = Guid.NewGuid();
     }
