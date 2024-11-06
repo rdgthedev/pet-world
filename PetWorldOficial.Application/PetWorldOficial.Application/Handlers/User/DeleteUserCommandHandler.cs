@@ -4,7 +4,8 @@ using PetWorldOficial.Application.Services.Interfaces;
 
 namespace PetWorldOficial.Application.Handlers.User;
 
-public class DeleteUserCommandHandler(IUserService userService) : IRequestHandler<DeleteUserCommand, Unit>
+public class DeleteUserCommandHandler(
+    IUserService userService) : IRequestHandler<DeleteUserCommand, Unit>
 {
     public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
@@ -13,7 +14,7 @@ public class DeleteUserCommandHandler(IUserService userService) : IRequestHandle
             await userService.DeleteAsync(request, cancellationToken);
             return Unit.Value;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw;
         }

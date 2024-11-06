@@ -1,106 +1,157 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetWorldOficial.Domain.Enums
 @model IEnumerable<PetWorldOficial.Application.ViewModels.Schedule.ScheduleDetailsViewModel>
 
 @{
-Layout = "_Layout";
+    Layout = "_Layout";
 }
 
 @if (User.IsInRole("Admin"))
 {
-<div class="container-fluid py-3">
-    <br>
-    <h1 class="text-center">Agendamentos</h1>
-    <br>
-</div>
+    <div class="container-fluid py-3">
+        <br>
+        <h1 class="text-center">Agendamentos</h1>
+        <br>
+    </div>
 }
 else
 {
-<div class="container-fluid py-3">
-    <br>
-    <h1 class="text-center">
-        Meus Agendamentos
-    </h1>
-    <br>
-</div>
+    <div class="container-fluid py-3">
+        <br>
+        <h1 class="text-center">
+            Meus Agendamentos
+        </h1>
+        <br>
+    </div>
 }
 
 @if (TempData["ErrorMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     </div>
-</div>
 }
 else if (TempData["SuccessMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     </div>
-</div>
 }
 
 <!-- Seção de Agendamentos -->
-<section class="my-5">
-    <div class="container">
+@if (Model != null && Model.Any())
+{
+    if (User.IsInRole(ERole.Admin.ToString()))
+    {
+        <section class="my-5">
+            <div class="container">
 
-        <div class="row">
-            <div class="col-lg-8">
-                <!-- Exibição dos agendamentos em cards -->
-                @if (Model != null && Model.Any())
-                {
-                @foreach (var schedule in Model)
-                {
-                <div class="card cart-card mb-3">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div class="d-flex">
-                            <img
-                                src="/Images/@schedule.Animal.ImageUrl"
-                                alt="Animal"
-                                class="img-fluid me-4"
-                                style="width: 100px; object-fit: cover" />
-                            <div>
-                                <h5 class="card-title">@schedule.Animal.Name</h5>
-                                <p class="card-text">Serviço: @schedule.Service.Name</p>
-                                <p><strong>Data:</strong> @schedule.Date.ToString("dd-MM-yyyy")</p>
-                                <p><strong>Horário:</strong> @schedule.Time.ToString(@"hh\:mm")</p>
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Exibição dos agendamentos em cards -->
+
+                        @foreach (var schedule in Model)
+                        {
+                            <div class="card cart-card mb-3">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img
+                                            src="/Images/@schedule.Animal.ImageUrl"
+                                            alt="Animal"
+                                            class="img-fluid me-4"
+                                            style="width: 100px; object-fit: cover"/>
+                                        <div>
+                                            <h5 class="card-title">@schedule.Animal.Name</h5>
+                                            <p class="card-text">Serviço: @schedule.Service.Name</p>
+                                            <p>
+                                                <strong>Data:</strong> @schedule.Date.ToString("dd-MM-yyyy")
+                                            </p>
+                                            <p>
+                                                <strong>Horário:</strong> @schedule.Time.ToString(@"hh\:mm")
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <!-- Botões de editar e cancelar -->
+                                        <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })" class="btn btn-warning mb-2">Editar</a>
+                                        <a href="@Url.Action("Delete", "Schedule", new { id = schedule.Id })" class="btn btn-danger">Cancelar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <!-- Resumo do Agendamento (se necessário) -->
+                        <div class="col-lg-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h4 class="card-title">Resumo dos Agendamentos</h4>
+                                    <ul class="list-group list-group-flush mb-3">
+                                        <li class="list-group-item d-flex justify-content-between">
+                                            <span>Total de Agendamentos</span>
+                                            <strong>@Model.Count()</strong>
+                                        </li>
+                                    </ul>
+                                    <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block">Agendar Novo Serviço</a>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex flex-column">
-                            <!-- Botões de editar e cancelar -->
-                            <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })" class="btn btn-warning mb-2">Editar</a>
-                            <a href="@Url.Action("Delete", "Schedule", new { id = schedule.Id })" class="btn btn-danger">Cancelar</a>
-                        </div>
                     </div>
                 </div>
-                }
-                }
-                else
-                {
-                <div class="alert alert-info" role="alert">
-                    Você não possui nenhum agendamento no momento.
-                </div>
-                }
             </div>
+        </section>
+    }
+    else
+    {
+        <section class="my-5">
+            <div class="container">
 
-            <!-- Resumo do Agendamento (se necessário) -->
-            <div class="col-lg-4">
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <h4 class="card-title">Resumo dos Agendamentos</h4>
-                        <ul class="list-group list-group-flush mb-3">
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Total de Agendamentos</span>
-                                <strong>@Model.Count()</strong>
-                            </li>
-                        </ul>
-                        <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block">Agendar Novo Serviço</a>
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        @foreach (var schedule in Model)
+                        {
+                            <div class="card cart-card mb-3">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img
+                                            src="/Images/@schedule.Animal.ImageUrl"
+                                            alt="Animal"
+                                            class="img-fluid me-4"
+                                            style="width: 100px; object-fit: cover"/>
+                                        <div>
+                                            <h5 class="card-title">@schedule.Animal.Name</h5>
+                                            <p class="card-text">Serviço: @schedule.Service.Name</p>
+                                            <p>
+                                                <strong>Data:</strong> @schedule.Date.ToString("dd-MM-yyyy")
+                                            </p>
+                                            <p>
+                                                <strong>Horário:</strong> @schedule.Time.ToString(@"hh\:mm")
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })" class="btn btn-warning mb-2">Editar</a>
+                                        <a href="@Url.Action("Delete", "Schedule", new { id = schedule.Id })" class="btn btn-danger">Cancelar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+    }
+}
+else
+{
+    <div class="container-fluid text-black py-3">
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
+            @TempData["NotFoundScheduling"]
+        </h2>
     </div>
-</section>
+}

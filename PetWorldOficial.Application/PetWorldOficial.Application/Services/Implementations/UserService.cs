@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
@@ -11,6 +13,8 @@ namespace PetWorldOficial.Application.Services.Implementations;
 
 public class UserService(
     IUserRepository userRepository,
+    IScheduleRepository schedulingRepository,
+    UserManager<User> userManager,
     IMapper mapper) : IUserService
 {
     public async Task<IEnumerable<UserDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken)
@@ -99,8 +103,7 @@ public class UserService(
             throw new UserNotFoundException("Usuário não encontrado!");
 
         if (user.Schedullings.Any())
-            throw new EmployeeHasPendingSchedulingsException("Não foi possível deletar o usuário," +
-                                                             " pois ele possui agendamentos pendentes!");
+            await schedulingRepository.DeleteRangeAsync(user.Schedullings, cancellationToken);
 
         await userRepository.DeleteAsync(user);
     }
@@ -110,7 +113,6 @@ public class UserService(
         CancellationToken cancellationToken)
         => mapper.Map<IEnumerable<UserDetailsViewModel>>(
             await userRepository.GetAllUsersExceptCurrentAsync(userId, cancellationToken));
-
 
     public async Task<int> CountUsersByRoleAsync(ERole roleName)
     {

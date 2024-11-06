@@ -78,7 +78,7 @@ public class ScheduleController(
         }
         catch (ScheduleNotFoundException e)
         {
-            TempData["ErrorMessage"] = e.Message;
+            TempData["NotFoundScheduling"] = e.Message;
             return View(schedules);
         }
         catch (Exception)

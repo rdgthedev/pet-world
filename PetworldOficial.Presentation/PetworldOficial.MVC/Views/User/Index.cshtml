@@ -8,7 +8,7 @@
     Layout = "_Layout";
 }
 
-@if (Model.Any())
+@if (Model is not null && Model.Any())
 {
     <div class="container-fluid py-3">
         <br>

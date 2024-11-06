@@ -44,9 +44,9 @@ public class GetAllClientsAndEmployesQueryHandler(
             {
                 var userDetails = usersDetails.ToList().FirstOrDefault(u => u.Id == user.Id);
                 var role = Enum.Parse<ERole>((await userManager.GetRolesAsync(user)).FirstOrDefault()!);
-                userDetails.RoleName = role is ERole.Admin ? "Administrador" : "Cliente";
+                userDetails!.RoleName = role is ERole.Admin ? "Administrador" : "Cliente";
             }
-            return usersDetails.OrderBy(u => u.RoleName).ToList();
+            return usersDetails.OrderBy(u => u.RoleName);
         }
         catch (Exception)
         {

@@ -29,10 +29,17 @@ public class GetAllSchedulesQueryHandler(
                 throw new UserNotFoundException("Ocorreu um erro. Tente fazer o login novamente no site." +
                                                 " Possívelmente sua sessão foi expirada!");
 
-            var isAdmin = request.UserPrincipal.IsInRole(ERole.Admin.ToString());
+            var isAdmin = request.UserPrincipal!.IsInRole(ERole.Admin.ToString());
 
             if (isAdmin)
-                return await scheduleService.GetAll(cancellationToken) ?? [];
+            {
+                var schedulingsResult = await scheduleService.GetAll(cancellationToken);
+
+                return schedulingsResult is null || !schedulingsResult.Any()
+                    ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
+                    : schedulingsResult;
+            }
+
 
             var animalsIds = (await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken))
                 .Select(a => a!.Id).ToList() ?? [];

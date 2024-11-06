@@ -39,7 +39,11 @@ builder.Services.AddDbContext<AppDbContext>(
     options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
-            b => { b.MigrationsAssembly("PetWorldOficial.Infrastructure"); });
+            cfg =>
+            {
+                cfg.CommandTimeout(120);
+                cfg.MigrationsAssembly("PetWorldOficial.Infrastructure");
+            });
     });
 
 builder.Services.AddIdentity<User, Role>()

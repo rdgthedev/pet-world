@@ -26,6 +26,8 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Schedullings
             .AsNoTracking()
             .Include(s => s.Service)
+            .Include(s => s.Animal)
+            
             .ToListAsync(cancellationToken);
     }
 
