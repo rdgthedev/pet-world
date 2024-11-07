@@ -47,15 +47,14 @@ else if (TempData["SuccessMessage"] != null)
 <!-- Seção de Agendamentos -->
 @if (Model != null && Model.Any())
 {
-    if (User.IsInRole(ERole.Admin.ToString()))
+    if (!User.IsInRole(ERole.Admin.ToString()))
     {
         <section class="my-5">
             <div class="container">
-
                 <div class="row">
+                    <!-- Coluna de agendamentos -->
                     <div class="col-lg-8">
                         <!-- Exibição dos agendamentos em cards -->
-
                         @foreach (var schedule in Model)
                         {
                             <div class="card cart-card mb-3">
@@ -85,19 +84,20 @@ else if (TempData["SuccessMessage"] != null)
                                 </div>
                             </div>
                         }
-                        <!-- Resumo do Agendamento (se necessário) -->
-                        <div class="col-lg-4">
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <h4 class="card-title">Resumo dos Agendamentos</h4>
-                                    <ul class="list-group list-group-flush mb-3">
-                                        <li class="list-group-item d-flex justify-content-between">
-                                            <span>Total de Agendamentos</span>
-                                            <strong>@Model.Count()</strong>
-                                        </li>
-                                    </ul>
-                                    <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block">Agendar Novo Serviço</a>
-                                </div>
+                    </div>
+
+                    <!-- Coluna de resumo do agendamento -->
+                    <div class="col-lg-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h4 class="card-title">Resumo dos Agendamentos</h4>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Total de Agendamentos</span>
+                                        <strong>@Model.Count()</strong>
+                                    </li>
+                                </ul>
+                                <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block">Agendar Novo Serviço</a>
                             </div>
                         </div>
                     </div>
@@ -125,7 +125,8 @@ else if (TempData["SuccessMessage"] != null)
                                             style="width: 100px; object-fit: cover"/>
                                         <div>
                                             <h5 class="card-title">@schedule.Animal.Name</h5>
-                                            <p class="card-text">Serviço: @schedule.Service.Name</p>
+                                            <p class="card-text"><strong>Serviço:</strong> @schedule.Service.Name</p>
+                                            <p class="card-text"><strong>Funcionário:</strong> @schedule.Employee.Name</p>
                                             <p>
                                                 <strong>Data:</strong> @schedule.Date.ToString("dd-MM-yyyy")
                                             </p>

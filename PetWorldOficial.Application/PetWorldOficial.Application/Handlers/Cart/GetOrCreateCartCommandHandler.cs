@@ -19,7 +19,6 @@ public class GetOrCreateCartCommandHandler(
         {
             var context = httpContextAccessor.HttpContext;
             var user = context.User;
-            // var userId = 0;
 
             var email = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty;
 

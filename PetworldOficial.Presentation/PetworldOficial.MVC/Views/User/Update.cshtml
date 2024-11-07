@@ -51,10 +51,7 @@
             <option value="" selected disabled>Selecione o perfil</option>
             @foreach (ERole role in Enum.GetValues(typeof(ERole)))
             {
-                if (role is ERole.Admin or ERole.User)
-                {
-                    <option value="@role">@role.GetDisplayName()</option>
-                }
+                <option value="@role">@role.GetDisplayName()</option>
             }
         </select>
         <span asp-validation-for="Gender" class="text-danger"></span>
@@ -95,7 +92,7 @@
         <input asp-for="Complement" type="text" class="form-control shadow-none">
         <span asp-validation-for="Complement" class="text-danger"></span>
     </div>
-    
+
     <div class="col-md-5">
         <label asp-for="PostalCode" class="form-label">Cep <span style="color: red;">*</span></label>
         <input asp-for="PostalCode" type="text" class="form-control shadow-none">

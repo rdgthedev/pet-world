@@ -63,10 +63,27 @@ public class CartService(
         int userId,
         CancellationToken cancellationToken)
     {
-        var cart = mapper.Map<CartDetailsViewModel>(
-                       await cartRepository.GetCartByUserId(userId, cancellationToken))
-                   ?? await cartCookieService.GetCartFromCookieAsync(httpContextAccessor.HttpContext,
-                       cancellationToken);
+        var cartCookieResult = await cartCookieService.GetCartFromCookieAsync(
+            httpContextAccessor.HttpContext,
+            cancellationToken);
+
+        var cartResult = await cartRepository.GetCartByUserId(userId, cancellationToken);
+
+        if (cartResult is not null 
+            && cartCookieResult is not null
+            && cartResult.Id != cartCookieResult.Id)
+        {
+            cartCookieResult.ClientId = cartResult.ClientId;
+            cartCookieResult.ExpiresDate = cartResult.ExpiresDate;
+            cartCookieResult.Items?.AddRange(mapper.Map<List<CartItemDetailsViewModel>>(cartResult.Items ?? []));
+            cartCookieResult.TotalPrice = cartResult.TotalPrice;
+
+            await cartRepository.UpdateAsync(mapper.Map<Cart>(cartCookieResult), cancellationToken);
+            await cartRepository.DeleteAsync(cartResult, cancellationToken);
+            cartResult = null!;
+        }
+
+        var cart = cartCookieResult ?? mapper.Map<CartDetailsViewModel>(cartResult);
 
         if (cart?.ExpiresDate < DateTime.Now)
         {
@@ -132,7 +149,7 @@ public class CartService(
     public async Task UpdateAsync(UpdateCartCommand command, CancellationToken cancellationToken)
     {
         var cart = await cartRepository.GetByIdAsync(command.Id, cancellationToken);
-        
+
         if (cart is null)
             throw new Exception();
 
