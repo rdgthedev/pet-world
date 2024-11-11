@@ -169,16 +169,15 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RaceId")
-                        .HasColumnType("int");
+                    b.Property<string>("Race")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("OwnerId");
-
-                    b.HasIndex("RaceId");
 
                     b.HasIndex(new[] { "Id" }, "IX_Animal_Id")
                         .IsUnique();
@@ -236,7 +235,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderId")
+                    b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -256,12 +255,14 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CartId");
-
                     b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId")
-                        .IsUnique();
+                        .HasDatabaseName("IX_CartItem_ProductId");
+
+                    b.HasIndex("CartId", "ProductId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CartItem_CartId_ProductId");
 
                     b.HasIndex(new[] { "Id" }, "IX_CartItem_Id");
 
@@ -412,27 +413,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Product", (string)null);
-                });
-
-            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Race", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("NVARCHAR")
-                        .HasColumnName("Name");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "Id" }, "IX_Race_Id");
-
-                    b.ToTable("Race", (string)null);
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Role", b =>
@@ -897,18 +877,9 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Animal_User_UserId");
 
-                    b.HasOne("PetWorldOficial.Domain.Entities.Race", "Race")
-                        .WithMany("Animals")
-                        .HasForeignKey("RaceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_Animal_Race_RaceId");
-
                     b.Navigation("Category");
 
                     b.Navigation("Owner");
-
-                    b.Navigation("Race");
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Cart", b =>
@@ -935,7 +906,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired()
                         .HasConstraintName("FK_CartItem_Order_OrderId");
 
                     b.HasOne("PetWorldOficial.Domain.Entities.Product", "Product")
@@ -1066,11 +1036,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                 {
                     b.Navigation("Stock")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("PetWorldOficial.Domain.Entities.Race", b =>
-                {
-                    b.Navigation("Animals");
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Service", b =>

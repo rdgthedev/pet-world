@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PetWorldOficial.Application.ViewModels.CartItem;
+﻿
+using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Commands.Cart
 {
@@ -11,7 +7,7 @@ namespace PetWorldOficial.Application.Commands.Cart
     {
         public int Id { get; set; }
         public DateTime ExpiresDate { get; set; }
-        public List<CartItemDetailsViewModel>? Items { get; set; }
+        public List<Domain.Entities.CartItem>? Items { get; set; }
         public int? ClientId { get; set; }
         public decimal TotalPrice { get; set; }
     }

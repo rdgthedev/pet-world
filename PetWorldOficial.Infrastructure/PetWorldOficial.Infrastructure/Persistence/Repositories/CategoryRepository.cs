@@ -41,12 +41,19 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
                 .AsNoTracking()
                 .Where(c => c.Type == ECategoryType.Service.ToString())
                 .ToListAsync(cancellationToken);
-        
+
         public async Task<IEnumerable<Category>> GetAllProductCategories(CancellationToken cancellationToken)
             => await context
                 .Categories
                 .AsNoTracking()
                 .Where(c => c.Type == ECategoryType.Product.ToString())
+                .ToListAsync(cancellationToken);
+
+        public async Task<IEnumerable<Category>> GetAllAnimalCategories(CancellationToken cancellationToken)
+            => await context
+                .Categories
+                .AsNoTracking()
+                .Where(c => c.Type == ECategoryType.Animal.ToString())
                 .ToListAsync(cancellationToken);
 
         public async Task CreateAsync(Category category, CancellationToken cancellationToken)

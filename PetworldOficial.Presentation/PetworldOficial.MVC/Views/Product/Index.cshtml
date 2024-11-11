@@ -15,6 +15,7 @@
     <br>
 </div>
 
+
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="d-flex justify-content-center align-items-center">
@@ -45,16 +46,21 @@
     {
         <section class="my-5">
             <div class="container">
-                <div class="pb-2">
-                    <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
-                        <img style="width: 25px" src="/Images/addition.svg" alt="">Novo produto
-                    </a>
+                <div class="row mb-3">
+                    <div class="col-md-6 d-flex justify-content-start">
+                        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Auth" asp-action="Register">
+                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Produto
+                        </a>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <input type="text" class="form-control" id="productSearch" class="form-control" placeholder="Buscar produtos...">
+                    </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-12">
+                    <div class="col-lg-12" id="productList">
                         @foreach (var product in Model)
                         {
-                            <div class="card cart-card mb-3">
+                            <div class="card cart-card mb-3 product-item">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div class="d-flex">
                                         <img
@@ -99,22 +105,31 @@
     else
     {
         <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <input type="text" class="form-control" id="productSearch" class="form-control" placeholder="Buscar produtos...">
+                </div>
+            </div>
+            <br>
+        </div>
+        <div class="container" id="productList">
             <div class="row">
                 @foreach (var product in Model)
                 {
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-3 mb-3 product-item">
                         <div class="card h-100">
-                            <img src="/Images/@product.ImageUrl" class="ImagemCard card-img-top" alt="..."
-                                 style="height: 200px; object-fit: scale-down; width: 100%">
-                            <div class="card-body d-flex flex-column">
+                            <!-- Adicionei 'text-center' para centralizar o conteúdo -->
+                            <img src="/Images/@product.ImageUrl" class="card-img-top" alt="Produto"
+                                 style="height: 200px; object-fit: contain; width: 100%; margin-top: 10px;">
+                            <div class="card-body d-flex flex-column justify-content-between">
                                 <h5 class="card-title">@product.Name</h5>
                                 <br>
-                                <div>
+                                <p>
                                     <b>Valor:</b> @product.Price.ToString("C")
-                                </div>
-                                <br>
-                                <div class="d-grid gap-2">
-                                    <a class="btn btn-dark" asp-route-id="@product.Id">Adicionar ao carrinho</a>
+                                </p>
+                                <div class="d-grid gap-2 mt-auto">
+                                    <!-- Ajuste para centralizar e expandir o botão -->
+                                    <button class="btn btn-dark add-to-cart" data-product-id="@product.Id">Adicionar ao carrinho</button>
                                 </div>
                             </div>
                         </div>
@@ -142,3 +157,39 @@ else
         }
     </div>
 }
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Filtro de pesquisa
+        $('#productSearch').on('input', function() {
+            var searchQuery = $(this).val().toLowerCase();
+            $('.product-item').each(function() {
+                var productName = $(this).find('.card-title').text().toLowerCase();
+                if (productName.includes(searchQuery)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Adicionar ao carrinho
+        $('.add-to-cart').on('click', function(e) {
+            e.preventDefault();
+            var productId = $(this).data('product-id');
+
+            $.ajax({
+                url: '/Cart/AddItem',
+                type: 'POST',
+                data: { productId: productId },
+                success: function(response) {
+                    alert("Produto adicionado ao carrinho!");
+                },
+                error: function() {
+                    alert("Houve um erro ao adicionar o produto ao carrinho.");
+                }
+            });
+        });
+    });
+</script>

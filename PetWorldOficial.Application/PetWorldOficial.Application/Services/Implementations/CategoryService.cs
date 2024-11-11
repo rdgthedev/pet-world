@@ -24,6 +24,10 @@ namespace PetWorldOficial.Application.Services.Implementations
             => mapper.Map<IEnumerable<CategoryDetailsViewModel>>(
                 await categoryRepository.GetAllServiceCategories(cancellationToken));
 
+        public async Task<IEnumerable<CategoryDetailsViewModel>> GetAllAnimalCategories(CancellationToken cancellationToken)
+            => mapper.Map<IEnumerable<CategoryDetailsViewModel>>(
+                await categoryRepository.GetAllAnimalCategories(cancellationToken));
+
         public async Task<IEnumerable<CategoryDetailsViewModel>> GetAllProductCategories(
             CancellationToken cancellationToken)
             => mapper.Map<IEnumerable<CategoryDetailsViewModel>>(

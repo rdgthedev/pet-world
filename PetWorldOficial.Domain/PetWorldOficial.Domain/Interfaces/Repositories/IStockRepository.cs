@@ -7,4 +7,5 @@ public interface IStockRepository
 {
     Task CreateAsync(Stock stock, CancellationToken cancellationToken);
     Task UpdateAsync(Stock stock, CancellationToken cancellationToken);
+    Task<Stock?> GetByProductId(int productId, CancellationToken cancellationToken);
 }

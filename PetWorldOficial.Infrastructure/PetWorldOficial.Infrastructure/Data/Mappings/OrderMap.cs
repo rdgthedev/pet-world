@@ -63,6 +63,7 @@ public class OrderMap : IEntityTypeConfiguration<Order>
             .WithOne(ci => ci.Order) // Com um CartItem
             .HasConstraintName("FK_CartItem_Order_OrderId")
             .HasForeignKey(ci => ci.OrderId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction); // Permitir exclusão em cascata
 
         builder.HasIndex(o => o.Id, "IX_Order_Id");

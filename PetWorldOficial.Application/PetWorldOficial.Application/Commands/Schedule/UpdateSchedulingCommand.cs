@@ -40,6 +40,7 @@ public record UpdateSchedulingCommand(ClaimsPrincipal? UserPrincipal) : IRequest
     public string EmployeeName { get; set; } = string.Empty;
     public string CategoryName { get; set; } = string.Empty;
     public string AnimalName { get; set; } = string.Empty;
+    public Guid Code { get; set; }
 
     public IEnumerable<AnimalDetailsViewModel?>? Animals { get; set; }
     public List<Schedulling>? Schedullings { get; set; }

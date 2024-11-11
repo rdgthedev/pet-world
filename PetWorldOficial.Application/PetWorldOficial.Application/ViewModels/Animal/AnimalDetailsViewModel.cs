@@ -9,7 +9,7 @@ public class AnimalDetailsViewModel
     public string Name { get; set; } = string.Empty;
     public DateTime? BirthDate { get; set; }
     public Domain.Entities.Category Category { get; set; } = null!;
-    public Domain.Entities.Race Race { get; set; } = null!;
+    public string Race { get; set; } = null!;
     public string Gender { get; set; } = string.Empty;
     public string ImageUrl { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }

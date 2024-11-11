@@ -30,6 +30,7 @@ public class CartItemMap : IEntityTypeConfiguration<Domain.Entities.CartItem>
             .WithMany(o => o.Items)
             .HasConstraintName("FK_CartItem_Order_OrderId")
             .HasForeignKey(ci => ci.OrderId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(s => s.Quantity)
@@ -48,5 +49,13 @@ public class CartItemMap : IEntityTypeConfiguration<Domain.Entities.CartItem>
             .IsRequired();
 
         builder.HasIndex(ci => ci.Id, "IX_CartItem_Id");
+        
+        builder.HasIndex(ci => new { ci.CartId, ci.ProductId })
+            .IsUnique()
+            .HasDatabaseName("IX_CartItem_CartId_ProductId");
+
+        builder.HasIndex(ci => ci.ProductId)
+            .IsUnique(false) 
+            .HasDatabaseName("IX_CartItem_ProductId");
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Cart;
-using PetWorldOficial.Application.ViewModels.CartItem;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
@@ -13,6 +12,8 @@ public class CartService(
     ICartRepository cartRepository,
     ICartCookieService cartCookieService,
     IHttpContextAccessor httpContextAccessor,
+    IStockService stockService,
+    ICartItemRepository cartItemRepository,
     IMapper mapper) : ICartService
 {
     public async Task<CartDetailsViewModel> CreateAsync(
@@ -28,19 +29,8 @@ public class CartService(
         {
             Id = cart.Id,
             ExpiresDate = cart.ExpiresDate,
-            Items = cart.Items.Select(x => new CartItemDetailsViewModel
-            {
-                CartId = x.CartId,
-                Description = x.Product.Description,
-                ImageUrl = x.Product.ImageUrl,
-                OrderId = x.OrderId,
-                Price = x.Price,
-                ProductId = x.ProductId,
-                ProductName = x.Product.Name,
-                Quantity = x.Quantity,
-                TotalPrice = x.TotalPrice
-            }).ToList(),
-            TotalPrice = cart.TotalPrice
+            Items = cart.Items.Select(x => new CartItem(x.Product, cart.Id, 1)).ToList(),
+            TotalPrice = cart.Items.Sum(i => i.TotalPrice)
         };
     }
 
@@ -63,27 +53,25 @@ public class CartService(
         int userId,
         CancellationToken cancellationToken)
     {
-        var cartCookieResult = await cartCookieService.GetCartFromCookieAsync(
-            httpContextAccessor.HttpContext,
-            cancellationToken);
+        // var cartCookieResult = await cartCookieService.GetCartFromCookieAsync(
+        //     httpContextAccessor.HttpContext,
+        //     cancellationToken);
 
         var cartResult = await cartRepository.GetCartByUserId(userId, cancellationToken);
+        var cart = cartResult != null ? mapper.Map<CartDetailsViewModel>(cartResult) : null!;
+        // if (cartResult is not null
+        //     && cartCookieResult is not null
+        //     && cartResult.Id != cartCookieResult.Id)
+        // {
+        //     foreach (var item in cartCookieResult.Items)
+        //         cartResult.AddItem(item, item.Product.Stock.Quantity);
+        //
+        //     await cartRepository.DeleteAsync(mapper.Map<Cart>(cartCookieResult), cancellationToken);
+        //     await cartRepository.UpdateAsync(cartResult, cancellationToken);
+        //     cartCookieResult = null!;
+        // }
 
-        if (cartResult is not null 
-            && cartCookieResult is not null
-            && cartResult.Id != cartCookieResult.Id)
-        {
-            cartCookieResult.ClientId = cartResult.ClientId;
-            cartCookieResult.ExpiresDate = cartResult.ExpiresDate;
-            cartCookieResult.Items?.AddRange(mapper.Map<List<CartItemDetailsViewModel>>(cartResult.Items ?? []));
-            cartCookieResult.TotalPrice = cartResult.TotalPrice;
-
-            await cartRepository.UpdateAsync(mapper.Map<Cart>(cartCookieResult), cancellationToken);
-            await cartRepository.DeleteAsync(cartResult, cancellationToken);
-            cartResult = null!;
-        }
-
-        var cart = cartCookieResult ?? mapper.Map<CartDetailsViewModel>(cartResult);
+        // var cart = cartCookieResult ?? mapper.Map<CartDetailsViewModel>(cartResult);
 
         if (cart?.ExpiresDate < DateTime.Now)
         {
@@ -99,16 +87,34 @@ public class CartService(
                 cart.ClientId = userId;
                 await UpdateAsync(mapper.Map<UpdateCartCommand>(cart), cancellationToken);
             }
-
+            
             var cookieCartId = cartCookieService.GetCartCookieValue(httpContextAccessor.HttpContext);
 
-            if (cookieCartId != cart.Id)
+            if (cookieCartId is null || cookieCartId != cart.Id)
                 cartCookieService.SetCartCookie(cart.Id.ToString(), cart.ExpiresDate, httpContextAccessor.HttpContext);
+
+            var itemsToRemove = new List<CartItem>();
+
+            foreach (var item in cart.Items!)
+            {
+                var isValid =
+                    await stockService.ValidateStockQuantity(item.ProductId, item.Quantity, cancellationToken);
+
+                if (!isValid)
+                    itemsToRemove.Add(item);
+            }
+
+            if (itemsToRemove.Any())
+            {
+                await cartItemRepository.DeleteRangeAsync(itemsToRemove, cancellationToken);
+                cart.Items = cart.Items.Where(ci => itemsToRemove.Any(i => ci.Id != i.Id)).ToList();
+            }
 
             return cart;
         }
 
         var cartCreated = await CreateAsync(userId, cancellationToken);
+
         cartCookieService.SetCartCookie(
             cartCreated.Id.ToString(),
             cartCreated.ExpiresDate,
@@ -130,19 +136,8 @@ public class CartService(
         {
             Id = cart!.Id,
             ExpiresDate = cart.ExpiresDate,
-            Items = cart.Items.Select(x => new CartItemDetailsViewModel
-            {
-                CartId = x.CartId,
-                Description = x.Product.Description,
-                ImageUrl = x.Product.ImageUrl,
-                OrderId = x.OrderId,
-                Price = x.Price,
-                ProductId = x.ProductId,
-                ProductName = x.Product.Name,
-                Quantity = x.Quantity,
-                TotalPrice = x.TotalPrice
-            }).ToList(),
-            TotalPrice = cart.TotalPrice
+            Items = cart.Items.Select(x => new CartItem(x.Product, cart.Id, 1)).ToList(),
+            TotalPrice = cart.Items.Sum(i => i.TotalPrice)
         };
     }
 
@@ -152,8 +147,6 @@ public class CartService(
 
         if (cart is null)
             throw new Exception();
-
-        //Informações para atualizar o carrinho
 
         await cartRepository.UpdateAsync(mapper.Map(command, cart), cancellationToken);
     }

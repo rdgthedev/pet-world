@@ -34,6 +34,7 @@ public class GetAllSchedulesQueryHandler(
             if (isAdmin)
             {
                 var schedulingsResult = await scheduleService.GetAll(cancellationToken);
+                schedulingsResult = GroupSchedulings(schedulingsResult.ToList());
 
                 return schedulingsResult is null || !schedulingsResult.Any()
                     ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
@@ -42,18 +43,41 @@ public class GetAllSchedulesQueryHandler(
 
 
             var animalsIds = (await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken))
-                .Select(a => a!.Id).ToList() ?? [];
+                .Select(a => a!.Id).ToList();
 
-            if (!animalsIds.Any())
-                return Enumerable.Empty<ScheduleDetailsViewModel>();
+            animalsIds = animalsIds is null || !animalsIds.Any()
+                ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
+                : animalsIds;
 
             var schedulings = await scheduleService.GetAllByAnimalsIds(animalsIds, cancellationToken);
-
-            return schedulings.ToList() ?? [];
+            schedulings = GroupSchedulings(schedulings.ToList());
+            return schedulings is null || !schedulings.Any()
+                ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
+                : schedulings;
         }
         catch (Exception)
         {
             throw;
         }
+    }
+
+    private List<ScheduleDetailsViewModel> GroupSchedulings(List<ScheduleDetailsViewModel> listOfSchedulings)
+    {
+        var schedulingsToRemove = new List<ScheduleDetailsViewModel>();
+
+        foreach (var scheduling in listOfSchedulings.ToList())
+        {
+            var indexAHead = listOfSchedulings.IndexOf(scheduling) + 1;
+
+            if (indexAHead <= listOfSchedulings.Count - 1)
+                if (scheduling.Code == listOfSchedulings[indexAHead].Code)
+                    schedulingsToRemove.Add(listOfSchedulings[indexAHead]);
+        }
+
+        listOfSchedulings = listOfSchedulings
+            .Where(s => !schedulingsToRemove.Contains(s))
+            .ToList();
+
+        return listOfSchedulings;
     }
 }

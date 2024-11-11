@@ -3,6 +3,7 @@
 @model IEnumerable<PetWorldOficial.Application.ViewModels.Schedule.ScheduleDetailsViewModel>
 
 @{
+    ViewData["Title"] = "Agendamentos";
     Layout = "_Layout";
 }
 
@@ -44,20 +45,34 @@ else if (TempData["SuccessMessage"] != null)
     </div>
 }
 
+
 <!-- Seção de Agendamentos -->
 @if (Model != null && Model.Any())
 {
     if (!User.IsInRole(ERole.Admin.ToString()))
     {
         <section class="my-5">
+            <!-- Filtro de Pesquisa -->
             <div class="container">
-                <div class="row">
+                <div class="row mb-3">
+                    <div class="col-md-6 d-flex justify-content-start">
+                        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index">
+                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Agendamento
+                        </a>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchSchedule()">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row" id="scheduleContainer">
                     <!-- Coluna de agendamentos -->
                     <div class="col-lg-8">
                         <!-- Exibição dos agendamentos em cards -->
                         @foreach (var schedule in Model)
                         {
-                            <div class="card cart-card mb-3">
+                            <div class="card cart-card mb-3 schedule-card">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div class="d-flex">
                                         <img
@@ -67,12 +82,17 @@ else if (TempData["SuccessMessage"] != null)
                                             style="width: 100px; object-fit: cover"/>
                                         <div>
                                             <h5 class="card-title">@schedule.Animal.Name</h5>
-                                            <p class="card-text">Serviço: @schedule.Service.Name</p>
+                                            <p class="card-text">
+                                                <strong>Serviço:</strong> @schedule.Service.Name
+                                            </p>
                                             <p>
                                                 <strong>Data:</strong> @schedule.Date.ToString("dd-MM-yyyy")
                                             </p>
                                             <p>
                                                 <strong>Horário:</strong> @schedule.Time.ToString(@"hh\:mm")
+                                            </p>
+                                            <p>
+                                                <strong>Duração:</strong> @schedule.Service.DurationInMinutes minutos
                                             </p>
                                         </div>
                                     </div>
@@ -108,30 +128,61 @@ else if (TempData["SuccessMessage"] != null)
     else
     {
         <section class="my-5">
+            <!-- Filtro de Pesquisa -->
             <div class="container">
-
-                <div class="row">
+                <div class="row mb-3">
+                    <div class="col-md-6 d-flex justify-content-start">
+                        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index">
+                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Agendamento
+                        </a>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchSchedule()">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row" id="scheduleContainer">
                     <div class="col-lg-12">
 
                         @foreach (var schedule in Model)
                         {
-                            <div class="card cart-card mb-3">
+                            <div class="card cart-card mb-3 schedule-card">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div class="d-flex">
-                                        <img
-                                            src="/Images/@schedule.Animal.ImageUrl"
-                                            alt="Animal"
-                                            class="img-fluid me-4"
-                                            style="width: 100px; object-fit: cover"/>
+                                        @if (string.IsNullOrEmpty(schedule.Animal.ImageUrl))
+                                        {
+                                            <img
+                                                src="/Images/PetImage.jpg"
+                                                alt="Animal"
+                                                class="img-fluid me-4"
+                                                style="width: 100px; object-fit: cover"/>
+                                        }
+                                        else
+                                        {
+                                            <img
+                                                src="/Images/@schedule.Animal.ImageUrl"
+                                                alt="Animal"
+                                                class="img-fluid me-4"
+                                                style="width: 100px; object-fit: cover"/>
+                                        }
+
                                         <div>
                                             <h5 class="card-title">@schedule.Animal.Name</h5>
-                                            <p class="card-text"><strong>Serviço:</strong> @schedule.Service.Name</p>
-                                            <p class="card-text"><strong>Funcionário:</strong> @schedule.Employee.Name</p>
+                                            <p class="card-text">
+                                                <strong>Serviço:</strong> @schedule.Service.Name
+                                            </p>
+                                            <p class="card-text">
+                                                <strong>Funcionário:</strong> @schedule.Employee.Name
+                                            </p>
                                             <p>
-                                                <strong>Data:</strong> @schedule.Date.ToString("dd-MM-yyyy")
+                                                <strong>Data:</strong> @schedule.Date.ToString("dd/MM/yyyy")
                                             </p>
                                             <p>
                                                 <strong>Horário:</strong> @schedule.Time.ToString(@"hh\:mm")
+                                            </p>
+                                            <p>
+                                                <strong>Duração:</strong> @schedule.Service.DurationInMinutes minutos
                                             </p>
                                         </div>
                                     </div>
@@ -156,3 +207,31 @@ else
         </h2>
     </div>
 }
+
+<script>
+    function searchSchedule() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toLowerCase();
+        var scheduleContainer = document.getElementById("scheduleContainer");
+        var scheduleCards = scheduleContainer.getElementsByClassName("schedule-card");
+
+        for (var i = 0; i < scheduleCards.length; i++) {
+            var animalName = scheduleCards[i].getElementsByClassName("card-title")[0];
+            var serviceName = scheduleCards[i].getElementsByClassName("card-text")[0];
+            var employeeName = scheduleCards[i].getElementsByClassName("card-text")[1];
+
+            if (animalName || serviceName || employeeName) {
+                var nameText = animalName.textContent || animalName.innerText;
+                var serviceText = serviceName.textContent || serviceName.innerText;
+                var employeeText = employeeName.textContent || employeeName.innerText;
+
+                // Aplica o filtro apenas para nome do animal, nome do serviço e nome do funcionário
+                if (nameText.toLowerCase().indexOf(filter) > -1 || serviceText.toLowerCase().indexOf(filter) > -1 || employeeText.toLowerCase().indexOf(filter) > -1) {
+                    scheduleCards[i].style.display = "";
+                } else {
+                    scheduleCards[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

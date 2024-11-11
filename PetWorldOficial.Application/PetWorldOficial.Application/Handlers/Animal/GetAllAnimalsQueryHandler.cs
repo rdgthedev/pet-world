@@ -30,7 +30,7 @@ public class GetAllAnimalsQueryHandler(
 
             if (request.User.IsInRole(ERole.Admin.ToString()))
             {
-                animals = await animalService.GetWithOwnerAndRace(cancellationToken);
+                animals = await animalService.GetAll(cancellationToken);
 
                 if (!animals.Any() || animals is null)
                     throw new NotFoundException("Nenhum pet encontrado!");
@@ -40,7 +40,7 @@ public class GetAllAnimalsQueryHandler(
 
             if (request.User.IsInRole(ERole.User.ToString()))
             {
-                animals = await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
+                animals = await animalService.GetByOwnerId(user.Id, cancellationToken);
 
                 if (!animals.Any() || animals is null)
                     throw new NotFoundException("Nenhum pet encontrado!");

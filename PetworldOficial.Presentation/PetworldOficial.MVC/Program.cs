@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Commands.Service;
@@ -50,6 +51,25 @@ builder.Services.AddIdentity<User, Role>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        // Tempo de expiração do cookie de autenticação
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(8); // Defina o tempo conforme necessário
+        options.SlidingExpiration = true;
+
+        // Evento acionado quando o usuário faz logout
+        options.Events.OnSigningOut = async context =>
+        {
+            // Verifica se o usuário está autenticado, se estiver, remove o CartId
+            if ((bool)context.HttpContext.User.Identity?.IsAuthenticated)
+            {
+                context.HttpContext.Response.Cookies.Delete("CartId");
+            }
+            await Task.CompletedTask;
+        };
+    });
+
 builder.Services.ConfigureApplicationCookie(option =>
 {
     option.ExpireTimeSpan = TimeSpan.FromHours(8);
@@ -69,10 +89,11 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IAnimalService, AnimalService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
-builder.Services.AddScoped<IRaceService, RaceService>();
+// builder.Services.AddScoped<IRaceService, RaceService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<ICartCookieService, CartCookieService>();
 builder.Services.AddTransient<IImageService, ImageService>();
 
@@ -86,10 +107,11 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAnimalRepository, AnimalRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
-builder.Services.AddScoped<IRaceRepository, RaceRepository>();
+// builder.Services.AddScoped<IRaceRepository, RaceRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
 #endregion
 

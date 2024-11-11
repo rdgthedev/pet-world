@@ -32,10 +32,10 @@ public class DeleteAnimalCommandHandler(
 
                 request.Name = animal.Name;
                 request.CategoryName = animal.Category.Title;
-                request.RaceName = animal.Race.Name;
+                request.RaceName = animal.Race;
                 request.UserId = animal.OwnerId;
                 request.Gender = animal.Gender;
-                request.RaceId = animal.Race.Id;
+                // request.RaceId = animal.Race.Id;
                 request.CategoryId = animal.Category.Id;
 
                 return request;

@@ -10,7 +10,7 @@ public class Animal : Entity
     public Animal(
         string name,
         EGender gender,
-        int raceId,
+        string race,
         int categoryId,
         int ownerId,
         string? imageUrl
@@ -18,7 +18,7 @@ public class Animal : Entity
     {
         Name = name;
         Gender = gender;
-        RaceId = raceId;
+        Race = race;
         CategoryId = categoryId;
         OwnerId = ownerId;
         ImageUrl = imageUrl;
@@ -32,8 +32,8 @@ public class Animal : Entity
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public string? ImageUrl { get; set; }
-    public int RaceId { get; private set; }
-    public Race Race { get; private set; }
+    public string Race { get; private set; }
+    // public Race Race { get; private set; }
     public int CategoryId { get; set; }
     public Category Category { get; set; }
     public int OwnerId { get; private set; }

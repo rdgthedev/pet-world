@@ -12,7 +12,7 @@ public class CommandToDomainProfiles : Profile
             .ConstructUsing(cmd => new Domain.Entities.Animal(
                 cmd.Name,
                 (EGender)Enum.Parse(typeof(EGender), cmd.Gender),
-                cmd.RaceId!.Value,
+                cmd.RaceName,
                 cmd.CategoryId!.Value,
                 cmd.UserId!.Value,
                 cmd.ImageUrl));
@@ -21,7 +21,7 @@ public class CommandToDomainProfiles : Profile
             .ConstructUsing(cmd => new Domain.Entities.Animal(
                 cmd.Name,
                 (EGender)Enum.Parse(typeof(EGender), cmd.Gender),
-                cmd.RaceId,
+                cmd.RaceName,
                 cmd.CategoryId,
                 cmd.UserId,
                 cmd.ImageUrl));
@@ -30,7 +30,7 @@ public class CommandToDomainProfiles : Profile
             .ConstructUsing(cmd => new Domain.Entities.Animal(
                 cmd.Name,
                 (EGender)Enum.Parse(typeof(EGender), cmd.Gender),
-                cmd.RaceId,
+                cmd.RaceName,
                 cmd.CategoryId,
                 cmd.UserId,
                 cmd.ImageUrl));

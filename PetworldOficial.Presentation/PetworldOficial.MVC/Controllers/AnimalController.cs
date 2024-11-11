@@ -119,7 +119,7 @@ public class AnimalController(
             if (cache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
                 command.Races = races!;
 
-            if (cache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+            if (cache.TryGetValue("AnimalCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
                 command.Categories = categories!;
 
             if (command.AdminId.HasValue)

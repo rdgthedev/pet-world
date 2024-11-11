@@ -24,19 +24,60 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
         {
             return await context
                 .Carts
-                .Include(c => c.Client)
+                .Include(c => c.Items)
+                .ThenInclude(i => i.Product)
+                .ThenInclude(p => p.Stock)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
         public async Task UpdateAsync(Cart cart, CancellationToken cancellationToken)
         {
-            context.Update(cart);
+            
+            var trackedUser = context.ChangeTracker.Entries<User>()
+                .FirstOrDefault(e => e.Entity.Id == cart.ClientId);
+            
+            if (trackedUser != null)
+            {
+                trackedUser.State = EntityState.Detached;
+            }
+
+            foreach (var item in cart.Items)
+            {
+                var trackedProduct = context.ChangeTracker.Entries<Product>()
+                    .FirstOrDefault(e => e.Entity.Id == item.ProductId);
+
+                if (trackedProduct != null)
+                {
+                    trackedProduct.State = EntityState.Detached;
+                }
+            }
+
+
+            context.Carts.Update(cart);
+
             await context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task DeleteAsync(Cart cart, CancellationToken cancellationToken)
         {
-            context.Remove(cart);
+            var trackedCart = context.ChangeTracker.Entries<Cart>()
+                .FirstOrDefault(e => e.Entity.Id == cart.Id);
+
+            if (trackedCart != null)
+            {
+                trackedCart.State = EntityState.Detached;
+            }
+
+            var trackedUser = context.ChangeTracker.Entries<User>()
+                .FirstOrDefault(e => e.Entity.Id == cart.ClientId);
+
+            if (trackedUser != null)
+            {
+                trackedUser.State = EntityState.Detached;
+            }
+
+            context.Carts.Remove(cart);
             await context.SaveChangesAsync(cancellationToken);
         }
 
@@ -45,6 +86,10 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
             var cart = await context
                 .Carts
                 .Include(c => c.Client)
+                .Include(c => c.Items)
+                .ThenInclude(c => c.Product)
+                .ThenInclude(p => p.Stock)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.ClientId == id, cancellationToken);
 
             return cart;

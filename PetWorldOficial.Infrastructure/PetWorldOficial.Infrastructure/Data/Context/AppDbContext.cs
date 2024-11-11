@@ -11,10 +11,11 @@ public class AppDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Service> Services { get; set; }
     public DbSet<Animal> Animals { get; set; }
     public DbSet<Schedulling> Schedullings { get; set; }
-    public DbSet<Race> Races { get; set; }
+    // public DbSet<Race> Races { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
     public DbSet<Order> Orders { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

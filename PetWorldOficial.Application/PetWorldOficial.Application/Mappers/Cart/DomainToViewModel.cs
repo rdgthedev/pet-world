@@ -7,6 +7,14 @@ public class DomainToViewModel : Profile
 {
     public DomainToViewModel()
     {
-        CreateMap<Domain.Entities.Cart, CartDetailsViewModel>();
+        CreateMap<Domain.Entities.Cart, CartDetailsViewModel>()
+            .ConstructUsing(c => new CartDetailsViewModel
+            {
+                Id = c.Id,
+                ClientId = c.ClientId,
+                ExpiresDate = c.ExpiresDate,
+                Items = c.Items,
+                TotalPrice = c.Items.Sum(i => i.TotalPrice)
+            });
     }
 }

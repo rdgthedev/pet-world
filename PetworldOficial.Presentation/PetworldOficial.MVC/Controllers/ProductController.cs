@@ -77,7 +77,7 @@ public class ProductController(
     {
         if (!ModelState.IsValid)
         {
-            if (memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+            if (memoryCache.TryGetValue("ProductCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
                 command.Categories = categories;
 
             if (memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))

@@ -16,6 +16,7 @@ namespace PetWorldOficial.Domain.Interfaces.Repositories
         Task<Category?> GetByIdAsync(int id, CancellationToken cancellationToken);
         Task<IEnumerable<Category>> GetAllServiceCategories(CancellationToken cancellationToken);
         Task<IEnumerable<Category>> GetAllProductCategories(CancellationToken cancellationToken);
+        Task<IEnumerable<Category>> GetAllAnimalCategories(CancellationToken cancellationToken);
         Task UpdateAsync(Category category, CancellationToken cancellationToken);
         Task DeleteAsync(Category category, CancellationToken cancellationToken);
     }

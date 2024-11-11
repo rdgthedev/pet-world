@@ -107,7 +107,8 @@ public class CreateScheduleCommanHandler(
                 EmployeeId = request.EmployeeId,
                 Date = request.Date,
                 Time = request.Time!.Value.Add(TimeSpan.FromMinutes(_defaultRange)),
-                Observation = request.Observation
+                Observation = request.Observation,
+                Code = request.Code
             };
 
             schedulings.Add(newRequest);

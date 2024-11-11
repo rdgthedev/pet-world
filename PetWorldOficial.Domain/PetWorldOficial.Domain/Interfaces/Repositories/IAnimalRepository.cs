@@ -12,5 +12,6 @@ public interface IAnimalRepository
     Task CreateAsync(Animal animal, CancellationToken cancellationToken);
     Task<IEnumerable<Animal?>> GetByUserIdWithOwnerAndRaceAsync(int id, CancellationToken cancellationToken);
     Task<IEnumerable<Animal?>> GetWithOwnerAndRaceAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<Animal?>> GetByOwnerId(int ownerId, CancellationToken cancellationToken);
     Task<Animal?> GetByIdWithOwnerAndCategoryAndRaceAsync(int id, CancellationToken cancellationToken);
 }

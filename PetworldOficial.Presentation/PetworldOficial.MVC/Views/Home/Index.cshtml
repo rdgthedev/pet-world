@@ -5,21 +5,21 @@
 
 @if (TempData["ErrorMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="alert alert-danger col-md-10" role="alert">
-        @TempData["ErrorMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="alert alert-danger col-md-10" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     </div>
-</div>
 }
 else if (TempData["SuccessMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="alert alert-success col-md-10" role="alert">
-        @TempData["SuccessMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="alert alert-success col-md-10" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     </div>
-</div>
 }
 
 <div id="carouselBasicExample" class="carousel slide carousel-fade" data-mdb-ride="carousel" data-mdb-carousel-init>
@@ -51,7 +51,7 @@ else if (TempData["SuccessMessage"] != null)
     <div class="carousel-inner">
         <!-- Single item -->
         <div class="carousel-item active">
-            <img src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(22).webp" style="height: 520px" class="d-block w-100" alt="Sunset Over the City"/>
+            <img src="https://mdbcdn.b-cdn.net/img/Photos/Slides/img%20(22).webp" class="d-block w-100" alt="Sunset Over the City"/>
         </div>
 
         <!-- Single item -->

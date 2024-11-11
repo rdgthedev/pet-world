@@ -2,7 +2,7 @@
 
 namespace PetWorldOficial.Application.Commands.Cart;
 
-public class AddItemToCartCommand : IRequest<Unit>
+public class AddOrIncreaseItemToCartCommand : IRequest<(bool success, decimal totalPrice)>
 {
     public int ProductId { get; set; }
 }

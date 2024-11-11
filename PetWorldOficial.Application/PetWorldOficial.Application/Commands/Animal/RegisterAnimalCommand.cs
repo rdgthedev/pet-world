@@ -14,7 +14,8 @@ public record RegisterAnimalCommand : IRequest<RegisterAnimalCommand>
     public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "A raça é obrigatória!")]
-    public int? RaceId { get; set; }
+    public string RaceName { get; set; } = string.Empty;
+    // public int? RaceId { get; set; }
 
     [Required(ErrorMessage = "O gênero é obrigatório!")]
     public string Gender { get; set; } = string.Empty;

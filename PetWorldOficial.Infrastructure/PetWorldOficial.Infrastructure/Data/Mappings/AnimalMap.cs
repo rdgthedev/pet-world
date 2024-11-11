@@ -20,12 +20,12 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
             .HasColumnType("INT")
             .IsRequired();
 
-        builder.HasOne(a => a.Race)
-            .WithMany(r => r.Animals)
-            .HasConstraintName("FK_Animal_Race_RaceId")
-            .HasForeignKey(a => a.RaceId)
-            .OnDelete(DeleteBehavior.Restrict)
-            .IsRequired();
+        // builder.HasOne(a => a.Race)
+        //     .WithMany(r => r.Animals)
+        //     .HasConstraintName("FK_Animal_Race_RaceId")
+        //     .HasForeignKey(a => a.RaceId)
+        //     .OnDelete(DeleteBehavior.Restrict)
+        //     .IsRequired();
 
         builder.HasOne(a => a.Category)
             .WithMany(r => r.Animals)

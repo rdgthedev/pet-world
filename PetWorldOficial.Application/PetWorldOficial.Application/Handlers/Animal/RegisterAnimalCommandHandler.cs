@@ -14,7 +14,6 @@ namespace PetWorldOficial.Application.Handlers.Animal;
 public class RegisterAnimalCommandHandler(
     IUserService userService,
     IAnimalService animalService,
-    IRaceService raceService,
     ICategoryService categoryService,
     IMemoryCache memoryCache,
     IImageService imageService) : IRequestHandler<RegisterAnimalCommand, RegisterAnimalCommand>
@@ -36,19 +35,19 @@ public class RegisterAnimalCommandHandler(
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
-                request.Categories = await memoryCache.GetOrCreateAsync("Categories", async entry =>
+                request.Categories = await memoryCache.GetOrCreateAsync("AnimalCategories", async entry =>
                 {
                     entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
-                    var categories = await categoryService.GetAll(cancellationToken);
+                    var categories = await categoryService.GetAllAnimalCategories(cancellationToken);
                     return categories;
                 }) ?? Enumerable.Empty<CategoryDetailsViewModel>();
 
-                request.Races = await memoryCache.GetOrCreateAsync("Races", async entry =>
-                {
-                    entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
-                    var races = await raceService.GetAll(cancellationToken);
-                    return races;
-                }) ?? Enumerable.Empty<RaceDetailsViewModel>();
+                // request.Races = await memoryCache.GetOrCreateAsync("Races", async entry =>
+                // {
+                //     entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
+                //     var races = await raceService.GetAll(cancellationToken);
+                //     return races;
+                // }) ?? Enumerable.Empty<RaceDetailsViewModel>();
 
                 if (request.UserPrincipal!.IsInRole(ERole.Admin.ToString())
                     && string.IsNullOrEmpty(request.Name.Trim()))

@@ -13,12 +13,14 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
         => await _context
             .Animals
             .AsNoTracking()
+            .Include(a => a.Owner)
             .ToListAsync(cancellationToken);
 
     public async Task<Animal?> GetByIdAsync(int id, CancellationToken cancellationToken)
         => await _context
             .Animals
             .AsNoTracking()
+            .Include(a => a.Category)
             .FirstOrDefaultAsync(animal => animal.Id == id, cancellationToken);
 
     public async Task CreateAsync(Animal entity, CancellationToken cancellationToken)
@@ -34,7 +36,6 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
             .Animals
             .AsNoTracking()
             .Include(a => a.Owner)
-            .Include(a => a.Race)
             .Where(animal => animal.OwnerId == id)
             .ToListAsync(cancellationToken);
 
@@ -47,7 +48,16 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
             .Animals
             .AsNoTracking()
             .Include(a => a.Owner)
-            .Include(a => a.Race)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<Animal?>> GetByOwnerId(int ownerId, CancellationToken cancellationToken)
+    {
+        return await _context
+            .Animals
+            .AsNoTracking()
+            .Where(a => a.OwnerId == ownerId)
+            .Include(a => a.Owner)
             .ToListAsync(cancellationToken);
     }
 
@@ -69,6 +79,5 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
             .AsNoTracking()
             .Include(a => a.Category)
             .Include(a => a.Owner)
-            .Include(a => a.Race)
             .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
 }

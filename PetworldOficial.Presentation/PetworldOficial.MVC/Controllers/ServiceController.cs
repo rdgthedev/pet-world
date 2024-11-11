@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Service;
 using PetWorldOficial.Application.Queries.Service;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetworldOficial.MVC.Utils;
@@ -79,7 +80,8 @@ public class ServiceController(
         CreateServiceCommand command,
         CancellationToken cancellationToken)
     {
-        command.GetCategories(cache);
+        if (cache.TryGetValue("ServiceCategories", out IEnumerable<CategoryDetailsViewModel> categories))
+            command.Categories = categories;
 
         if (!ModelState.IsValid)
             return View(command);
@@ -139,9 +141,10 @@ public class ServiceController(
         IFormFile? file,
         CancellationToken cancellationToken)
     {
-        command.Category = mapper.Map<Category>(await categoryService.GetById(command.CategoryId!.Value, cancellationToken));
+        command.Category =
+            mapper.Map<Category>(await categoryService.GetById(command.CategoryId!.Value, cancellationToken));
         command.Categories = await categoryService.GetAllServiceCategories(cancellationToken);
-        
+
         if (!ModelState.IsValid)
             return View(command);
 
