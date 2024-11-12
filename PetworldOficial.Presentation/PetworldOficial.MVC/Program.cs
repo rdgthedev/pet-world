@@ -10,8 +10,13 @@ using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
 using Newtonsoft.Json;
 using PetWorldOficial.Application.Settings;
+using PetWorldOficial.Domain.Interfaces.Services;
 using PetWorldOficial.Infrastructure.Data.Context;
+using PetWorldOficial.Infrastructure.Services.Payment;
+using Stripe;
 using AuthService = PetWorldOficial.Infrastructure.Services.AuthService;
+using IAuthService = PetWorldOficial.Application.Services.Interfaces.IAuthService;
+using ProductService = PetWorldOficial.Application.Services.Implementations.ProductService;
 using UserService = PetWorldOficial.Application.Services.Implementations.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -66,6 +71,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             {
                 context.HttpContext.Response.Cookies.Delete("CartId");
             }
+
             await Task.CompletedTask;
         };
     });
@@ -78,6 +84,11 @@ builder.Services.ConfigureApplicationCookie(option =>
     option.AccessDeniedPath = "/Auth/Login";
 });
 
+#region Stripe
+
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
+
+#endregion
 
 #region Services
 
@@ -95,6 +106,7 @@ builder.Services.AddScoped<IStockService, StockService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<ICartCookieService, CartCookieService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IImageService, ImageService>();
 
 #endregion

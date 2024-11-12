@@ -57,7 +57,7 @@
                                     <strong class="cart-total-price">R$ @Model.TotalPrice.ToString("F2")</strong>
                                 </li>
                             </ul>
-                            <button class="btn btn-success btn-block">Finalizar Compra</button>
+                            <a class="btn btn-success btn-block" asp-controller="Checkout" asp-action="Checkout">Finalizar Compra</a>
                         </div>
                     </div>
                 </div>

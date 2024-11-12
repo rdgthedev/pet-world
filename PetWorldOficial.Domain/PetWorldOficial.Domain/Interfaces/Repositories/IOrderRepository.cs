@@ -11,7 +11,8 @@ namespace PetWorldOficial.Domain.Interfaces.Repositories
     {
         Task<IEnumerable<Order>> GetAllAsync();
         Task<Order?> GetByIdAsync(int id);
-        Task UpdateAsync(Order cart);
-        Task DeleteAsync(Order cart);
+        Task AddAsync(Order order, CancellationToken cancellationToken);
+        Task UpdateAsync(Order order);
+        Task DeleteAsync(Order order);
     }
 }

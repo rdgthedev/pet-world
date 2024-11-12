@@ -12,7 +12,7 @@ public class Order : Entity
     public Order(int clientId)
     {
         ClientId = clientId;
-        Status = EOrderStatus.WaitingPayment;
+        Status = EOrderStatus.AwaitingPickup;
         Items = new List<CartItem>();
         CalculateTotalPrice();
     }
@@ -40,7 +40,10 @@ public class Order : Entity
     private void CalculateTotalPrice()
     {
         if (!Items.Any())
+        {
+            TotalPrice = 0;
             return;
+        }
 
         TotalPrice = Items.Sum(x => x.TotalPrice);
     }
