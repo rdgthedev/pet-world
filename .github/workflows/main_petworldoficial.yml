@@ -24,14 +24,14 @@ jobs:
 
       - name: dotnet publish
         run: |
-          dotnet publish -c Release -o ${{ github.workspace }}/myapp
-          ls -R ${{ github.workspace }}/myapp  # Verificar imediatamente após a publicação se a pasta foi criada
+          dotnet publish -c Release -o ./publish  # Usando ./publish como diretório de saída
+          ls -R ./publish  # Verificar conteúdo da pasta
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{ github.workspace }}/myapp  # Verificar o caminho correto
+          path: ./publish  # Caminho correto para upload do artefato
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,13 +46,15 @@ jobs:
         with:
           name: .net-app
 
-      - name: List contents of the output directory  
-        run: ls -R ${{ github.workspace }}/myapp  # Verificando conteúdo da pasta após o download
+      - name: List contents of the downloaded artifact
+        run: ls -R ./publish  # Verificar o conteúdo do pacote após o download
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'PetWorldOficial'
+          slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_92B59EF0ABBD422F9AB4B6AFD267FC7A }}
-          package: ${{ github.workspace }}/myapp  # Garantir que o caminho esteja correto
+          package: ./publish  # Usando o caminho correto para o pacote
+
