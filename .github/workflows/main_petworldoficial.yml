@@ -23,13 +23,13 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{ github.workspace }}/myapp  
+        run: dotnet publish -c Release -o ./myapp  # Corrigindo o caminho para ./myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: .net-app
-          path: ${{ github.workspace }}/myapp  
+          path: ./myapp  # Corrigindo o caminho para ./myapp
 
   deploy:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
           name: .net-app
 
       - name: List contents of the output directory  
-        run: ls -R ${{ github.workspace }}/myapp  
+        run: ls -R ./myapp  # Verificando se o conteúdo da pasta está correto
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -53,4 +53,4 @@ jobs:
         with:
           app-name: 'PetWorldOficial'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_92B59EF0ABBD422F9AB4B6AFD267FC7A }}
-          package: ${{ github.workspace }}/myapp  
+          package: ./myapp  # Referenciando o caminho correto
