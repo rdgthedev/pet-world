@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PetWorldOficial.Application.Commands.Order;
+using PetWorldOficial.Application.ViewModels.Order;
 
 namespace PetWorldOficial.Application.Services.Interfaces
 {
@@ -11,7 +13,7 @@ namespace PetWorldOficial.Application.Services.Interfaces
     {
         Task<IEnumerable<Cart>> GetAllAsync(CancellationToken cancellationToken);
         Task<Cart?> GetByIdAsync(int id);
-        Task CreateAsync(Order order, CancellationToken cancellationToken);
+        Task<OrderDetailsViewModel> CreateAsync(CreateOrderCommand command, CancellationToken cancellationToken);
         Task UpdateAsync(Cart cart);
         Task DeleteAsync(Cart cart);
     }

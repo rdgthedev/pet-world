@@ -61,8 +61,8 @@
     <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Animal" asp-action="Update" method="post">
         <input type="hidden" asp-for="@Model.Id">
         <input type="hidden" asp-for="@Model.UserId">
-        <input type="hidden" asp-for="@Model.RaceName">
-        <input type="hidden" asp-for="@Model.CategoryTitle">
+        @* <input type="hidden" asp-for="@Model.RaceName"> *@
+        @* <input type="hidden" asp-for="@Model.CategoryTitle"> *@
         <input type="hidden" asp-for="@Model.ImageUrl">
 
         @if (Model.CategoryId == 0)
@@ -115,7 +115,7 @@
         <div class="col-md-8">
             <label asp-for="@Model.CategoryId" class="form-label">Categoria <span style="color: red;">*</span></label>
             <select asp-for="@Model.CategoryId" class="form-select shadow-none">
-                <option value="">@Model.CategoryTitle</option>
+                <option value="@Model.CategoryId">@Model.CategoryTitle</option>
                 @foreach (var category in Model.Categories)
                 {
                     <option value="@category.Id">@category.Title</option>

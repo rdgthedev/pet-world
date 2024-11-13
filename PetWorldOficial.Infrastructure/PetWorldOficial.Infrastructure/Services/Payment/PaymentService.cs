@@ -12,7 +12,7 @@ namespace PetWorldOficial.Infrastructure.Services.Payment;
 
 public class PaymentService(IHttpContextAccessor httpContextAccessor) : IPaymentService
 {
-    public async Task<int> CreateSessionCheckout(string email, List<CartItem> items,
+    public async Task<(int statusCode, string sessionId)> CreateSessionCheckout(string email, List<CartItem> items,
         CancellationToken cancellationToken)
     {
         try
@@ -34,16 +34,17 @@ public class PaymentService(IHttpContextAccessor httpContextAccessor) : IPayment
                     Quantity = ci.Quantity,
                 }).ToList(),
                 Mode = "payment",
-                SuccessUrl = domain + "/Home",
-                CancelUrl = domain + "/",
+                SuccessUrl = domain + "/Order/Create?session_id={{CHECKOUT_SESSION_ID}}&paymentMethod=card",
+                CancelUrl = domain + "/Cancel",
                 CustomerEmail = email,
                 PaymentMethodTypes = new List<string> { "card" }
             };
-            var service = new SessionService();
-            var session = service.Create(options);
 
-            httpContextAccessor.HttpContext.Response.Headers.Append("Location", session.Url);
-            return await Task.FromResult(StatusCodes.Status303SeeOther);
+            var service = new SessionService();
+            var session = await service.CreateAsync(options, cancellationToken: cancellationToken);
+            httpContextAccessor.HttpContext?.Response.Headers.Append("Location", session.Url);
+
+            return (StatusCodes.Status303SeeOther, session.Id);
         }
         catch (Exception)
         {

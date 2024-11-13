@@ -9,10 +9,16 @@ public class Order : Entity
     {
     }
 
-    public Order(int clientId)
+    public Order(
+        int clientId, 
+        string? stripeSessionId, 
+        EPaymentMethod paymentMethod)
     {
         ClientId = clientId;
-        Status = EOrderStatus.AwaitingPickup;
+        PaymentMethod = paymentMethod;
+        Code = Guid.NewGuid();
+        StripeSessionId = stripeSessionId;
+        Status = EOrderStatus.PaymentConfirmed;
         Items = new List<CartItem>();
         CalculateTotalPrice();
     }
@@ -20,6 +26,7 @@ public class Order : Entity
     public int ClientId { get; private set; }
     public User Client { get; private set; }
     public Guid Code { get; private set; }
+    public string? StripeSessionId { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public DateTime PaymentDate { get; private set; }

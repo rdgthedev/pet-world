@@ -107,7 +107,9 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 builder.Services.AddScoped<ICartCookieService, CartCookieService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddTransient<IImageService, ImageService>();
+
 
 #endregion
 
@@ -124,6 +126,8 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 
 #endregion
 

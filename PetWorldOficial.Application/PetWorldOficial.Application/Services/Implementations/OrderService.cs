@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using PetWorldOficial.Application.Commands.Order;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Order;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
@@ -19,9 +21,9 @@ public class OrderService(
         throw new NotImplementedException();
     }
 
-    public async Task CreateAsync(Order order, CancellationToken cancellationToken)
+    public async Task<OrderDetailsViewModel> CreateAsync(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        await orderRepository.AddAsync(mapper.Map<Order>(order), cancellationToken);
+        return mapper.Map<OrderDetailsViewModel>(await orderRepository.AddAsync(mapper.Map<Order>(command), cancellationToken));
     }
 
     public Task UpdateAsync(Cart cart)

@@ -1,13 +1,7 @@
-﻿using System.Diagnostics.Tracing;
-using System.Security.Claims;
-using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.Commands.Checkout;
 using PetWorldOficial.Application.Commands.Order;
-using PetWorldOficial.Application.Services.Interfaces;
-using Stripe;
-using Stripe.Checkout;
 
 namespace PetworldOficial.MVC.Controllers;
 
@@ -26,9 +20,9 @@ public class CheckoutController(IMediator mediator) : Controller
         }
     }
     
+    [HttpGet]
     public IActionResult PaymentMethods()
     {
-        // Aqui você pode passar dados para a view, caso necessário.
         return View();
     }
 
@@ -46,6 +40,35 @@ public class CheckoutController(IMediator mediator) : Controller
         }
     
         return Ok();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Success(
+        [FromQuery]string? session_id, 
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return Ok();
+        }
+        catch (Exception)
+        {
+            throw;
+        }        
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> Cancel()
+    {
+        try
+        {
+            TempData["CanceledMessage"] = "Você não finalizou seu pedido, seus itens continuam no carrinho!";
+            return RedirectToAction("Index","Home");
+        }
+        catch (Exception)
+        {
+            throw;
+        }        
     }
 
     // [HttpPost("/webhook")]

@@ -7,7 +7,7 @@ namespace PetWorldOficial.Domain.Interfaces.Services;
 
 public interface IPaymentService
 {
-    Task<int> CreateSessionCheckout(string email, List<CartItem> items, CancellationToken cancellationToken);
+    Task<(int statusCode, string sessionId)> CreateSessionCheckout(string email, List<CartItem> items, CancellationToken cancellationToken);
 
     Task<Session?> CheckoutWebHook(
         Stream body,

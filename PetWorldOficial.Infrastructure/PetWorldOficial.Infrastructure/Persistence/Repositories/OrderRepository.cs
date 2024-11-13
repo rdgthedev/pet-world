@@ -17,10 +17,11 @@ public class OrderRepository(
         throw new NotImplementedException();
     }
 
-    public async Task AddAsync(Order order, CancellationToken cancellationToken)
+    public async Task<Order> AddAsync(Order order, CancellationToken cancellationToken)
     {
-        await context.Orders.AddAsync(order, cancellationToken);
+        var oder = await context.Orders.AddAsync(order, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+        return order;
     }
 
     public Task UpdateAsync(Order order)

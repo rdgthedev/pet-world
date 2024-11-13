@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using PetWorldOficial.Application.Commands.Cart;
+﻿using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.ViewModels.Cart;
 
 namespace PetWorldOficial.Application.Services.Interfaces

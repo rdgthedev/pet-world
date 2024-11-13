@@ -1,6 +1,6 @@
 ﻿@{
-ViewData["Title"] = "Escolha a Forma de Pagamento";
-Layout = "_Layout"; // Ou defina o layout desejado
+    ViewData["Title"] = "Escolha a Forma de Pagamento";
+    Layout = "_Layout"; // Ou defina o layout desejado
 }
 
 <div class="container mt-5">
@@ -13,9 +13,9 @@ Layout = "_Layout"; // Ou defina o layout desejado
             <div class="card h-100">
                 <div class="card-body text-center">
                     <i class="fas fa-credit-card fa-4x mb-3"></i> <!-- Ícone do Cartão de Crédito/Débito -->
-                    <h5 class="card-title">Cartão de Crédito/Débito</h5>
+                    <h5 class="card-title">Cartão de Crédito</h5>
                     <p>Realize o pagamento com seu cartão de crédito ou débito.</p>
-                    <a href="#" class="btn btn-primary">Selecionar</a>
+                    <a class="btn btn-primary" asp-controller="Checkout" asp-action="Checkout">Selecionar</a>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@ Layout = "_Layout"; // Ou defina o layout desejado
                     <!-- Espaçamento adicionado entre o ícone e o nome -->
                     <h5 class="card-title mt-3">PIX</h5> <!-- Margem superior adicionada aqui -->
                     <p>Pagamento rápido via PIX com QR Code.</p>
-                    <a href="#" class="btn btn-primary">Selecionar</a>
+                    <a class="btn btn-primary" asp-controller="Checkout" asp-action="Checkout">Selecionar</a>
                 </div>
             </div>
         </div>

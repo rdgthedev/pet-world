@@ -31,8 +31,8 @@ public class CommandToDomainProfiles : Profile
                 cmd.Name,
                 (EGender)Enum.Parse(typeof(EGender), cmd.Gender),
                 cmd.RaceName,
-                cmd.CategoryId,
-                cmd.UserId,
+                cmd.CategoryId.Value,
+                cmd.UserId.Value,
                 cmd.ImageUrl));
 
         //CreateMap<UpdateAnimalCommand, Domain.Entities.Animal>().ReverseMap();

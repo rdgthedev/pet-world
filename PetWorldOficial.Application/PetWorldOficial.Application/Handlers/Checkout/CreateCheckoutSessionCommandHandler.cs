@@ -18,14 +18,14 @@ public class CreateCheckoutSessionCommandHandler(
     {
         try
         {
-            var email = httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)
-                ?.Value;
+            var email = httpContextAccessor.HttpContext.User.Claims
+                .FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? string.Empty;
             var userId = (await userService.GetByEmailAsync(email, cancellationToken))?.Id ?? 0;
             var cart = await cartService.GetOrCreateCartForUserAsync(userId, cancellationToken);
 
-            var statusoCode = await paymentService.CreateSessionCheckout(email, cart.Items, cancellationToken);
+            var result = await paymentService.CreateSessionCheckout(email, cart.Items, cancellationToken);
 
-            return new StatusCodeResult(statusoCode);
+            return new StatusCodeResult(result.statusCode);
         }
         catch (Exception)
         {
