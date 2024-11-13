@@ -36,7 +36,8 @@ public class PaymentService(IHttpContextAccessor httpContextAccessor) : IPayment
                 Mode = "payment",
                 SuccessUrl = domain + "/Home",
                 CancelUrl = domain + "/",
-                CustomerEmail = email
+                CustomerEmail = email,
+                PaymentMethodTypes = new List<string> { "card" }
             };
             var service = new SessionService();
             var session = service.Create(options);
@@ -49,7 +50,7 @@ public class PaymentService(IHttpContextAccessor httpContextAccessor) : IPayment
             throw;
         }
     }
-    
+
     public async Task<Session?> CheckoutWebHook(
         Stream body,
         string header,

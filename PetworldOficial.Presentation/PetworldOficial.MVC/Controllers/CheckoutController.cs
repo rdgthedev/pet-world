@@ -25,9 +25,15 @@ public class CheckoutController(IMediator mediator) : Controller
             throw;
         }
     }
+    
+    public IActionResult PaymentMethods()
+    {
+        // Aqui você pode passar dados para a view, caso necessário.
+        return View();
+    }
 
     [HttpPost("webhook")]
-    public async Task<IActionResult> StripeWebhook(CancellationToken cancellationToken)
+    public async Task<IActionResult> StripeWebhook([FromBody] object stripeEvent, CancellationToken cancellationToken)
     {
         try
         {
@@ -38,7 +44,36 @@ public class CheckoutController(IMediator mediator) : Controller
             TempData["ErrorMessage"] = e.Message;
             return RedirectToAction("Index", "Home");
         }
-
+    
         return Ok();
     }
+
+    // [HttpPost("/webhook")]
+    // public async Task<IActionResult> StripeWebhook()
+    // {
+    //     string _secretKey = "whsec_4fbcaba32bd42cf97ea98ecaff3e9677b4900056ff3ba90118e8cb776f8b48e3";
+    //     var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+    //
+    //     try
+    //     {
+    //         var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _secretKey);
+    //
+    //         // Handle the event
+    //         // If on SDK version < 46, use class Events instead of EventTypes
+    //         if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
+    //         {
+    //             var session = stripeEvent.Data.Object as Session;
+    //             if (session.Status == "paid")
+    //             {
+    //                 Console.WriteLine("BATEU AQUI");
+    //             }
+    //         }
+    //
+    //         return Ok();
+    //     }
+    //     catch (StripeException e)
+    //     {
+    //         return BadRequest();
+    //     }
+    // }
 }
