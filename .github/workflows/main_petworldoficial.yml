@@ -44,10 +44,14 @@ jobs:
         with:
           name: .net-app
 
+      - name: List files in the publish directory
+        run: ls -R ${{env.DOTNET_ROOT}}/myapp
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'PetWorldOficial'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_92B59EF0ABBD422F9AB4B6AFD267FC7A }}
-          package: '${{env.DOTNET_ROOT}}/myapp'
+          package: '${{env.DOTNET_ROOT}}/myapp/bin/Release/net8.0/publish'
+          slot-name: 'Production'
