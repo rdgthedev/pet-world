@@ -6,5 +6,6 @@ public enum EOrderStatus
     ProcessingPayment = 1,
     PaymentConfirmed = 2,
     AwaitingPickup = 3,
-    Completed = 4
+    Completed = 4,
+    Canceled = 5
 }

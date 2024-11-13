@@ -18,7 +18,7 @@ public class UserController(
     {
         try
         {
-            var users = await mediator.Send(new GetAllUsersExceptCurrentQuery(User), cancellationToken);
+            var users = await mediator.Send(new GetAllClientsAndEmployeesQuery(User), cancellationToken);
             return View(users);
         }
         catch (UserNotFoundException e)
@@ -121,6 +121,10 @@ public class UserController(
             return RedirectToAction("Index");
         }
         catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (EmployeeHasPendingSchedulingsException e)
         {
             TempData["ErrorMessage"] = e.Message;
         }

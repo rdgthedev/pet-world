@@ -20,10 +20,6 @@
       <ProjectReference Include="..\..\PetWorldOficial.Infrastructure\PetWorldOficial.Infrastructure\PetWorldOficial.Infrastructure.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Views\Cart\" />
-    </ItemGroup>
-
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>

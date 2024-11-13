@@ -5,7 +5,8 @@ namespace PetWorldOficial.Application.Services.Interfaces;
 
 public interface IAuthService
 {
-    Task<bool> Login(LoginUserCommand command);
-    Task<bool> Register(User user, string password);
+    Task<User?> Login(LoginUserCommand command);
+    Task<User?> Register(User user, string? role, string? password);
     Task Logout();
+    Task SignIn(User user);
 }

@@ -15,7 +15,8 @@ public class CommandToDomainProfiles : Profile
                 s.ServiceId,
                 s.Date!.Value,
                 s.Time!.Value,
-                s.Observation));
+                s.Observation,
+                s.Code));
 
         CreateMap<UpdateSchedulingCommand, Schedulling>()
             .ConstructUsing(s => new Schedulling(
@@ -24,6 +25,7 @@ public class CommandToDomainProfiles : Profile
                 s.ServiceId,
                 s.Date!.Value,
                 s.Time!.Value,
-                s.Observation));
+                s.Observation,
+                s.Code));
     }
 }

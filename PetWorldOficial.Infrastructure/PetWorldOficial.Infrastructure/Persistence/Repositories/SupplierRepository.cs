@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Infrastructure.Context;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
@@ -15,12 +15,31 @@ public class SupplierRepository(AppDbContext context) : ISupplierRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Supplier?> GetByIdAsync(int id,  CancellationToken cancellationToken)
+    public async Task<Supplier?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await context
             .Suppliers
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
+    }
+
+    public async Task<Supplier?> GetByNameAsync(string name, CancellationToken cancellationToken)
+    {
+        return await context
+            .Suppliers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Name == name, cancellationToken);
+    }
+
+    public async Task<Supplier?> ExistsAsync(string name, string cnpj, string cellPhone,
+        CancellationToken cancellationToken)
+    {
+        return await context
+            .Suppliers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(s => s.Name == name
+                                      || s.CNPJ == cnpj
+                                      || s.CellPhone == cellPhone, cancellationToken);
     }
 
     public async Task CreateAsync(Supplier supplierModel, CancellationToken cancellationToken)

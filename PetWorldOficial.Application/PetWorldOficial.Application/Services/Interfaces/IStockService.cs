@@ -11,5 +11,6 @@ namespace PetWorldOficial.Application.Services.Interfaces
     {
         Task CreateAsync(CreateProductCommand command, CancellationToken cancellationToken);
         Task UdpateAsync(UpdateProductCommand command, CancellationToken cancellationToken);
+        Task<bool> ValidateStockQuantity(int id, int quantity, CancellationToken cancellationToken);
     }
 }

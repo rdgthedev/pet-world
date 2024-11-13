@@ -1,5 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using MediatR.Pipeline
 @model PetWorldOficial.Application.Commands.Schedule.UpdateSchedulingCommand
 
 @{
@@ -84,7 +83,6 @@ else if (TempData["SuccessMessage"] != null)
             <label asp-for="@Model.Time" class="form-label">Horário <span style="color: red;">*</span></label>
             <select asp-for="@Model.Time" id="time" class="form-select shadow-none">
                 <option value="" selected disabled>Selecione um horário</option>
-                <!-- Horários disponíveis serão preenchidos aqui via AJAX -->
             </select>
             <span asp-validation-for="@Model.Time" class="text-danger"></span>
         </div>

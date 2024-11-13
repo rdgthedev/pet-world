@@ -1,0 +1,162 @@
+﻿@model PetWorldOficial.Application.ViewModels.Cart.CartDetailsViewModel
+
+@{
+    ViewData["Title"] = "Carrinho";
+    Layout = "_Layout";
+}
+
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-8 alert alert-danger" role="alert" style="display:none;" id="error-message"></div>
+</div>
+
+<!-- Seção do carrinho de compras -->
+<section class="my-5">
+    <div class="container">
+        <h2 class="cart-title text-center mb-4">Carrinho de Compras</h2>
+        @if (Model.Items is not null && Model.Items.Any())
+        {
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Itera sobre os itens do carrinho e exibe cada item -->
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="card cart-card mb-3">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <img src="/Images/@item.Product.ImageUrl" alt="Imagem do produto" class="img-fluid me-4" style="width: 100px; object-fit: scale-down"/>
+                                    <div>
+                                        <h5 class="card-title mb-1">@item.Product.Name</h5>
+                                        <p class="mb-0"><strong>Preço:</strong> R$ @item.Product.Price.ToString("F2")</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <!-- Controles de quantidade -->
+                                    <button class="btn btn-sm btn-primary me-2 update-cart-item" data-product-id="@item.ProductId" data-action="decrease">-</button>
+                                    <span>@item.Quantity</span>
+                                    <button class="btn btn-sm btn-primary ms-2 update-cart-item" data-product-id="@item.ProductId" data-action="increase" data-max-quantity="@item.Product.Stock.Quantity">+</button>
+
+
+                                    <!-- Botão de deletar com ícone de lixeira -->
+                                    <button class="btn btn-sm btn-danger ms-3 delete-cart-item" data-item-id="@item.Id">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Resumo do pedido -->
+                <div class="col-lg-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h4 class="card-title">Resumo do Pedido</h4>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Total</span>
+                                    <strong class="cart-total-price">R$ @Model.TotalPrice.ToString("F2")</strong>
+                                </li>
+                            </ul>
+                            <button class="btn btn-success btn-block">Finalizar Compra</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-content-center" style="margin-top: 100px;">
+                <h2 class="text-center">Você não possui itens no carrinho</h2>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Adicionando a CDN do Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Lógica para atualizar a quantidade no carrinho
+        $('.update-cart-item').on('click', function(e) {
+            e.preventDefault();
+            var productId = $(this).data('product-id');
+            var action = $(this).data('action');
+            var $quantitySpan = $(this).siblings('span');
+            var $totalPrice = $('.cart-total-price');
+            var currentQuantity = parseInt($quantitySpan.text());
+            var $decreaseButton = $(this).siblings('.btn[data-action="decrease"]');
+            var $increaseButton = $(this).siblings('.btn[data-action="increase"]');
+
+            // Obter a quantidade máxima disponível para o produto
+            var maxQuantity = $(this).data('max-quantity');
+
+            // Atualiza a quantidade localmente com base na ação
+            if (action === 'increase') {
+                if (currentQuantity >= maxQuantity) {
+                    return; // Sai da função para impedir o incremento
+                }
+                currentQuantity++;
+            } else if (action === 'decrease') {
+                if (currentQuantity <= 1) {
+                    return;
+                }
+                currentQuantity--;
+            }
+
+            // Atualiza a quantidade exibida no span
+            $quantitySpan.text(currentQuantity);
+
+            // Desabilitar o botão de decrease quando a quantidade for 1
+            $decreaseButton.prop('disabled', currentQuantity <= 1);
+
+            // Desabilitar o botão de incremento quando atingir a quantidade máxima
+            $increaseButton.prop('disabled', currentQuantity >= maxQuantity);
+
+            // Enviar a nova quantidade para o servidor via AJAX
+            var url = action === 'increase' ? '/Cart/AddItem' : '/Cart/DecreaseItem';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { productId: productId, quantity: currentQuantity }, // Enviando a nova quantidade
+                success: function(response) {
+                    if (response.success) {
+                        // Se a operação for bem-sucedida, atualiza o preço total
+                        $totalPrice.text('R$ ' + response.totalPrice.toFixed(2));
+                    }
+                },
+                error: function() {
+                    console.error('Erro ao atualizar o carrinho.');
+                }
+            });
+        });
+
+        // Lógica para deletar o item do carrinho
+        $('.delete-cart-item').on('click', function(e) {
+            e.preventDefault();
+            var id = $(this).data('item-id');
+
+            $.ajax({
+                url: '/CartItem/Delete', // Endpoint para remover o item
+                type: 'POST',
+                data: { id: id },
+                success: function(response) {
+                    if (response.success) {
+                        // Força o recarregamento da página para refletir as mudanças no carrinho
+                        location.reload();
+                    } else {
+                        // Exibe uma mensagem de erro, caso necessário
+                        $('#error-message').text('Erro ao remover o item.').show();
+                    }
+                },
+                error: function() {
+                    console.error('Erro ao remover o item do carrinho.');
+                    $('#error-message').text('Erro ao remover o item.').show();
+                }
+            });
+        });
+
+    });
+
+</script>

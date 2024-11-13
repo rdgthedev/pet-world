@@ -34,7 +34,8 @@ public class AnimalService(
         await animalRepository.CreateAsync(animal, cancellationToken);
     }
 
-    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserIdWithOwnerAndRace(int id, CancellationToken cancellationToken)
+    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetByUserIdWithOwnerAndRace(int id,
+        CancellationToken cancellationToken)
     {
         return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(
             await animalRepository.GetByUserIdWithOwnerAndRaceAsync(id, cancellationToken));
@@ -42,11 +43,21 @@ public class AnimalService(
 
     public async Task<IEnumerable<AnimalDetailsViewModel?>> GetWithOwnerAndRace(CancellationToken cancellationToken)
     {
-        return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(await animalRepository.GetWithOwnerAndRaceAsync(cancellationToken));
+        return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(
+            await animalRepository.GetWithOwnerAndRaceAsync(cancellationToken));
     }
 
-    public async Task<AnimalDetailsViewModel?> GetByIdWithOwnerAndCategoryAndRaceAsync(int id, CancellationToken cancellationToken)
+    public async Task<IEnumerable<AnimalDetailsViewModel?>> GetByOwnerId(int ownerId,
+        CancellationToken cancellationToken)
     {
-        return mapper.Map<AnimalDetailsViewModel>(await animalRepository.GetByIdWithOwnerAndCategoryAndRaceAsync(id, cancellationToken));
+        return mapper.Map<IEnumerable<AnimalDetailsViewModel>>(
+            await animalRepository.GetByOwnerId(ownerId, cancellationToken));
+    }
+
+    public async Task<AnimalDetailsViewModel?> GetByIdWithOwnerAndCategoryAndRaceAsync(int id,
+        CancellationToken cancellationToken)
+    {
+        return mapper.Map<AnimalDetailsViewModel>(
+            await animalRepository.GetByIdWithOwnerAndCategoryAndRaceAsync(id, cancellationToken));
     }
 }

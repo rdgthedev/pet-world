@@ -1,9 +1,13 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Service;
 using PetWorldOficial.Application.Queries.Service;
+using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetworldOficial.MVC.Utils;
 
@@ -11,6 +15,8 @@ namespace PetworldOficial.MVC.Controllers;
 
 public class ServiceController(
     IWebHostEnvironment webHostEnvironment,
+    ICategoryService categoryService,
+    IMapper mapper,
     IMediator mediator,
     IMemoryCache cache) : Controller
 {
@@ -71,10 +77,11 @@ public class ServiceController(
 
     [HttpPost]
     public async Task<IActionResult> Create(
-        CreateServiceCommand command, 
+        CreateServiceCommand command,
         CancellationToken cancellationToken)
     {
-        command.GetCategories(cache);
+        if (cache.TryGetValue("ServiceCategories", out IEnumerable<CategoryDetailsViewModel> categories))
+            command.Categories = categories;
 
         if (!ModelState.IsValid)
             return View(command);
@@ -134,6 +141,10 @@ public class ServiceController(
         IFormFile? file,
         CancellationToken cancellationToken)
     {
+        command.Category =
+            mapper.Map<Category>(await categoryService.GetById(command.CategoryId!.Value, cancellationToken));
+        command.Categories = await categoryService.GetAllServiceCategories(cancellationToken);
+
         if (!ModelState.IsValid)
             return View(command);
 
@@ -192,7 +203,6 @@ public class ServiceController(
         try
         {
             var result = await mediator.Send(command, cancellationToken);
-
             TempData["SuccessMessage"] = "Serviço deletado com sucesso!";
 
             return RedirectToAction("Index");

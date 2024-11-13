@@ -1,6 +1,6 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+using MediatR;
 using PetWorldOficial.Application.Commands.Animal;
-using PetWorldOficial.Application.Services.Implementations;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Exceptions;
 
@@ -16,9 +16,12 @@ public class DeleteAnimalCommandHandler(
         {
             if (string.IsNullOrEmpty(request.Name))
             {
-                var user = await userService.GetByUserNameAsync(
-                    request.UserPrincipal?.Identity?.Name!, cancellationToken);
+                var email = request.UserPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
+                var user = await userService.GetByEmailAsync(
+                    email!,
+                    cancellationToken);
+                
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
@@ -29,10 +32,10 @@ public class DeleteAnimalCommandHandler(
 
                 request.Name = animal.Name;
                 request.CategoryName = animal.Category.Title;
-                request.RaceName = animal.Race.Name;
+                request.RaceName = animal.Race;
                 request.UserId = animal.OwnerId;
                 request.Gender = animal.Gender;
-                request.RaceId = animal.Race.Id;
+                // request.RaceId = animal.Race.Id;
                 request.CategoryId = animal.Category.Id;
 
                 return request;

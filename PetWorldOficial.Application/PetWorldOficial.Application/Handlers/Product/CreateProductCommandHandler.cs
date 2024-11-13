@@ -24,10 +24,10 @@ public class CreateProductCommandHandler(
         {
             if (string.IsNullOrEmpty(request.Name.Trim()))
             {
-                if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                if (!memoryCache.TryGetValue("ProductCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
                 {
                     categories = await categoryService.GetAllProductCategories(cancellationToken);
-                    memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
+                    memoryCache.Set("ProductCategories", categories, TimeSpan.FromHours(8));
                 }
 
                 if (!memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))

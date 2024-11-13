@@ -2,7 +2,7 @@
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Infrastructure.Context;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
@@ -26,6 +26,8 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Schedullings
             .AsNoTracking()
             .Include(s => s.Service)
+            .Include(s => s.Employee)
+            .Include(s => s.Animal)
             .ToListAsync(cancellationToken);
     }
 

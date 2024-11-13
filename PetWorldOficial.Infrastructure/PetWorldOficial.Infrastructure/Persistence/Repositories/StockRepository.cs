@@ -1,10 +1,7 @@
 ﻿using PetWorldOficial.Domain.Entities;
-using PetWorldOficial.Infrastructure.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using PetWorldOficial.Domain.Interfaces.Repositories;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories
 {
@@ -20,6 +17,13 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
         {
             context.Stocks.Update(stock);
             await context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<Stock?> GetByProductId(int productId, CancellationToken cancellationToken)
+        {
+            return await context.Stocks
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.ProductId == productId, cancellationToken);
         }
     }
 }

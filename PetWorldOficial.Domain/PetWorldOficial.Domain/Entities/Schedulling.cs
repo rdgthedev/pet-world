@@ -15,7 +15,8 @@ public class Schedulling : Entity
         int employeeId,
         DateTime date,
         TimeSpan time,
-        string? observation) : this()
+        string? observation,
+        Guid code) : this()
     {
         AnimalId = animalId;
         ServiceId = serviceId;
@@ -23,9 +24,9 @@ public class Schedulling : Entity
         Date = date;
         Time = time;
         Observation = observation;
-        Status = ESchedullingStatus.Created;
+        Status = ESchedullingStatus.Pending;
         CreatedAt = DateTime.Now;
-        Code = Guid.NewGuid();
+        Code = code;
     }
 
     public int AnimalId { get; private set; }

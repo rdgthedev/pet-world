@@ -4,37 +4,83 @@ namespace PetWorldOficial.Domain.Entities;
 
 public class Cart : Entity
 {
-    public Cart()
+    public Cart(int? clientId)
     {
+        if (clientId.HasValue && clientId > 0)
+            ClientId = clientId;
+
         CreatedAt = DateTime.Now;
-        ExpiresDate = CreatedAt.AddDays(3);
-        Items = new();
+        ExpiresDate = CreatedAt.AddDays(90);
+        Items = [];
+        TotalValue();
     }
 
-    public Cart(CartItem cartItem)
-    {
-        CreatedAt = DateTime.Now;
-        ExpiresDate = CreatedAt.AddDays(3);
-        Items.Add(cartItem);
-    }
-
-    public User Client { get; private set; }
+    public int? ClientId { get; private set; }
+    public User? Client { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public DateTime ExpiresDate { get; private set; }
-    public decimal TotalPrice { get; set; }
+    public decimal TotalPrice { get; private set; }
     public List<CartItem> Items { get; private set; }
 
-    private void TotalValue()
+    public void TotalValue()
     {
         if (!Items.Any())
+        {
+            TotalPrice = 0;
+            return;
+        }
+
+        TotalPrice = Items.Sum(x => x.TotalPrice);
+    }
+
+    public bool AddItem(CartItem item, int stockQuantity)
+    {
+        var excededStockQuantity = Items.FirstOrDefault(i => i.ProductId == item.ProductId)?.Quantity == stockQuantity;
+
+        if (item is null || excededStockQuantity)
+            return false;
+
+        var existingItem = Items.FirstOrDefault(i => i.ProductId == item.ProductId);
+
+        if (existingItem != null)
+            existingItem.IncreaseQuantity(item.Quantity);
+        else
+            Items.Add(item);
+
+        TotalValue();
+        return true;
+    }
+
+    public void DecreaseItem(CartItem item)
+    {
+        if (item is null)
             return;
 
-        Items.ForEach(ci => TotalPrice += ci.TotalPrice);
+        var existingItem = Items.FirstOrDefault(i => i.ProductId == item.ProductId);
+
+        if (existingItem != null)
+            existingItem.DecreaseQuantity(1);
+        else
+            Items.Add(item);
+
+        TotalValue();
     }
 
-    public void AddItem(CartItem item)
+    public bool RemoveItem(int productId)
     {
-        Items.Add(item);
+        if (productId <= 0)
+            return false;
+
+        var existingItem = Items.FirstOrDefault(i => i.ProductId == productId);
+
+        if (existingItem is null)
+            return false;
+
+        Items.Remove(existingItem);
+        TotalValue();
+        return true;
     }
+
+    public bool ValidateExpiresDate() => ExpiresDate < DateTime.Now;
 }

@@ -1,0 +1,15 @@
+{
+  "name": "pet-world",
+  "version": "1.0.0",
+  "description": "O Pet World é uma aplicação web, cujo sua finalidade é gerenciar as atividades de um Pet Shop, oferecer a posibilidade dos clientes realizeram compra de produtos para os seus pets e agendamento dos serviços que o Pet Shop oferece.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mdb-ui-kit": "^8.0.0"
+  }
+}

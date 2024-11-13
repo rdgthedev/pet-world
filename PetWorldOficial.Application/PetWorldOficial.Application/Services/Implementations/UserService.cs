@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.User;
@@ -11,6 +12,8 @@ namespace PetWorldOficial.Application.Services.Implementations;
 
 public class UserService(
     IUserRepository userRepository,
+    IScheduleRepository schedulingRepository,
+    UserManager<User> userManager,
     IMapper mapper) : IUserService
 {
     public async Task<IEnumerable<UserDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken)
@@ -29,6 +32,11 @@ public class UserService(
     public async Task<UserDetailsViewModel?> GetByUserNameAsync(string? userName, CancellationToken cancellationToken)
     {
         return mapper.Map<UserDetailsViewModel>(await userRepository.GetByUserNameAsync(userName!, cancellationToken));
+    }
+
+    public async Task<UserDetailsViewModel?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return mapper.Map<UserDetailsViewModel>(await userRepository.GetByEmailAsync(email));
     }
 
     public async Task<UserExistsViewModel> UserExistsAsync(
@@ -93,6 +101,9 @@ public class UserService(
         if (user is null)
             throw new UserNotFoundException("Usuário não encontrado!");
 
+        if (user.Schedullings.Any())
+            await schedulingRepository.DeleteRangeAsync(user.Schedullings, cancellationToken);
+
         await userRepository.DeleteAsync(user);
     }
 
@@ -101,7 +112,6 @@ public class UserService(
         CancellationToken cancellationToken)
         => mapper.Map<IEnumerable<UserDetailsViewModel>>(
             await userRepository.GetAllUsersExceptCurrentAsync(userId, cancellationToken));
-
 
     public async Task<int> CountUsersByRoleAsync(ERole roleName)
     {

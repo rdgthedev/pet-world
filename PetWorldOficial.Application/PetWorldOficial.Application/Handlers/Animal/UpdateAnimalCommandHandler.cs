@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Animal;
 using PetWorldOficial.Application.Services.Interfaces;
@@ -12,7 +13,6 @@ public class UpdateAnimalCommandHandler(
     IUserService userService,
     IAnimalService animalService,
     ICategoryService categoryService,
-    IRaceService raceService,
     IMemoryCache memoryCache,
     IImageService imageService) : IRequestHandler<UpdateAnimalCommand, UpdateAnimalCommand>
 {
@@ -22,39 +22,42 @@ public class UpdateAnimalCommandHandler(
         {
             if (string.IsNullOrEmpty(request.Name))
             {
-                var user = await userService.GetByUserNameAsync(request.UserPrincipal?.Identity?.Name!,
+                var email = request.UserPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                var user = await userService.GetByEmailAsync(
+                    email!,
                     cancellationToken);
 
                 if (user is null)
                     throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
 
-                var animal = await animalService.GetByIdWithOwnerAndCategoryAndRaceAsync(request.Id, cancellationToken);
+                var animal = await animalService.GetById(request.Id, cancellationToken);
 
                 if (animal is null)
                     throw new AnimalNotFoundException("Pet não encontrado!");
 
-                if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                if (!memoryCache.TryGetValue("AnimalCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
                 {
-                    categories = await categoryService.GetAll(cancellationToken);
-                    memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
+                    categories = await categoryService.GetAllAnimalCategories(cancellationToken);
+                    memoryCache.Set("AnimalCategories", categories, TimeSpan.FromHours(8));
                 }
 
-                if (!memoryCache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
-                {
-                    races = await raceService.GetAll(cancellationToken);
-                    memoryCache.Set("Races", races, TimeSpan.FromHours(8));
-                }
+                // if (!memoryCache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                // {
+                //     races = await raceService.GetAll(cancellationToken);
+                //     memoryCache.Set("Races", races, TimeSpan.FromHours(8));
+                // }
 
                 request.Name = animal.Name;
                 request.Gender = animal.Gender;
-                request.RaceName = animal.Race.Name;
-                request.RaceId = animal.Race.Id;
+                request.RaceName = animal.Race;
+                // request.RaceId = animal.Race.Id;
                 request.CategoryId = animal.Category.Id;
                 request.CategoryTitle = animal.Category.Title;
                 request.BirthDate = animal.BirthDate;
                 request.UserId = user.Id;
                 request.Categories = categories;
-                request.Races = races;
+                // request.Races = races;
                 request.ImageUrl = animal.ImageUrl;
 
                 return request;

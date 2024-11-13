@@ -8,11 +8,11 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid text-black py-3">
+<div class="container-fluid tpy-3">
     <br>
-    <h2 class="text-center">
+    <h1 class="text-center">
         Serviços
-    </h2>
+    </h1>
     <br>
 </div>
 
@@ -32,59 +32,99 @@
     </div>
 }
 
+
 @if (Model is not null && Model.Count() != 0)
 {
-    <div class="container">
-        @if (User.IsInRole(ERole.Admin.ToString()))
-        {
-            <div class="pb-2">
-                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Create">
-                    <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Serviço
-                </a>
-            </div>
-        }
-        <div class="row">
-            @foreach (var service in Model)
-            {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="/Images/@service!.ImageUrl" class="ImagemCard card-img-top" alt="..." style="height: 200px; object-fit: cover; width: 100%">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">@service.Name</h5>
-                            <br>
-                            <div>
-                                <b>Valor:</b> @service.Price.ToString("C")
-                            </div>
-                            <div>
-                                <b>Duração:</b> @service.DurationInMinutes minutos
-                            </div>
-                            <br>
+    if (User.IsInRole(ERole.Admin.ToString()))
+    {
+        <!-- Seção de Agendamentos -->
+        <section class="my-5">
+            <!-- Campo de pesquisa -->
+            <div class="container">
+                <div class="row mb-3">
+                    <div class="col-md-6 d-flex justify-content-start">
 
-                            @if (!User.IsInRole(ERole.Admin.ToString()))
-                            {
+                        <a class="btn btn-dark fw-normal shadow-none me-2" asp-controller="Service" asp-action="Create">
+                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo serviço
+                        </a>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar serviço..." onkeyup="searchService()">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row" id="serviceContainer">
+                    <div class="col-lg-12">
+                        @foreach (var service in Model)
+                        {
+                            <div class="card cart-card mb-3 service-card">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img
+                                            src="/Images/@service!.ImageUrl"
+                                            alt="Animal"
+                                            class="img-fluid me-4"
+                                            style="width: 100px; object-fit: cover"/>
+                                        <div>
+                                            <h5 class="card-title service-name">@service.Id - @service.Name</h5>
+                                            <p class="card-text">Duração: @service.DurationInMinutes minutos</p>
+                                            <p>
+                                                <strong>Preço:</strong> @service.Price.ToString("C")
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <!-- Botões de editar e cancelar -->
+                                        <a href="@Url.Action("Create", "Schedule", new { id = service.Id })" class="btn btn-dark mb-2">Agendar</a>
+                                        <a href="@Url.Action("Update", "Service", new { id = service.Id })" class="btn btn-warning mb-2">Editar</a>
+                                        <a href="@Url.Action("Delete", "Service", new { id = service.Id })" class="btn btn-danger">Deletar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    else
+    {
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar serviço..." onkeyup="searchService()">
+                </div>
+            </div>
+            <br>
+        </div>
+        <div class="container">
+            <div class="row" id="serviceContainer">
+                @foreach (var service in Model)
+                {
+                    <div class="col-md-3 mb-4 service-card">
+                        <div class="card h-100">
+                            <img src="/Images/@service!.ImageUrl" class="ImagemCard card-img-top" alt="..." style="height: 200px; object-fit: cover; width: 100%">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title service-name">@service.Name</h5>
+                                <br>
+                                <div>
+                                    <b>Valor:</b> @service.Price.ToString("C")
+                                </div>
+                                <div>
+                                    <b>Duração:</b> @service.DurationInMinutes minutos
+                                </div>
+                                <br>
                                 <div class="d-grid gap-2">
                                     <a class="btn btn-dark" asp-controller="Schedule" asp-action="Create" asp-route-id="@service.Id">Agendar</a>
                                 </div>
-                            }
-                            else
-                            {
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <div style="padding-right: 15px">
-                                        <a style="width: 100px;" asp-controller="Service" asp-action="Update" asp-route-id="@service.Id" class="btn btn-dark me-2 shadow-none">Editar</a>
-                                    </div>
-                                    <div style="padding-left: 15px">
-                                        <a style="width: 100px" class="btn btn-danger shadow-none" asp-controller="Service" asp-action="Delete" asp-route-id="@service.Id">
-                                            Excluir
-                                        </a>
-                                    </div>
-                                </div>
-                            }
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
-    </div>
+    }
 }
 else
 {
@@ -93,14 +133,26 @@ else
         <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
             @TempData["NotFoundService"]
         </h2>
-        <br>
-        @if (User.IsInRole(ERole.Admin.ToString()))
-        {
-            <div class="d-flex justify-content-center align-items-center">
-                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Create">
-                    Adicionar Serviço
-                </a>
-            </div>
-        }
     </div>
 }
+
+<script>
+    function searchService() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toLowerCase();
+        var serviceContainer = document.getElementById("serviceContainer");
+        var serviceCards = serviceContainer.getElementsByClassName("service-card");
+
+        for (var i = 0; i < serviceCards.length; i++) {
+            var serviceName = serviceCards[i].getElementsByClassName("service-name")[0];
+            if (serviceName) {
+                var textValue = serviceName.textContent || serviceName.innerText;
+                if (textValue.toLowerCase().indexOf(filter) > -1) {
+                    serviceCards[i].style.display = "";
+                } else {
+                    serviceCards[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

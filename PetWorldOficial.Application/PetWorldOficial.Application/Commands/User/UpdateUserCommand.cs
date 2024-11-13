@@ -5,8 +5,7 @@ namespace PetWorldOficial.Application.Commands.User;
 
 public record UpdateUserCommand : IRequest<Unit>
 {
-    [Required]
-    public int Id { get; set; }
+    [Required] public int Id { get; set; }
 
     [Required(ErrorMessage = "O nome é obrigatório!")]
     public string Name { get; set; } = string.Empty;
@@ -17,9 +16,12 @@ public record UpdateUserCommand : IRequest<Unit>
     [Required(ErrorMessage = "O nome é obrigatório!")]
     public string Gender { get; set; } = string.Empty;
 
+    [Required(ErrorMessage = "O perfil é obrigatório!")]
+    public string RoleName { get; set; } = string.Empty;
+
     [Required(ErrorMessage = "O documento é obrigatório!")]
     public string Document { get; set; } = string.Empty;
-    
+
     [Required(ErrorMessage = "A data é obrigatória!")]
     public DateTime? BirthDate { get; set; }
 
@@ -32,7 +34,7 @@ public record UpdateUserCommand : IRequest<Unit>
 
     [Required(ErrorMessage = "A rua é obrigatória!")]
     public string Street { get; set; } = string.Empty;
-    
+
     [Required(ErrorMessage = "O número é obrigatório!")]
     public int Number { get; set; }
 

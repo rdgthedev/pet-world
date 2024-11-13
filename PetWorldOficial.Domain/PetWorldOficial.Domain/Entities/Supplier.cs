@@ -11,22 +11,26 @@ public class Supplier : Entity
 
     public Supplier(
         string name,
+        string email,
         string cnpj,
         string cellPhone,
         string street,
         int number,
         string neighborhood,
-        string complement,
+        string? complement,
+        string postalCode,
         string city,
         string state)
     {
         Name = name;
+        Email = email;
         CNPJ = cnpj;
         CellPhone = cellPhone;
         Street = street;
         Number = number;
         Neighborhood = neighborhood;
         Complement = complement;
+        PostalCode = postalCode;
         City = city;
         State = state;
         CreatedAt = DateTime.Now;
@@ -35,12 +39,14 @@ public class Supplier : Entity
     }
 
     public string Name { get; private set; }
+    public string Email { get; set; }
     public string CNPJ { get; private set; }
     public string CellPhone { get; private set; }
     public string Street { get; private set; }
     public int Number { get; private set; }
     public string Neighborhood { get; private set; }
-    public string Complement { get; private set; }
+    public string? Complement { get; private set; }
+    public string PostalCode { get; set; }
     public string City { get; private set; }
     public string State { get; private set; }
     public EActivingStatus Status { get; set; }

@@ -8,23 +8,25 @@ namespace PetWorldOficial.Application.Commands.Product;
 
 public record UpdateProductCommand : IRequest<UpdateProductCommand>
 {
-    [Required(ErrorMessage = "O Id é obrigatório!")]
+    [Required(ErrorMessage = "O id é obrigatório!")]
     public int Id { get; set; }
-    [Required(ErrorMessage = "O Nome é obrigatório!")]
+    [Required(ErrorMessage = "O nome é obrigatório!")]
     public string Name { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "A Descrição é obrigatória!")]
+    [Required(ErrorMessage = "A descrição é obrigatória!")]
     public string Description { get; set; } = string.Empty;
-    [Range(0.01, double.MaxValue, ErrorMessage = "O Preço deve ser maior que zero!")]
+    [Required(ErrorMessage = "O preço não pode ser vazio!")]
+    [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser maior que zero!")]
     public decimal? Price { get; set; } = null!;
 
-    [Range(1, int.MaxValue, ErrorMessage = "A Categoria é obrigatória!")]
+    [Range(1, int.MaxValue, ErrorMessage = "A categoria é obrigatória!")]
     public int CategoryId { get; set; }
 
-    [Range(1, int.MaxValue, ErrorMessage = "O Fornecedor é obrigatório!")]
+    [Range(1, int.MaxValue, ErrorMessage = "O fornecedor é obrigatório!")]
     public int SupplierId { get; set; }
-
-    [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
+    
+    [Required(ErrorMessage = "A quantidade não pode ser vazia!")]
+    [Range(1, int.MaxValue, ErrorMessage = "deve ser inserido no mínimo um produto!")]
     public int? QuantityInStock { get; set; }
     public IFormFile? File { get; set; }
 

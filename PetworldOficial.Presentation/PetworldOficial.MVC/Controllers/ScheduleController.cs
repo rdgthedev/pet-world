@@ -1,24 +1,20 @@
-﻿using System.Text;
-using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Application.ViewModels.Animal;
 using PetWorldOficial.Application.ViewModels.Schedule;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
-using PetworldOficial.MVC.Utils;
 
 namespace PetworldOficial.MVC.Controllers;
 
 public class ScheduleController(
     IScheduleService _scheduleService,
     IMediator mediator,
-    IMemoryCache memoryCache) : Controller
+    IAnimalService animalService,
+    IUserService userService) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> GetAvailableTimes(
@@ -46,7 +42,6 @@ public class ScheduleController(
             return Json(new { redirectToUrl = Url.Action("Index", "Service") });
         }
     }
-
 
     [HttpGet]
     public async Task<IActionResult> GetAvailableEmployees(
@@ -83,7 +78,7 @@ public class ScheduleController(
         }
         catch (ScheduleNotFoundException e)
         {
-            TempData["ErrorMessage"] = e.Message;
+            TempData["NotFoundScheduling"] = e.Message;
             return View(schedules);
         }
         catch (Exception)
@@ -100,7 +95,6 @@ public class ScheduleController(
         try
         {
             var result = await mediator.Send(new CreateScheduleCommand(User) { ServiceId = id }, cancellationToken);
-            TempData["Animals"] = result.Animals!.SerializeObject();
             return View(result);
         }
         catch (UserNotFoundException e)
@@ -128,16 +122,20 @@ public class ScheduleController(
         CreateScheduleCommand command,
         CancellationToken cancellationToken)
     {
-        if (memoryCache.TryGetValue("Animals", out IEnumerable<AnimalDetailsViewModel>? animals))
-            command.Animals = animals;
-
-        if (!ModelState.IsValid)
-        {
-            return View(command);
-        }
-
         try
         {
+            command.Animals = User.IsInRole(ERole.User.ToString())
+                ? await animalService.GetByUserIdWithOwnerAndRace(command.UserId!.Value, cancellationToken)
+                : await animalService.GetWithOwnerAndRace(cancellationToken);
+
+            // if(User.IsInRole(ERole.Admin.ToString()))
+            //     command.Users = await userService.GetAllUsersExceptCurrentAsync()
+
+            if (!ModelState.IsValid)
+            {
+                return View(command);
+            }
+
             var result = await mediator.Send(command, cancellationToken);
             TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index", "Service");

@@ -53,7 +53,8 @@ public sealed class User : IdentityUser<int>
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public List<Animal> Animals { get; private set; }
-    public List<Schedulling> Schedullings { get; set; }
+    public List<Schedulling> Schedullings { get; private set; }
+    public Cart Cart { get; private set; }
 
     public void Update(
         string name,

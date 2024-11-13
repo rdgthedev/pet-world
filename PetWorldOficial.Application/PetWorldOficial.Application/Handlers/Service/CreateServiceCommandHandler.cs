@@ -21,10 +21,10 @@ namespace PetWorldOficial.Application.Handlers.Service
             {
                 if (string.IsNullOrEmpty(request.Name.Trim()))
                 {
-                    if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+                    if (!memoryCache.TryGetValue("ServiceCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
                     {
                         categories = await categoryService.GetAllServiceCategories(cancellationToken);
-                        memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
+                        memoryCache.Set("ServiceCategories", categories, TimeSpan.FromHours(8));
                     }
 
                     request.Categories = categories;

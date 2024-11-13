@@ -1,12 +1,7 @@
 ﻿using AutoMapper;
 using PetWorldOficial.Application.Commands.Product;
 using PetWorldOficial.Application.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PetWorldOficial.Application.Handlers;
+using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Application.Services.Implementations
 {
@@ -22,6 +17,15 @@ namespace PetWorldOficial.Application.Services.Implementations
             var stock = mapper.Map<Domain.Entities.Stock>(command);
             await stockRepository.UpdateAsync(stock, cancellationToken);
         }
-            
+
+        public async Task<bool> ValidateStockQuantity(int productId, int quantity, CancellationToken cancellationToken)
+        {
+            var stock = await stockRepository.GetByProductId(productId, cancellationToken);
+
+            if (stock is null)
+                throw new Exception();
+
+            return stock.Quantity >= quantity;
+        }
     }
 }

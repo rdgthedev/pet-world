@@ -1,9 +1,10 @@
-﻿using MediatR;
-using Microsoft.Extensions.Caching.Memory;
+﻿using System.Security.Claims;
+using MediatR;
 using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Commands.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Utils;
+using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetWorldOficial.Application.Handlers.Schedule;
@@ -13,7 +14,6 @@ public class CreateScheduleCommanHandler(
     IUserService userService,
     IAnimalService animalService,
     IServiceService serviceService,
-    IMemoryCache memoryCache,
     IOptions<Settings.Settings> options) : IRequestHandler<CreateScheduleCommand, CreateScheduleCommand>
 {
     private readonly int _defaultRange = options.Value.Range.DefaultRangeServices;
@@ -22,20 +22,20 @@ public class CreateScheduleCommanHandler(
     {
         try
         {
-            if (request.Animals is null || !request.Animals.Any())
+            if (request.AnimalId is null or 0)
             {
-                var user = await userService.GetByUserNameAsync(
-                    request.UserPrincipal?.Identity?.Name!,
+                var email = request.UserPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                var user = await userService.GetByEmailAsync(
+                    email!,
                     cancellationToken);
 
                 if (user is null)
                     throw new UserNotFoundException("Ocorreu um erro! Por favor tente se reconectar.");
 
-                request.Animals = await memoryCache.GetOrCreateAsync("Animals", async entry =>
-                {
-                    entry.AbsoluteExpiration = DateTime.Now.AddHours(8);
-                    return await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
-                });
+                request.Animals = request.UserPrincipal!.IsInRole(ERole.User.ToString())
+                    ? await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken)
+                    : await animalService.GetWithOwnerAndRace(cancellationToken);
 
                 var service = await serviceService.GetById(request.ServiceId, cancellationToken);
 
@@ -46,6 +46,7 @@ public class CreateScheduleCommanHandler(
                 request.ServicePrice = service.Price;
                 request.DurationInMinutes = service.DurationInMinutes;
                 request.CategoryName = service.Category.Title;
+                request.UserId = user.Id;
 
                 return request;
             }
@@ -106,7 +107,8 @@ public class CreateScheduleCommanHandler(
                 EmployeeId = request.EmployeeId,
                 Date = request.Date,
                 Time = request.Time!.Value.Add(TimeSpan.FromMinutes(_defaultRange)),
-                Observation = request.Observation
+                Observation = request.Observation,
+                Code = request.Code
             };
 
             schedulings.Add(newRequest);

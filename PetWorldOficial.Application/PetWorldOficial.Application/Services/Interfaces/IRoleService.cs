@@ -1,5 +1,6 @@
 ﻿using PetWorldOficial.Application.Commands.Role;
 using PetWorldOficial.Application.ViewModels.Role;
+using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Services.Interfaces;
 

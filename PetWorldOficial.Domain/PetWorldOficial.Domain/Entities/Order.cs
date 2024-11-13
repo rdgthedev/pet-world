@@ -9,15 +9,12 @@ public class Order : Entity
     {
     }
 
-    public Order(
-        int clientId,
-        CartItem item)
+    public Order(int clientId)
     {
         ClientId = clientId;
         Status = EOrderStatus.WaitingPayment;
         Items = new List<CartItem>();
-        Items.Add(item);
-        TotalPrice = TotalValue();
+        CalculateTotalPrice();
     }
 
     public int ClientId { get; private set; }
@@ -31,15 +28,20 @@ public class Order : Entity
     public decimal TotalPrice { get; private set; }
     public List<CartItem> Items { get; private set; }
 
-    public decimal TotalValue()
+    public void AddItems(params CartItem[] cartItems)
     {
-        decimal totalValue = 0;
+        if (cartItems.Length <= 0)
+            return;
 
+        Items.AddRange(cartItems.ToList());
+        CalculateTotalPrice();
+    }
+
+    private void CalculateTotalPrice()
+    {
         if (!Items.Any())
-            return totalValue;
+            return;
 
-        Items.ForEach(i => totalValue += i.TotalPrice);
-
-        return totalValue;
+        TotalPrice = Items.Sum(x => x.TotalPrice);
     }
 }

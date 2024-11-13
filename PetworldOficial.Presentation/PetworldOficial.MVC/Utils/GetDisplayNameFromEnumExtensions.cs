@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using PetWorldOficial.Domain.Enums;
 
 namespace PetworldOficial.MVC.Utils;
 

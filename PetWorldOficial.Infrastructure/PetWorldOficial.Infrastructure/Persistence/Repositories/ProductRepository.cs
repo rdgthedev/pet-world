@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Query.Internal;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
-using PetWorldOficial.Infrastructure.Context;
+using PetWorldOficial.Infrastructure.Data.Context;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
@@ -23,6 +23,7 @@ public class ProductRepository : IProductRepository
             .AsNoTracking()
             .Include(p => p.Category)
             .Include(p => p.Supplier)
+            .Include(p => p.Stock)
             .ToListAsync(cancellationToken);
     }
 

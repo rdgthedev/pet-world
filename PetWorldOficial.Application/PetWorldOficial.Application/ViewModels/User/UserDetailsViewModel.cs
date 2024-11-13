@@ -5,6 +5,7 @@ public class UserDetailsViewModel
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string UserName { get; set; } = string.Empty;
+    public string? RoleName { get; set; }
     public string Gender { get; set; } = string.Empty;
     public DateTime? BirthDate { get; set; }
     public string Document { get; set; } = string.Empty;

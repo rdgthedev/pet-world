@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+using MediatR;
 using PetWorldOficial.Application.Queries.Animal;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Animal;
@@ -16,20 +17,20 @@ public class GetAllAnimalsQueryHandler(
     {
         try
         {
-            var user = await userService.GetByUserNameAsync(request.User.Identity?.Name!, cancellationToken);
+            var email = request.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var user = await userService.GetByEmailAsync(
+                email!,
+                cancellationToken);
 
             if (user is null)
                 throw new UserNotFoundException("Faça o login ou cadastre-se no site!");
-
-            var role = request.User.IsInRole(ERole.Admin.ToString())
-                ? ERole.Admin
-                : ERole.User;
 
             var animals = Enumerable.Empty<AnimalDetailsViewModel?>();
 
             if (request.User.IsInRole(ERole.Admin.ToString()))
             {
-                animals = await animalService.GetWithOwnerAndRace(cancellationToken);
+                animals = await animalService.GetAll(cancellationToken);
 
                 if (!animals.Any() || animals is null)
                     throw new NotFoundException("Nenhum pet encontrado!");
@@ -39,7 +40,7 @@ public class GetAllAnimalsQueryHandler(
 
             if (request.User.IsInRole(ERole.User.ToString()))
             {
-                animals = await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken);
+                animals = await animalService.GetByOwnerId(user.Id, cancellationToken);
 
                 if (!animals.Any() || animals is null)
                     throw new NotFoundException("Nenhum pet encontrado!");

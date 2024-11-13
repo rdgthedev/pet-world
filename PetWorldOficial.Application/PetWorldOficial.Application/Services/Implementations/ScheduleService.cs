@@ -126,7 +126,8 @@ public class ScheduleService(
             command.EmployeeId!.Value,
             command.Date!.Value,
             command.Time!.Value,
-            command.Observation);
+            command.Observation,
+            command.Code);
 
         await _scheduleRepository.CreateAsync(s, cancellationToken);
     }

@@ -4,17 +4,17 @@
 
 @{
     ViewData["Title"] = "Registrar Usuário";
-    Layout = "_LayoutCRUD";
+    Layout = "_Layout";
 }
 
-<div class="container-fluid text-black py-3">
+<div class="container-fluid py-3">
     <br>
     <h2 class="text-center">
-        @*         <img src="/Images/DadosDoCadastro.png" alt="">*@
-        Dados do Cadastro
+        Dados do Usuário
     </h2>
     <br>
 </div>
+
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="d-flex justify-content-center align-items-center">
@@ -76,6 +76,21 @@ else if (TempData["SuccessMessage"] != null)
         <input asp-for="BirthDate" type="date" class="form-control shadow-none">
         <span asp-validation-for="BirthDate" class="text-danger"></span>
     </div>
+
+    @if (User.IsInRole(ERole.Admin.ToString()))
+    {
+        <div class="col-md-10">
+            <label asp-for="@Model.Role" class="form-label">Perfil <span style="color: red;">*</span></label>
+            <select asp-for="@Model.Role" class="form-select shadow-none">
+                <option value="" selected disabled>Selecione o perfil</option>
+                @foreach (ERole role in Enum.GetValues(typeof(ERole)))
+                {
+                    <option value="@role">@role.GetDisplayName()</option>
+                }
+            </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+    }
 
     <div class="col-md-10">
         <label asp-for="Password" class="form-label">Senha <span style="color: red;">*</span></label>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using PetWorldOficial.Application.Commands.Product;
 using PetWorldOficial.Application.Queries.Product;
+using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Product;
 using PetWorldOficial.Application.ViewModels.Supplier;
@@ -14,6 +15,8 @@ namespace PetworldOficial.MVC.Controllers;
 public class ProductController(
     IMediator mediator,
     IWebHostEnvironment webHostEnvironment,
+    ICategoryService categoryService,
+    ISupplierService supplierService,
     IMemoryCache memoryCache) : Controller
 {
     [HttpGet]
@@ -60,7 +63,6 @@ public class ProductController(
     // }
     //
     [HttpGet()]
-
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new CreateProductCommand(), cancellationToken);
@@ -75,7 +77,7 @@ public class ProductController(
     {
         if (!ModelState.IsValid)
         {
-            if (memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
+            if (memoryCache.TryGetValue("ProductCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
                 command.Categories = categories;
 
             if (memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))
@@ -119,6 +121,7 @@ public class ProductController(
         try
         {
             command.Id = id;
+
             var result = await mediator.Send(command, cancellationToken);
             ModelState.Clear();
             return View(result);
@@ -141,7 +144,12 @@ public class ProductController(
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
+        {
+            command.Categories = await categoryService.GetAllProductCategories(cancellationToken);
+            command.Suppliers = await supplierService.GetAllAsync(cancellationToken);
+            
             return View(command);
+        }
 
         try
         {
@@ -162,7 +170,7 @@ public class ProductController(
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno!";
-            return RedirectToAction("Error", "Home");
+            return RedirectToAction("Index", "Product");
         }
     }
 
@@ -187,7 +195,8 @@ public class ProductController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Delete([FromForm] DeleteProductCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete([FromForm] DeleteProductCommand command,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid) return View();
 

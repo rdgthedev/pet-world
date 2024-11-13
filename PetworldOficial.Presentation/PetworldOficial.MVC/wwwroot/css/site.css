@@ -1,5 +1,7 @@
-html {
+﻿html {
     font-size: 14px;
+    position: relative; /* Essa posição é boa para evitar que o footer se sobreponha ao conteúdo */
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,18 +10,24 @@ html {
     }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-    position: relative;
-    min-height: 100%;
 }
 
 body {
     margin-bottom: 60px;
     font-family: 'Roboto', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
 }
 
 h1 {
@@ -31,3 +39,6 @@ h2 {
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
 }
+
+
+
