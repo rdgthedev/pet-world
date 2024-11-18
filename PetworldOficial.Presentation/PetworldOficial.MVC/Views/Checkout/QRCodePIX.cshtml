@@ -1,0 +1,35 @@
+﻿@model PetWorldOficial.Application.ViewModels.Cart.CartDetailsViewModel
+
+@{
+    ViewData["Title"] = "Pagamento via PIX";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Pagamento via PIX</h2>
+
+    <!-- Exibição do QR Code PIX como imagem -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">QR Code para Pagamento</h5>
+                    <p>Escaneie o QR Code abaixo para realizar o pagamento via PIX.</p>
+
+                    <!-- Imagem do QR Code clicável -->
+                    <a asp-controller="Order" asp-action="Create" asp-route-paymentMethod="PIX" id="qrcodeLink">
+                        <img src="~/images/PIXImage.svg" alt="QR Code PIX" class="img-fluid mt-4" style="max-width: 256px;"/>
+                    </a>
+                    <p class="mt-4">Empresa: <strong>Pet World</strong></p>
+                    <p class="mt-4">Chave PIX: <strong>12.345.678/0001-90</strong></p>
+                    <p class="mt-4">Valor a ser pago: <strong>@Model.TotalPrice.ToString("C")</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão de voltar -->
+    <div class="text-center mt-4">
+        <a href="@Url.Action("PaymentMethods", "Checkout")" class="btn btn-outline-dark">Voltar</a>
+    </div>
+</div>

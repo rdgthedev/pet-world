@@ -53,11 +53,19 @@
                             <h4 class="card-title">Resumo do Pedido</h4>
                             <ul class="list-group list-group-flush mb-3">
                                 <li class="list-group-item d-flex justify-content-between">
+                                    <span>Frete</span>
+                                    <strong>R$ 10,00</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Sub-Total</span>
+                                    <strong class="cart-sub-total-price">R$ 10,00</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
                                     <span>Total</span>
                                     <strong class="cart-total-price">R$ @Model.TotalPrice.ToString("F2")</strong>
                                 </li>
                             </ul>
-                            <button class="btn btn-success btn-block">Finalizar Compra</button>
+                            <a class="btn btn-success btn-block" href="@Url.Action("PaymentMethods", "Checkout")">Finalizar Compra</a>
                         </div>
                     </div>
                 </div>
@@ -85,6 +93,7 @@
             var action = $(this).data('action');
             var $quantitySpan = $(this).siblings('span');
             var $totalPrice = $('.cart-total-price');
+            var $subTotalPrice = $('.cart-sub-total-price');
             var currentQuantity = parseInt($quantitySpan.text());
             var $decreaseButton = $(this).siblings('.btn[data-action="decrease"]');
             var $increaseButton = $(this).siblings('.btn[data-action="increase"]');
@@ -124,6 +133,7 @@
                     if (response.success) {
                         // Se a operação for bem-sucedida, atualiza o preço total
                         $totalPrice.text('R$ ' + response.totalPrice.toFixed(2));
+                        $subTotalPrice.text('R$ ' + (response.totalPrice - 10).toFixed(2));
                     }
                 },
                 error: function() {

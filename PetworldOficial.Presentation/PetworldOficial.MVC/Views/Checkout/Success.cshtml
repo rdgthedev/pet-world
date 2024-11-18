@@ -1,0 +1,222 @@
+﻿@model IEnumerable<PetWorldOficial.Application.ViewModels.Animal.AnimalDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Sucesso";
+
+    Layout = "_Layout";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+else if (TempData["SuccessMessage"] != null)
+{
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
+    </div>
+}
+
+@if (Model.Any())
+{
+    <div class="container">
+        <!-- Barra de pesquisa para Admin -->
+        @if (User.IsInRole("Admin"))
+        {
+            <section class="my-5">
+                <div class="container">
+                    <div class="row mb-3">
+                        <div class="col-md-6 d-flex justify-content-start">
+                            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Auth" asp-action="Register">
+                                <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Pet
+                            </a>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-end">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar pet..." onkeyup="searchPet()">
+                        </div>
+                    </div>
+                    <div class="row" id="petList">
+                        <div class="col-lg-12">
+                            @foreach (var animal in Model)
+                            {
+                                <div class="card cart-card mb-3 pet-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div class="d-flex">
+                                            @if (animal.ImageUrl is not null)
+                                            {
+                                                <img
+                                                    src="/Images/@animal.ImageUrl"
+                                                    alt="Imagem pet"
+                                                    class="img-fluid me-4"
+                                                    style="width: 100px; object-fit: cover"/>
+                                            }
+                                            else
+                                            {
+                                                <img
+                                                    src="/Images/PetImage.jpg"
+                                                    alt="Imagem pet"
+                                                    class="img-fluid me-4"
+                                                    style="width: 100px; object-fit: cover"/>
+                                            }
+                                            <div>
+                                                <h5 class="card-title">@animal.Id - @animal.Name</h5>
+                                                <p class="card-text">
+                                                    <strong>Dono:</strong> @animal.Owner.Name
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>CPF do dono:</strong> @animal.Owner.Document
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>Raça:</strong> @animal.Race
+                                                </p>
+                                                @if (animal.BirthDate != null)
+                                                {
+                                                    <p class="card-text">
+                                                        <strong>Idade:</strong> @(DateTime.Now.Year - animal.BirthDate!.Value.Year) anos
+                                                    </p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="card-text">
+                                                        <strong>Idade:</strong> Não consta.
+                                                    </p>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <a href="@Url.Action("Update", "Animal", new { id = animal.Id })" class="btn btn-warning mb-2">Editar</a>
+                                            <a href="@Url.Action("Delete", "Animal", new { id = animal.Id })" class="btn btn-danger">Deletar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+        else
+        {
+            <section class="my-5">
+                <div class="container">
+                    <div class="row mb-3">
+                        <div class="col-md-6 d-flex justify-content-start">
+                            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Auth" asp-action="Register">
+                                <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Pet
+                            </a>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-end">
+                            <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar pet..." onkeyup="searchPet()">
+                        </div>
+                    </div>
+                    <div class="row" id="petList">
+                        <div class="col-lg-12">
+                            @foreach (var animal in Model)
+                            {
+                                <div class="card cart-card mb-3 pet-card">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div class="d-flex">
+                                            @if (animal.ImageUrl is not null)
+                                            {
+                                                <img
+                                                    src="/Images/@animal.ImageUrl"
+                                                    alt="Imagem pet"
+                                                    class="img-fluid me-4"
+                                                    style="width: 100px; object-fit: cover"/>
+                                            }
+                                            else
+                                            {
+                                                <img
+                                                    src="/Images/PetImage.jpg"
+                                                    alt="Imagem pet"
+                                                    class="img-fluid me-4"
+                                                    style="width: 100px; object-fit: cover"/>
+                                            }
+                                            <div>
+                                                <h5 class="card-title">@animal.Id - @animal.Name</h5>
+                                                <p class="card-text">
+                                                    <strong>Dono:</strong> @animal.Owner.Name
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>CPF do dono:</strong> @animal.Owner.Document
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>Raça:</strong> @animal.Race
+                                                </p>
+                                                @if (animal.BirthDate != null)
+                                                {
+                                                    <p class="card-text">
+                                                        <strong>Idade:</strong> @(DateTime.Now.Year - animal.BirthDate!.Value.Year) anos
+                                                    </p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="card-text">
+                                                        <strong>Idade:</strong> Não consta.
+                                                    </p>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <a href="@Url.Action("Update", "Animal", new { id = animal.Id })" class="btn btn-warning mb-2">Editar</a>
+                                            <a href="@Url.Action("Delete", "Animal", new { id = animal.Id })" class="btn btn-danger">Deletar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        }
+    </div>
+}
+else
+{
+    <div class="container-fluid py-3">
+        <h2 class="text-center">
+            @TempData["NotFoundPetMessage"]
+        </h2>
+        <div class="d-flex justify-content-center align-items-center">
+            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
+                <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
+            </a>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function searchPet() {
+            var input = document.getElementById("searchInput");
+            var filter = input.value.toUpperCase();
+            var petList = document.getElementById("petList");
+            var cards = petList.getElementsByClassName("pet-card");
+
+            Array.from(cards).forEach(function(card) {
+                // Buscar pelo título, descrição e CPF
+                var title = card.querySelector(".card-title")?.textContent || "";
+                var description = card.querySelector(".card-text")?.textContent || "";
+                var cpf = card.querySelector(".card-text:nth-child(3)")?.textContent || ""; // CPF do dono
+
+                if (title.toUpperCase().indexOf(filter) > -1 || description.toUpperCase().indexOf(filter) > -1 || cpf.toUpperCase().indexOf(filter) > -1) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+    </script>
+}

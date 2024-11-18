@@ -10,7 +10,7 @@ public class DomainToCommand : Profile
     {
         CreateMap<Domain.Entities.Cart, UpdateCartCommand>();
         CreateMap<Domain.Entities.Cart, DeleteCartCommand>()
-            .ForMember(dest => dest.CartId, 
+            .ForMember(dest => dest.Id, 
                 options => options.MapFrom(c => c.Id));
     }
 }

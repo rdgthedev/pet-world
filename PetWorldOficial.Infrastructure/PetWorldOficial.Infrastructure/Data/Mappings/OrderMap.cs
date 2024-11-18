@@ -24,7 +24,7 @@ public class OrderMap : IEntityTypeConfiguration<Order>
         builder.Property(s => s.Code)
             .HasColumnName("Code")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(10)
+            .HasMaxLength(128)
             .IsRequired();
 
         builder.Property(o => o.PaymentMethod)
@@ -57,14 +57,20 @@ public class OrderMap : IEntityTypeConfiguration<Order>
                 os => (EOrderStatus)Enum.Parse(typeof(EOrderStatus), os)
             )
             .IsRequired();
+
+        builder.Property(o => o.StripeSessionId)
+            .HasColumnName("StripeSessionId")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(128)
+            .IsRequired(false);
         
-        // Correção do relacionamento com CartItem
-        builder.HasMany(o => o.Items) // Mudado para HasMany
-            .WithOne(ci => ci.Order) // Com um CartItem
-            .HasConstraintName("FK_CartItem_Order_OrderId")
+     
+        builder.HasMany(o => o.Items) 
+            .WithOne(ci => ci.Order) 
+            .HasConstraintName("FK_OrderItem_Order_OrderId")
             .HasForeignKey(ci => ci.OrderId)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.NoAction); // Permitir exclusão em cascata
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(o => o.Id, "IX_Order_Id");
         builder.HasIndex(o => o.Code, "IX_Order_Code");

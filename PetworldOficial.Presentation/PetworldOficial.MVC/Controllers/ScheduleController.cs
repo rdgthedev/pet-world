@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Schedule;
@@ -167,7 +167,7 @@ public class ScheduleController(
     {
         try
         {
-            var command = new UpdateSchedulingCommand(User) { SchedulingId = id };
+            var command = new UpdateSchedulingCommand(User) { Id = id };
             var result = await mediator.Send(command, cancellationToken);
             return View(result);
         }
@@ -256,5 +256,49 @@ public class ScheduleController(
             TempData["ErrorMessage"] = "Ocorreu um erro interno";
             return RedirectToAction("Index");
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Cancel(
+        [FromQuery]  UpdateStatusToCanceledCommand command,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.message;
+        }
+        catch (ScheduleNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Finish(
+        [FromQuery] UpdateStatusFinishedCommand command,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.message;
+        }
+        catch (ScheduleNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+        }
+
+        return RedirectToAction("Index");
     }
 }

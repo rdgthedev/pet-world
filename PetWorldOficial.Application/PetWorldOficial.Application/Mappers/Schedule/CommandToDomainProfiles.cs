@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Mappers.Schedule;
@@ -18,14 +18,6 @@ public class CommandToDomainProfiles : Profile
                 s.Observation,
                 s.Code));
 
-        CreateMap<UpdateSchedulingCommand, Schedulling>()
-            .ConstructUsing(s => new Schedulling(
-                s.AnimalId!.Value,
-                s.EmployeeId!.Value,
-                s.ServiceId,
-                s.Date!.Value,
-                s.Time!.Value,
-                s.Observation,
-                s.Code));
+        CreateMap<UpdateSchedulingCommand, Schedulling>();
     }
 }

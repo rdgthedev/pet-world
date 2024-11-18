@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using PetWorldOficial.Domain.Enums
+@using PetworldOficial.MVC.Utils
 @model IEnumerable<PetWorldOficial.Application.ViewModels.Schedule.ScheduleDetailsViewModel>
 
 @{
@@ -31,7 +32,9 @@ else
     <div class="d-flex justify-content-center align-items-center">
         <div class="col-md-12 alert alert-danger" role="alert">
             @TempData["ErrorMessage"]
-            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
         </div>
     </div>
 }
@@ -40,7 +43,9 @@ else if (TempData["SuccessMessage"] != null)
     <div class="d-flex justify-content-center align-items-center">
         <div class="col-md-12 alert alert-success" role="alert">
             @TempData["SuccessMessage"]
-            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
         </div>
     </div>
 }
@@ -55,13 +60,14 @@ else if (TempData["SuccessMessage"] != null)
             <!-- Filtro de Pesquisa -->
             <div class="container">
                 <div class="row mb-3">
-                    <div class="col-md-6 d-flex justify-content-start">
-                        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index">
-                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Agendamento
-                        </a>
-                    </div>
-                    <div class="col-md-6 d-flex justify-content-end">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchSchedule()">
+                    @* <div class="col-md-6 d-flex justify-content-start"> *@
+                    @*     <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index"> *@
+                    @*         <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Agendamento *@
+                    @*     </a> *@
+                    @* </div> *@
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <input type="text" class="form-control" id="searchInput"
+                               placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchScheduling()">
                     </div>
                 </div>
             </div>
@@ -75,13 +81,18 @@ else if (TempData["SuccessMessage"] != null)
                             <div class="card cart-card mb-3 schedule-card">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div class="d-flex">
-                                        <img
-                                            src="/Images/@schedule.Animal.ImageUrl"
-                                            alt="Animal"
-                                            class="img-fluid me-4"
-                                            style="width: 100px; object-fit: cover"/>
+                                        @if (string.IsNullOrEmpty(schedule.Animal.ImageUrl))
+                                        {
+                                            <img src="/Images/PetImage.jpg" alt="Animal" class="img-fluid me-4"
+                                                 style="width: 100px; object-fit: cover"/>
+                                        }
+                                        else
+                                        {
+                                            <img src="/Images/@schedule.Animal.ImageUrl" alt="Animal" class="img-fluid me-4"
+                                                 style="width: 100px; object-fit: cover"/>
+                                        }
                                         <div>
-                                            <h5 class="card-title">@schedule.Animal.Name</h5>
+                                            <h5 class="card-title">@schedule.Id - @schedule.Animal.Name</h5>
                                             <p class="card-text">
                                                 <strong>Serviço:</strong> @schedule.Service.Name
                                             </p>
@@ -94,12 +105,22 @@ else if (TempData["SuccessMessage"] != null)
                                             <p>
                                                 <strong>Duração:</strong> @schedule.Service.DurationInMinutes minutos
                                             </p>
+                                            <p>
+                                                <strong>Status:</strong>
+                                                @(Enum.Parse<ESchedullingStatus>(schedule.Status).GetDisplayName())
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="d-flex flex-column">
                                         <!-- Botões de editar e cancelar -->
-                                        <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })" class="btn btn-warning mb-2">Editar</a>
-                                        <a href="@Url.Action("Delete", "Schedule", new { id = schedule.Id })" class="btn btn-danger">Cancelar</a>
+                                        <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })"
+                                           class="btn btn-warning mb-2">
+                                            Editar
+                                        </a>
+                                        <a href="@Url.Action("Cancel", "Schedule", new { id = schedule.Id })"
+                                           class="btn btn-danger">
+                                            Cancelar
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -117,7 +138,10 @@ else if (TempData["SuccessMessage"] != null)
                                         <strong>@Model.Count()</strong>
                                     </li>
                                 </ul>
-                                <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block">Agendar Novo Serviço</a>
+                                <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block">
+                                    Agendar Novo
+                                    Serviço
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -131,13 +155,14 @@ else if (TempData["SuccessMessage"] != null)
             <!-- Filtro de Pesquisa -->
             <div class="container">
                 <div class="row mb-3">
-                    <div class="col-md-6 d-flex justify-content-start">
-                        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index">
-                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Agendamento
-                        </a>
-                    </div>
-                    <div class="col-md-6 d-flex justify-content-end">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchSchedule()">
+                    @* <div class="col-md-6 d-flex justify-content-start"> *@
+                    @*     <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index"> *@
+                    @*         <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Agendamento *@
+                    @*     </a> *@
+                    @* </div> *@
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <input type="text" class="form-control" id="searchInput"
+                               placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchScheduling()">
                     </div>
                 </div>
             </div>
@@ -152,23 +177,17 @@ else if (TempData["SuccessMessage"] != null)
                                     <div class="d-flex">
                                         @if (string.IsNullOrEmpty(schedule.Animal.ImageUrl))
                                         {
-                                            <img
-                                                src="/Images/PetImage.jpg"
-                                                alt="Animal"
-                                                class="img-fluid me-4"
-                                                style="width: 100px; object-fit: cover"/>
+                                            <img src="/Images/PetImage.jpg" alt="Animal" class="img-fluid me-4"
+                                                 style="width: 100px; object-fit: cover"/>
                                         }
                                         else
                                         {
-                                            <img
-                                                src="/Images/@schedule.Animal.ImageUrl"
-                                                alt="Animal"
-                                                class="img-fluid me-4"
-                                                style="width: 100px; object-fit: cover"/>
+                                            <img src="/Images/@schedule.Animal.ImageUrl" alt="Animal" class="img-fluid me-4"
+                                                 style="width: 100px; object-fit: cover"/>
                                         }
 
                                         <div>
-                                            <h5 class="card-title">@schedule.Animal.Name</h5>
+                                            <h5 class="card-title">@schedule.Id - @schedule.Animal.Name</h5>
                                             <p class="card-text">
                                                 <strong>Serviço:</strong> @schedule.Service.Name
                                             </p>
@@ -184,12 +203,30 @@ else if (TempData["SuccessMessage"] != null)
                                             <p>
                                                 <strong>Duração:</strong> @schedule.Service.DurationInMinutes minutos
                                             </p>
+                                            <p>
+                                                <strong>Status:</strong>
+                                                @(Enum.Parse<ESchedullingStatus>(schedule.Status).GetDisplayName())
+                                            </p>
                                         </div>
                                     </div>
-                                    <div class="d-flex flex-column">
-                                        <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })" class="btn btn-warning mb-2">Editar</a>
-                                        <a href="@Url.Action("Delete", "Schedule", new { id = schedule.Id })" class="btn btn-danger">Cancelar</a>
-                                    </div>
+
+                                    @if (schedule.Status == ESchedullingStatus.Pending.ToString())
+                                    {
+                                        <div class="d-flex flex-column">
+                                            <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })"
+                                               class="btn btn-outline-warning mb-2 d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-pencil me-2"></i> Editar
+                                            </a>
+                                            <a href="@Url.Action("Finish", "Schedule", new { code = schedule.Code })"
+                                               class="btn btn-outline-success mb-2 d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-check-circle me-2"></i> Finalizar
+                                            </a>
+                                            <a href="@Url.Action("Cancel", "Schedule", new { code = schedule.Code })"
+                                               class="btn btn-outline-danger d-flex align-items-center justify-content-center">
+                                                <i class="bi bi-x-circle me-2"></i> Cancelar
+                                            </a>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         }
@@ -209,7 +246,7 @@ else
 }
 
 <script>
-    function searchSchedule() {
+    function searchScheduling() {
         var input = document.getElementById("searchInput");
         var filter = input.value.toLowerCase();
         var scheduleContainer = document.getElementById("scheduleContainer");

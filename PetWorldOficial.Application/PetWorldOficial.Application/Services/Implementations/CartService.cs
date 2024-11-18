@@ -16,6 +16,8 @@ public class CartService(
     ICartItemRepository cartItemRepository,
     IMapper mapper) : ICartService
 {
+    private const int _freightPrice = 10;
+
     public async Task<CartDetailsViewModel> CreateAsync(
         int? userId,
         CancellationToken cancellationToken)
@@ -36,7 +38,7 @@ public class CartService(
 
     public async Task DeleteAsync(DeleteCartCommand command, CancellationToken cancellationToken)
     {
-        var cart = await cartRepository.GetByIdAsync(command.CartId!.Value, cancellationToken);
+        var cart = await cartRepository.GetByIdAsync(command.Id!.Value, cancellationToken);
 
         if (cart is null)
             throw new Exception();
@@ -87,7 +89,7 @@ public class CartService(
                 cart.ClientId = userId;
                 await UpdateAsync(mapper.Map<UpdateCartCommand>(cart), cancellationToken);
             }
-            
+
             var cookieCartId = cartCookieService.GetCartCookieValue(httpContextAccessor.HttpContext);
 
             if (cookieCartId is null || cookieCartId != cart.Id)
@@ -110,6 +112,8 @@ public class CartService(
                 cart.Items = cart.Items.Where(ci => itemsToRemove.Any(i => ci.Id != i.Id)).ToList();
             }
 
+            cart.TotalPrice += _freightPrice;
+
             return cart;
         }
 
@@ -120,6 +124,8 @@ public class CartService(
             cartCreated.ExpiresDate,
             httpContextAccessor.HttpContext);
 
+        cartCreated.TotalPrice += _freightPrice;
+        
         return cartCreated;
     }
 

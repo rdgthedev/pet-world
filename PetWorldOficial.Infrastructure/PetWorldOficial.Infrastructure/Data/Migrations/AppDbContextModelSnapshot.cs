@@ -235,9 +235,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.Property<int>("CartId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("DECIMAL(10,2)")
                         .HasColumnName("Price");
@@ -254,8 +251,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnName("TotalPrice");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId")
                         .HasDatabaseName("IX_CartItem_ProductId");
@@ -315,7 +310,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(10)
+                        .HasMaxLength(128)
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Code");
 
@@ -341,6 +336,11 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Status");
 
+                    b.Property<string>("StripeSessionId")
+                        .HasMaxLength(128)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("StripeSessionId");
+
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("DECIMAL(10,2)")
                         .HasColumnName("TotalPrice");
@@ -354,6 +354,46 @@ namespace PetWorldOficial.Infrastructure.Migrations
                     b.HasIndex(new[] { "Id" }, "IX_Order_Id");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("DECIMAL(10,2)")
+                        .HasColumnName("Price");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INT")
+                        .HasColumnName("Quantity");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("DECIMAL(10,2)")
+                        .HasColumnName("TotalPrice");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_OrderItem_ProductId");
+
+                    b.HasIndex("OrderId", "ProductId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_OrderItem_OrderId_ProductId");
+
+                    b.HasIndex(new[] { "Id" }, "IX_OrderItem_Id");
+
+                    b.ToTable("OrderItem", (string)null);
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Product", b =>
@@ -902,12 +942,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_CartItem_Cart_CartId");
 
-                    b.HasOne("PetWorldOficial.Domain.Entities.Order", "Order")
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .HasConstraintName("FK_CartItem_Order_OrderId");
-
                     b.HasOne("PetWorldOficial.Domain.Entities.Product", "Product")
                         .WithOne()
                         .HasForeignKey("PetWorldOficial.Domain.Entities.CartItem", "ProductId")
@@ -916,8 +950,6 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasConstraintName("FK_CartItem_Product_ProductId");
 
                     b.Navigation("Cart");
-
-                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -931,6 +963,27 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("PetWorldOficial.Domain.Entities.OrderItem", b =>
+                {
+                    b.HasOne("PetWorldOficial.Domain.Entities.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_OrderItem_Order_OrderId");
+
+                    b.HasOne("PetWorldOficial.Domain.Entities.Product", "Product")
+                        .WithOne()
+                        .HasForeignKey("PetWorldOficial.Domain.Entities.OrderItem", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_OrderItem_Product_ProductId");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("PetWorldOficial.Domain.Entities.Product", b =>

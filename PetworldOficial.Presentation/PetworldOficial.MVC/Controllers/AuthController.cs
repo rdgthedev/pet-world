@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
@@ -91,6 +92,54 @@ public class AuthController(
         {
             TempData["ErrorMessage"] = "Occoreu um erro interno!";
             return RedirectToPage("Error");
+        }
+    }
+
+    [HttpGet]
+    public IActionResult ForgotPassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ForgotPassword(
+        ForgotPasswordCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View();
+
+        var result = await mediator.Send(command, cancellationToken);
+        TempData["SuccessMessage"] = result.message;
+        return View();
+    }
+
+    [HttpGet]
+    public IActionResult ResetPassword(
+        [FromQuery] string email,
+        [FromQuery] string token)
+    {
+        return View(new ResetPasswordCommand { Email = email, Token = token });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(
+        ResetPasswordCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View();
+
+        try
+        {
+            var result = await mediator.Send(command, cancellationToken);
+            // TempData["SuccessMessage"] = result.
+            return RedirectToAction("Login");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }

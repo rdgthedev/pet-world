@@ -48,8 +48,8 @@ public class CartItem : Entity
     public int Quantity { get; private set; }
     public decimal Price { get; private set; }
     public decimal TotalPrice { get; private set; }
-    public int? OrderId { get; private set; }
-    public Order? Order { get; private set; }
+    // public int? OrderId { get; private set; }
+    // public Order? Order { get; private set; }
 
     private decimal TotalValue()
         => Price * Quantity;
@@ -59,10 +59,27 @@ public class CartItem : Entity
         Quantity += quantity;
         TotalPrice = TotalValue();
     }
-    
+
     public void DecreaseQuantity(int quantity)
     {
         Quantity -= quantity;
         TotalPrice = TotalValue();
     }
+
+    // public void SetOrderId(int? orderId)
+    // {
+    //     OrderId = orderId;
+    // }
+    //
+    // public void SetCart(int? cartId, Cart? cart)
+    // {
+    //     CartId = cartId;
+    //     Cart = cart;
+    // }
+    //
+    // public void SetProduct(int productId, Product product)
+    // {
+    //     ProductId = productId;
+    //     Product = product;
+    // }
 }
