@@ -46,3 +46,4 @@ jobs:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.PetWorldOficial_0B0F }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        debug: true  # Adicionando log de debug para mais informações
