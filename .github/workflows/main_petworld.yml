@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch: # Permite disparar manualmente se necessário
 
 env:
   AZURE_WEBAPP_NAME: PetWorldOficial
@@ -52,16 +52,18 @@ jobs:
           name: webapp
           path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
+      # Login to Azure using Service Principal
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}       # ID do Service Principal
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}       # ID do Tenant
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }} # ID da Subscription
 
+      # Deploy using the publish profile
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Usando o segredo correto
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}  # Usando o Publish Profile como segredo
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
