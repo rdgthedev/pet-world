@@ -12,15 +12,20 @@ public class ViewModelToDomain : Profile
         CreateMap<OrderDetailsViewModel, Domain.Entities.Order>()
             .ConstructUsing(o => new Domain.Entities.Order(
                 o.ClientId,
-                o.StripeSession,
-                ParsePaymentMethod(o.PaymentMethod)));
+                o.StripeSessionId,
+                ParsePaymentMethod(o.PaymentMethod)))
+            .AfterMap((src, dest) =>
+            {
+                dest.AddItems(src.Items.ToArray());
+                dest.CalculateTotalPrice();
+            });
     }
-    
+
     private static EPaymentMethod ParsePaymentMethod(string paymentMethod)
     {
         if (Enum.TryParse<EPaymentMethod>(paymentMethod, true, out var result))
             return result;
-        
+
         throw new Exception("Método de pagamento inválido.");
     }
 }

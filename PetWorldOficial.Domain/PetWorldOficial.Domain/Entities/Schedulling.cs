@@ -42,4 +42,22 @@ public class Schedulling : Entity
     public ESchedullingStatus Status { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; set; }
+
+    public void UpdateStatusToCanceled()
+    {
+        if (Status != ESchedullingStatus.Pending)
+            return;
+
+        Status = ESchedullingStatus.Canceled;
+        LastUpdatedAt = DateTime.Now;;
+    }
+
+    public void UpdateStatusToFinished()
+    {
+        if (Status != ESchedullingStatus.Pending)
+            return;
+
+        Status = ESchedullingStatus.Finished;
+        LastUpdatedAt = DateTime.Now;
+    }
 }

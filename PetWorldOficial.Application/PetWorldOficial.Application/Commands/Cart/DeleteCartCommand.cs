@@ -8,6 +8,6 @@ namespace PetWorldOficial.Application.Commands.Cart
 {
     public class DeleteCartCommand
     {
-        public int? CartId { get; set; }
+        public int? Id { get; set; }
     }
 }

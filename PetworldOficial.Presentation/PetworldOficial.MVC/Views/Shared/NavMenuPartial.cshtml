@@ -36,6 +36,9 @@
                     <li class="nav-item">
                         <a class="nav-link active" asp-controller="Schedule" asp-action="Index">Agendamentos</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-controller="Order" asp-action="Index">Pedidos</a>
+                    </li>
                 }
                 else
                 {
@@ -92,6 +95,10 @@
                                     {
                                         <li>
                                             <a asp-controller="Schedule" asp-action="Index" class="dropdown-item">Meus agendamentos</a>
+                                        </li>
+
+                                        <li>
+                                            <a asp-controller="Order" asp-action="Index" class="dropdown-item">Meus pedidos</a>
                                         </li>
 
                                         <li>

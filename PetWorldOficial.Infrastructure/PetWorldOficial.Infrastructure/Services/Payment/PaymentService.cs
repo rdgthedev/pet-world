@@ -2,6 +2,7 @@
 using Azure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Services;
 using Stripe;
@@ -10,14 +11,16 @@ using Event = Stripe.V2.Event;
 
 namespace PetWorldOficial.Infrastructure.Services.Payment;
 
-public class PaymentService(IHttpContextAccessor httpContextAccessor) : IPaymentService
+public class PaymentService(
+    IHttpContextAccessor httpContextAccessor,
+    IConfiguration configuration) : IPaymentService
 {
     public async Task<(int statusCode, string sessionId)> CreateSessionCheckout(string email, List<CartItem> items,
         CancellationToken cancellationToken)
     {
         try
         {
-            var domain = "https://localhost:44383";
+            var domain = configuration["Domain"];
             var options = new SessionCreateOptions
             {
                 LineItems = items.Select(ci => new SessionLineItemOptions

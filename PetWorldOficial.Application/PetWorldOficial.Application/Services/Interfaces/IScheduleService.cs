@@ -1,5 +1,5 @@
 ﻿using System.Security.Cryptography;
-using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
@@ -14,6 +14,7 @@ public interface IScheduleService
         CancellationToken cancellationToken);
 
     Task<ScheduleDetailsViewModel?> GetById(int id, CancellationToken cancellationToken);
+    Task<IEnumerable<ScheduleDetailsViewModel>?> GetAllByCode(Guid code, CancellationToken cancellationToken);
     Task<ScheduleDetailsViewModel?> GetByIdWithAnimalAndService(int id, CancellationToken cancellationToken);
 
     Task<List<ScheduleDetailsViewModel?>> GetSchedulesByUsersIdsAsync(IEnumerable<int> usersIds,
@@ -34,6 +35,7 @@ public interface IScheduleService
     Task<bool> IsMaximumServiceBookingsPerAnimalExceededAsync(
         CreateScheduleCommand command,
         CancellationToken cancellationToken);
+
     Task<int> CountSchedulesByDateAndHour(DateTime scheduleDate, TimeSpan hour, CancellationToken cancellationToken);
 
     Task Update(UpdateSchedulingCommand command, CancellationToken cancellationToken);
@@ -58,4 +60,6 @@ public interface IScheduleService
         DateTime date,
         TimeSpan time,
         CancellationToken cancellationToken);
+
+    Task DeleteAsync(DeleteSchedulingCommand command, CancellationToken cancellationToken);
 }

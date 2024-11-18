@@ -9,12 +9,13 @@ using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Persistence.Repositories;
 using PetWorldOficial.Infrastructure.Services;
 using Newtonsoft.Json;
+using PetWorldOficial.Application.Configuration.SendInBlue;
 using PetWorldOficial.Application.Settings;
 using PetWorldOficial.Domain.Interfaces.Services;
 using PetWorldOficial.Infrastructure.Data.Context;
 using PetWorldOficial.Infrastructure.Services.Payment;
 using Stripe;
-using AuthService = PetWorldOficial.Infrastructure.Services.AuthService;
+using AuthService = PetWorldOficial.Infrastructure.Services.Auth.AuthService;
 using IAuthService = PetWorldOficial.Application.Services.Interfaces.IAuthService;
 using ProductService = PetWorldOficial.Application.Services.Implementations.ProductService;
 using UserService = PetWorldOficial.Application.Services.Implementations.UserService;
@@ -30,6 +31,8 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddHttpClient();
 builder.Services.AddMemoryCache();
+
+builder.Services.Configure<SendInBlueConfiguration>(builder.Configuration.GetSection("Sendinblue"));
 
 builder.Services.AddCors(options =>
 {
@@ -109,7 +112,7 @@ builder.Services.AddScoped<ICartCookieService, CartCookieService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddTransient<IImageService, ImageService>();
-
+builder.Services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 #endregion
 
@@ -127,7 +130,6 @@ builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-
 
 #endregion
 

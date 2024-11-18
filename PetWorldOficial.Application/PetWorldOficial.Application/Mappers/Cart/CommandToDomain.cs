@@ -8,5 +8,6 @@ public class CommandToDomain : Profile
     public CommandToDomain()
     {
         CreateMap<UpdateCartCommand, Domain.Entities.Cart>();
+        CreateMap<DeleteCartCommand, Domain.Entities.Cart>();
     }
 }

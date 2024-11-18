@@ -12,6 +12,7 @@ public class ScheduleDetailsViewModel
     public DateTime Date { get; set; }
     public TimeSpan Time { get; set; }
     public string? Observation { get; set; }
+    public string Status { get; set; } = string.Empty;
     public Domain.Entities.Service Service { get; set; } = null!;
     public Domain.Entities.Animal Animal { get; set; } = null!;
     public Domain.Entities.User Employee { get; set; } = null!;

@@ -6,6 +6,8 @@ public enum ESchedullingStatus
 {
     [Display(Name = "Pendente")]
     Pending = 0,
+    [Display(Name = "Cancelado")]
+    Canceled = 1,
     [Display(Name = "Finalizado")]
-    Completed = 1
+    Finished = 2
 }

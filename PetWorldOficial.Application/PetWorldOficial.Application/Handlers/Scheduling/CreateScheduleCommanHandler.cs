@@ -1,13 +1,13 @@
 ﻿using System.Security.Claims;
 using MediatR;
 using Microsoft.Extensions.Options;
-using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
-namespace PetWorldOficial.Application.Handlers.Schedule;
+namespace PetWorldOficial.Application.Handlers.Scheduling;
 
 public class CreateScheduleCommanHandler(
     IScheduleService scheduleService,

@@ -26,12 +26,12 @@ public class CartItemMap : IEntityTypeConfiguration<Domain.Entities.CartItem>
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
 
-        builder.HasOne(ci => ci.Order)
-            .WithMany(o => o.Items)
-            .HasConstraintName("FK_CartItem_Order_OrderId")
-            .HasForeignKey(ci => ci.OrderId)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.NoAction);
+        // builder.HasOne(ci => ci.Order)
+        //     .WithMany(o => o.Items)
+        //     .HasConstraintName("FK_CartItem_Order_OrderId")
+        //     .HasForeignKey(ci => ci.OrderId)
+        //     .IsRequired(false)
+        //     .OnDelete(DeleteBehavior.NoAction);
 
         builder.Property(s => s.Quantity)
             .HasColumnName("Quantity")

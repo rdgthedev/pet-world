@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace PetWorldOficial.Application.Commands.Schedule
+namespace PetWorldOficial.Application.Commands.Scheduling
 {
     public record DeleteSchedulingCommand(int SchedulingId) : IRequest<DeleteSchedulingCommand>
     {

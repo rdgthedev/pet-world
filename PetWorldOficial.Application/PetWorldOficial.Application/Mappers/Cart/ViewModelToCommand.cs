@@ -9,5 +9,6 @@ public class ViewModelToCommand : Profile
     public ViewModelToCommand()
     {
         CreateMap<CartDetailsViewModel, UpdateCartCommand>();
+        CreateMap<CartDetailsViewModel, DeleteCartCommand>();
     }
 }

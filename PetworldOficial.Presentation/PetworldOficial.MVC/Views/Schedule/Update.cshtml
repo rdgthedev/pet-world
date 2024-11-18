@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model PetWorldOficial.Application.Commands.Schedule.UpdateSchedulingCommand
+@model PetWorldOficial.Application.Commands.Scheduling.UpdateSchedulingCommand
 
 @{
     ViewData["Title"] = "Agendar";
@@ -64,7 +64,7 @@ else if (TempData["SuccessMessage"] != null)
     <form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="Schedule" asp-action="Update" method="post">
         <input type="hidden" asp-for="@Model.ServiceId" value="@Model.ServiceId">
         <input type="hidden" asp-for="@Model.ServicePrice" value="@Model.ServicePrice">
-        <input type="hidden" asp-for="@Model.SchedulingId" value="@Model.SchedulingId">
+        <input type="hidden" asp-for="@Model.Id" value="@Model.Id">
         <input type="hidden" asp-for="@Model.UserId" value="@Model.UserId">
         <input type="hidden" asp-for="@Model.AnimalId" value="@Model.AnimalId">
         <input type="hidden" id="durationInMinutes" asp-for="@Model.DurationInMinutes" value="@Model.DurationInMinutes">

@@ -1,4 +1,6 @@
-﻿@{
+﻿@model PetWorldOficial.Application.ViewModels.Cart.CartDetailsViewModel
+
+@{
     ViewData["Title"] = "Escolha a Forma de Pagamento";
     Layout = "_Layout"; // Ou defina o layout desejado
 }
@@ -32,7 +34,7 @@
                     <!-- Espaçamento adicionado entre o ícone e o nome -->
                     <h5 class="card-title mt-3">PIX</h5> <!-- Margem superior adicionada aqui -->
                     <p>Pagamento rápido via PIX com QR Code.</p>
-                    <a class="btn btn-primary" asp-controller="Checkout" asp-action="Checkout">Selecionar</a>
+                    <a class="btn btn-primary" asp-controller="Checkout" asp-action="QrCodePIX">Selecionar</a>
                 </div>
             </div>
         </div>

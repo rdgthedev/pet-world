@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Domain.Exceptions;
 
-namespace PetWorldOficial.Application.Handlers.Schedule;
+namespace PetWorldOficial.Application.Handlers.Scheduling;
 
 public class UpdateSchedulingCommandHandler(
     IScheduleService scheduleService,
@@ -22,7 +22,7 @@ public class UpdateSchedulingCommandHandler(
         {
             if (request.AnimalId == null)
             {
-                var scheduling = await schedulingService.GetById(request.SchedulingId, cancellationToken);
+                var scheduling = await schedulingService.GetById(request.Id, cancellationToken);
 
                 if (scheduling == null)
                     throw new ScheduleNotFoundException("Ocorreu um erro! Agendamento não encontrado!");
@@ -69,7 +69,7 @@ public class UpdateSchedulingCommandHandler(
 
             var newRequest = new UpdateSchedulingCommand(request.UserPrincipal)
             {
-                SchedulingId = request.SchedulingId + 1,
+                Id = request.Id + 1,
                 AnimalId = request.AnimalId,
                 ServiceId = request.ServiceId,
                 EmployeeId = request.EmployeeId,

@@ -5,7 +5,7 @@ using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Domain.Exceptions;
 
-namespace PetWorldOficial.Application.Handlers.Schedule;
+namespace PetWorldOficial.Application.Handlers.Scheduling;
 
 public class GetAvailableEmployeesToSchedulingQueryHandler(
     IUserService userService,

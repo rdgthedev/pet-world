@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
-using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Application.Services.Interfaces;
-using PetWorldOficial.Application.Settings;
 using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
@@ -27,6 +25,9 @@ public class ScheduleService(
 
     public async Task<ScheduleDetailsViewModel?> GetById(int id, CancellationToken cancellationToken)
         => _mapper.Map<ScheduleDetailsViewModel>(await _scheduleRepository.GetByIdAsync(id, cancellationToken));
+
+    public async Task<IEnumerable<ScheduleDetailsViewModel>?> GetAllByCode(Guid code, CancellationToken cancellationToken)
+        => _mapper.Map<IEnumerable<ScheduleDetailsViewModel>>(await _scheduleRepository.GetAllByCode(code, cancellationToken));
 
     public async Task<ScheduleDetailsViewModel?> GetByIdWithAnimalAndService(
         int id,
@@ -90,7 +91,7 @@ public class ScheduleService(
 
     public async Task Update(UpdateSchedulingCommand command, CancellationToken cancellationToken)
     {
-        var scheduling = await _scheduleRepository.GetByIdAsync(command.SchedulingId, cancellationToken);
+        var scheduling = await _scheduleRepository.GetByIdAsync(command.Id, cancellationToken);
 
         if (scheduling is null)
             throw new Exception();
@@ -102,11 +103,11 @@ public class ScheduleService(
     public async Task UpdateRange(List<UpdateSchedulingCommand> commands, CancellationToken cancellationToken)
     {
         var schedulings = await _scheduleRepository.GetByIdsAsync(
-            commands.Select(c => c.SchedulingId).ToList(), cancellationToken)!;
+            commands.Select(c => c.Id).ToList(), cancellationToken)!;
 
         foreach (var command in commands)
         {
-            var schedulingToUpdate = schedulings.FirstOrDefault(s => s.Id == command.SchedulingId);
+            var schedulingToUpdate = schedulings.FirstOrDefault(s => s.Id == command.Id);
 
             if (schedulingToUpdate != null)
                 _mapper.Map(command, schedulingToUpdate);
@@ -178,11 +179,26 @@ public class ScheduleService(
     public async Task DeleteRange(List<DeleteSchedulingCommand> commands, CancellationToken cancellationToken)
     {
         var schedulings = await _scheduleRepository.GetByIdsAsync(
-            commands.Select(c => c.SchedulingId).ToList(), cancellationToken)!;
+            commands.Select(c => c.SchedulingId).ToList(),
+            cancellationToken)!;
 
         if (schedulings is null)
             throw new ScheduleNotFoundException("Agendamento não encontrado!");
 
-        await _scheduleRepository.DeleteRangeAsync(schedulings.ToList(), cancellationToken);
+        foreach (var scheduling in schedulings)
+            scheduling.UpdateStatusToCanceled();
+
+        await _scheduleRepository.UpdateRangeAsync(schedulings.ToList(), cancellationToken);
+        // await _scheduleRepository.DeleteRangeAsync(schedulings.ToList(), cancellationToken);
+    }
+
+    public async Task DeleteAsync(DeleteSchedulingCommand command, CancellationToken cancellationToken)
+    {
+        var scheduling = await _scheduleRepository.GetByIdAsync(command.SchedulingId, cancellationToken);
+        
+        if(scheduling is null)
+            throw new ScheduleNotFoundException("Agendamento não encontrado!");
+        
+        await _scheduleRepository.UpdateAsync(scheduling, cancellationToken);
     }
 }

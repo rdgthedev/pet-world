@@ -54,6 +54,18 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Schedulling>?> GetAllByCode(Guid code, CancellationToken cancellationToken)
+    {
+        return await _context
+            .Schedullings
+            .Include(s => s.Animal)
+            .Include(s => s.Service)
+            .ThenInclude(s => s.Category)
+            .Include(s => s.Employee)
+            .Where(s => s.Code == code)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task CreateAsync(Schedulling entity, CancellationToken cancellationToken)
     {
         await _context.Schedullings.AddAsync(entity, cancellationToken);
@@ -116,7 +128,9 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .AsNoTracking()
             .Include(s => s.Employee)
             .Include(s => s.Service)
-            .Where(s => s.Date.Date == date.Date && s.Service.Category.Title == categoryType.ToString())
+            .Where(s => s.Date.Date == date.Date && s.Service.Category.Title == categoryType.ToString()
+                                                 && s.Status != ESchedullingStatus.Canceled
+                                                 && s.Status != ESchedullingStatus.Finished)
             .Select(s => s.Time)
             .ToListAsync(cancellationToken);
     }
@@ -161,7 +175,9 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.AnimalId == animalId
                                       && s.Date.Date == schedulingDate.Date
-                                      && s.Time == schedulingTime, cancellationToken);
+                                      && s.Time == schedulingTime
+                                      && s.Status != ESchedullingStatus.Canceled
+                                      && s.Status != ESchedullingStatus.Finished, cancellationToken);
     }
 
     public async Task<IEnumerable<Schedulling?>> GetSchedulesWithEmployeeByDateAndTime(DateTime date,
@@ -206,7 +222,9 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Include(s => s.Service)
             .Include(s => s.Employee)
             .Where(s => s.Date.Date == schedullingDate.Date
-                        && s.Service.Category.Title == categoryType.ToString())
+                        && s.Service.Category.Title == categoryType.ToString()
+                        && s.Status != ESchedullingStatus.Canceled
+                        && s.Status != ESchedullingStatus.Finished)
             .ToListAsync(cancellationToken);
     }
 

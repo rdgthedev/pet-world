@@ -6,7 +6,7 @@ using PetWorldOficial.Application.ViewModels.Schedule;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
-namespace PetWorldOficial.Application.Handlers.Schedule;
+namespace PetWorldOficial.Application.Handlers.Scheduling;
 
 public class GetAllSchedulesQueryHandler(
     IScheduleService scheduleService,
@@ -38,10 +38,12 @@ public class GetAllSchedulesQueryHandler(
 
                 return schedulingsResult is null || !schedulingsResult.Any()
                     ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
-                    : schedulingsResult;
+                    : schedulingsResult
+                        .OrderBy(s => s.Status != ESchedullingStatus.Pending.ToString())
+                        .ThenBy(s => s.Status)
+                        .ToList();
             }
-
-
+            
             var animalsIds = (await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken))
                 .Select(a => a!.Id).ToList();
 
@@ -50,10 +52,15 @@ public class GetAllSchedulesQueryHandler(
                 : animalsIds;
 
             var schedulings = await scheduleService.GetAllByAnimalsIds(animalsIds, cancellationToken);
+
             schedulings = GroupSchedulings(schedulings.ToList());
+
             return schedulings is null || !schedulings.Any()
                 ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
-                : schedulings;
+                : schedulings
+                    .OrderBy(s => s.Status != ESchedullingStatus.Pending.ToString())
+                    .ThenBy(s => s.Status)
+                    .ToList();
         }
         catch (Exception)
         {

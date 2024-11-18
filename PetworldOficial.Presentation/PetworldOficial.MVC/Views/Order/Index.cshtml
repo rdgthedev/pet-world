@@ -1,0 +1,194 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetWorldOficial.Domain.Enums
+@using PetworldOficial.MVC.Utils
+@model IEnumerable<PetWorldOficial.Application.ViewModels.Order.OrderDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Pedidos";
+    Layout = "_Layout";
+}
+
+<div class="container-fluid tpy-3">
+    <br>
+    @if (User.IsInRole(ERole.Admin.ToString()))
+    {
+        <h1 class="text-center">
+            Lista de Pedidos
+        </h1>
+    }
+    else
+    {
+        <h1 class="text-center">
+            Meus Pedidos
+        </h1>
+    }
+    <br>
+</div>
+
+@if (TempData["OrderCreated"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["OrderCreated"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model is not null && Model.Count() != 0)
+{
+    <section class="my-5">
+        <div class="container">
+            <div class="row" id="supplierContainer">
+                <div class="col-lg-12">
+                    @foreach (var order in Model)
+                    {
+                        <div class="card cart-card mb-3 supplier-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div class="d-flex">
+                                    <img
+                                        src="/Images/PedidoOK.png"
+                                        alt="Imagem fornecedor"
+                                        class="img-fluid me-4"
+                                        style="width: 100px; object-fit: cover"/>
+                                    <div>
+                                        @if (!User.IsInRole(ERole.Admin.ToString()))
+                                        {
+                                            <h5 class="card-title supplier-name">Número do pedido: @order.Id</h5>
+                                        }
+                                        else
+                                        {
+                                            <h5 class="card-title supplier-name">Número do pedido: @order!.Id - @order.Client.Name</h5>
+                                        }
+                                        <p class="card-text">
+                                            <strong>Método de pagamento:</strong> @(Enum.Parse<EPaymentMethod>(order.PaymentMethod).GetDisplayName())
+                                        </p>
+                                        <p class="card-text">
+                                            <strong>Data de pagamento:</strong> @order.PaymentDate.ToString("dd/MM/yyyy")
+                                        </p>
+                                        <p class="card-text">
+                                            <strong>Status:</strong> <span class="supplier-email">@(Enum.Parse<EOrderStatus>(order.Status).GetDisplayName())</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <a
+                                        asp-controller="Order"
+                                        asp-action="Details"
+                                        asp-route-id="@order.Id"
+                                        class="btn btn-info mb-2"
+                                        style="width: 200px">
+                                        <i class="bi bi-eye"></i> Visualizar
+                                    </a>
+
+                                    @if (User.IsInRole(ERole.Admin.ToString()))
+                                    {
+                                        if (Enum.Parse<EOrderStatus>(order.Status) is EOrderStatus.PaymentConfirmed)
+                                        {
+                                            <a
+                                                asp-controller="Order"
+                                                asp-action="AwaitingPickUp"
+                                                asp-route-id="@order.Id"
+                                                class="btn btn-warning mb-2"
+                                                style="width: 200px">
+                                                <i class="bi bi-hourglass-split"></i> Aguardando Coleta
+                                            </a>
+                                        }
+
+                                        if (Enum.Parse<EOrderStatus>(order.Status) is EOrderStatus.AwaitingPickup)
+                                        {
+                                            <a
+                                                asp-controller="Order"
+                                                asp-action="InTransit"
+                                                asp-route-id="@order.Id"
+                                                class="btn btn-warning mb-2"
+                                                style="width: 200px">
+                                                <i class="bi bi-arrow-right-circle"></i> Em Trânsito
+                                            </a>
+                                        }
+
+                                        if (Enum.Parse<EOrderStatus>(order.Status) is EOrderStatus.InTransit)
+                                        {
+                                            <a
+                                                asp-controller="Order"
+                                                asp-action="Delivered"
+                                                asp-route-id="@order.Id"
+                                                class="btn btn-success mb-2"
+                                                style="width: 200px">
+                                                <i class="bi bi-check-circle"></i> Entregue
+                                            </a>
+                                        }
+
+                                        if (Enum.Parse<EOrderStatus>(order.Status) is not EOrderStatus.Canceled)
+                                        {
+                                            <a
+                                                asp-controller="Order"
+                                                asp-action="Cancel"
+                                                asp-route-id="@order.Id"
+                                                class="btn btn-danger mb-2"
+                                                style="width: 200px">
+                                                <i class="bi bi-x-circle"></i> Cancelado
+                                            </a>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
+            @TempData["NotFoundSupplier"]
+        </h2>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+        <br>
+        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Supplier" asp-action="Register">
+            Adicionar Fornecedor
+        </a>
+    </div>
+}
+
+<script>
+    function searchSupplier() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toLowerCase();
+        var supplierContainer = document.getElementById("supplierContainer");
+        var supplierCards = supplierContainer.getElementsByClassName("supplier-card");
+
+        for (var i = 0; i < supplierCards.length; i++) {
+            var supplierName = supplierCards[i].getElementsByClassName("supplier-name")[0];
+            var supplierEmail = supplierCards[i].getElementsByClassName("supplier-email")[0];
+            if (supplierName || supplierEmail) {
+                var nameText = supplierName.textContent || supplierName.innerText;
+                var emailText = supplierEmail.textContent || supplierEmail.innerText;
+                if (nameText.toLowerCase().indexOf(filter) > -1 || emailText.toLowerCase().indexOf(filter) > -1) {
+                    supplierCards[i].style.display = "";
+                } else {
+                    supplierCards[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>

@@ -33,10 +33,9 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
 
         public async Task UpdateAsync(Cart cart, CancellationToken cancellationToken)
         {
-            
             var trackedUser = context.ChangeTracker.Entries<User>()
                 .FirstOrDefault(e => e.Entity.Id == cart.ClientId);
-            
+
             if (trackedUser != null)
             {
                 trackedUser.State = EntityState.Detached;
@@ -85,11 +84,11 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
         {
             var cart = await context
                 .Carts
+                .AsNoTracking()
                 .Include(c => c.Client)
                 .Include(c => c.Items)
                 .ThenInclude(c => c.Product)
                 .ThenInclude(p => p.Stock)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.ClientId == id, cancellationToken);
 
             return cart;

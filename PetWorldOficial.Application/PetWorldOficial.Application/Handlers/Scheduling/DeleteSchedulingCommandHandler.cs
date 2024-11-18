@@ -1,17 +1,10 @@
 ﻿using MediatR;
-using PetWorldOficial.Application.Commands.Schedule;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static PetWorldOficial.Application.Settings.Settings;
 
-namespace PetWorldOficial.Application.Handlers.Schedule
+namespace PetWorldOficial.Application.Handlers.Scheduling
 {
     public class DeleteSchedulingCommandHandler(
         IScheduleService scheduleService) : IRequestHandler<DeleteSchedulingCommand, DeleteSchedulingCommand>

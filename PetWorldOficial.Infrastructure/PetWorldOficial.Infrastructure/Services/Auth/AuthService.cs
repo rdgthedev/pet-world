@@ -1,6 +1,4 @@
 ﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
@@ -8,13 +6,13 @@ using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
-namespace PetWorldOficial.Infrastructure.Services;
+namespace PetWorldOficial.Infrastructure.Services.Auth;
 
 public class AuthService(
     UserManager<User> userManager,
     SignInManager<User> signInManager) : IAuthService
 {
-    public async Task<User> Login(LoginUserCommand command)
+    public async Task<User?> Login(LoginUserCommand command)
     {
         var user = await userManager.FindByEmailAsync(command.Email.Trim().ToLower());
 
@@ -44,12 +42,38 @@ public class AuthService(
         }
 
         var name = user.Name.Split(' ');
-        
+
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, name[0]));
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, user.Email!));
 
-        // await signInManager.SignInAsync(user, false);
         return user;
+    }
+
+    public async Task ResetPassword(
+        User user,
+        string token,
+        string newPassword)
+    {
+        var existingUser = await userManager.FindByEmailAsync(user.Email!);
+        
+        var isValid = await userManager.VerifyUserTokenAsync(
+            user, 
+            TokenOptions.DefaultProvider, 
+            "ResetPassword", 
+            token);
+
+        if (!isValid)
+            throw new InvalidTokenException("O token de redefinição de senha está inválido!");
+
+        var result = await userManager.ResetPasswordAsync(existingUser!, token, newPassword);
+
+        if (!result.Succeeded)
+            throw new Exception("Ocorreu um erro ao tentar resetar sua senha!");
+    }
+
+    public Task<string> GenerateForgetPasswordTokenAsync(User user)
+    {
+        return userManager.GeneratePasswordResetTokenAsync(user);
     }
 
     public async Task Logout() => await signInManager.SignOutAsync();

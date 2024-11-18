@@ -3,15 +3,19 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using MediatR;
 using PetWorldOficial.Application.ViewModels.Animal;
-using PetWorldOficial.Application.ViewModels.User;
 using PetWorldOficial.Domain.Entities;
 
-namespace PetWorldOficial.Application.Commands.Schedule;
+namespace PetWorldOficial.Application.Commands.Scheduling;
 
-public record CreateScheduleCommand(ClaimsPrincipal? UserPrincipal) : IRequest<CreateScheduleCommand>
+public record UpdateSchedulingCommand(ClaimsPrincipal? UserPrincipal) : IRequest<UpdateSchedulingCommand>
 {
+    public int Id { get; set; }
+
     [Required(ErrorMessage = "O pet é obrigatório!")]
     public int? AnimalId { get; set; }
+
+    [Required(ErrorMessage = "O funcionário é obrigatório!")]
+    public int? EmployeeId { get; set; }
 
     [Required] public int ServiceId { get; set; }
 
@@ -33,15 +37,14 @@ public record CreateScheduleCommand(ClaimsPrincipal? UserPrincipal) : IRequest<C
     [Required(ErrorMessage = "O preço é obrigatório")]
     public double ServicePrice { get; set; }
 
+    public string EmployeeName { get; set; } = string.Empty;
     public string CategoryName { get; set; } = string.Empty;
-    public Guid Code { get; set; } = Guid.NewGuid();
+    public string AnimalName { get; set; } = string.Empty;
+    public Guid Code { get; set; }
+    public string Status { get; set; } = string.Empty;
 
     public IEnumerable<AnimalDetailsViewModel?>? Animals { get; set; }
     public List<Schedulling>? Schedullings { get; set; }
     public int? UserId { get; set; }
-
-    [Required(ErrorMessage = "O funcionário é obrigatório!")]
-    public int? EmployeeId { get; set; }
-
     public string Message { get; set; } = string.Empty;
 }

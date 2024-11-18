@@ -11,6 +11,7 @@ public interface IScheduleRepository
     Task<IEnumerable<Schedulling>> GetAllAsync(CancellationToken cancellationToken);
     Task<Schedulling?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<IEnumerable<Schedulling>>? GetByIdsAsync(List<int> ids, CancellationToken cancellationToken);
+    Task<IEnumerable<Schedulling>?> GetAllByCode(Guid code, CancellationToken cancellationToken);
     Task UpdateAsync(Schedulling schedule, CancellationToken cancellationToken);
     Task DeleteAsync(Schedulling schedule, CancellationToken cancellationToken);
     Task DeleteRangeAsync(List<Schedulling> schedulings, CancellationToken cancellationToken);

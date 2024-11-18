@@ -22,6 +22,7 @@ public class DomainToViewModel : Profile
                 Service = s.Service,
                 Animal = s.Animal,
                 Employee = s.Employee,
+                Status = s.Status.ToString()
             });
     }
 }

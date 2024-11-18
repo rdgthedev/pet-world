@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.Commands.Checkout;
 using PetWorldOficial.Application.Commands.Order;
+using PetWorldOficial.Domain.Exceptions;
 
 namespace PetworldOficial.MVC.Controllers;
 
@@ -19,7 +21,7 @@ public class CheckoutController(IMediator mediator) : Controller
             throw;
         }
     }
-    
+
     [HttpGet]
     public IActionResult PaymentMethods()
     {
@@ -38,13 +40,13 @@ public class CheckoutController(IMediator mediator) : Controller
             TempData["ErrorMessage"] = e.Message;
             return RedirectToAction("Index", "Home");
         }
-    
+
         return Ok();
     }
 
     [HttpPost]
     public async Task<IActionResult> Success(
-        [FromQuery]string? session_id, 
+        [FromQuery] string? session_id,
         CancellationToken cancellationToken)
     {
         try
@@ -54,21 +56,41 @@ public class CheckoutController(IMediator mediator) : Controller
         catch (Exception)
         {
             throw;
-        }        
+        }
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> Cancel()
     {
         try
         {
             TempData["CanceledMessage"] = "Você não finalizou seu pedido, seus itens continuam no carrinho!";
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
         catch (Exception)
         {
             throw;
-        }        
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> QrCodePIX(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await mediator.Send(new GetCartFromCookieCommand(), cancellationToken);
+            return View(result);
+        }
+        catch (OrderNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return RedirectToAction("Index", "Home");
+        }
     }
 
     // [HttpPost("/webhook")]

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PetWorldOficial.Domain.Common;
+﻿using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 using PetWorldOficial.Infrastructure.Data.Context;
@@ -29,7 +27,8 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Animal?>> GetByUserIdWithOwnerAndRaceAsync(int id,
+    public async Task<IEnumerable<Animal?>> GetByUserIdWithOwnerAndRaceAsync(
+        int id,
         CancellationToken cancellationToken)
     {
         var animals = await _context
