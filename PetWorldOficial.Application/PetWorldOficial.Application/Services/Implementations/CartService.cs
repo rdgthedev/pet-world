@@ -4,6 +4,7 @@ using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Cart;
 using PetWorldOficial.Domain.Entities;
+using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Application.Services.Implementations;
@@ -55,25 +56,8 @@ public class CartService(
         int userId,
         CancellationToken cancellationToken)
     {
-        // var cartCookieResult = await cartCookieService.GetCartFromCookieAsync(
-        //     httpContextAccessor.HttpContext,
-        //     cancellationToken);
-
         var cartResult = await cartRepository.GetCartByUserId(userId, cancellationToken);
         var cart = cartResult != null ? mapper.Map<CartDetailsViewModel>(cartResult) : null!;
-        // if (cartResult is not null
-        //     && cartCookieResult is not null
-        //     && cartResult.Id != cartCookieResult.Id)
-        // {
-        //     foreach (var item in cartCookieResult.Items)
-        //         cartResult.AddItem(item, item.Product.Stock.Quantity);
-        //
-        //     await cartRepository.DeleteAsync(mapper.Map<Cart>(cartCookieResult), cancellationToken);
-        //     await cartRepository.UpdateAsync(cartResult, cancellationToken);
-        //     cartCookieResult = null!;
-        // }
-
-        // var cart = cartCookieResult ?? mapper.Map<CartDetailsViewModel>(cartResult);
 
         if (cart?.ExpiresDate < DateTime.Now)
         {
@@ -110,6 +94,10 @@ public class CartService(
             {
                 await cartItemRepository.DeleteRangeAsync(itemsToRemove, cancellationToken);
                 cart.Items = cart.Items.Where(ci => itemsToRemove.Any(i => ci.Id != i.Id)).ToList();
+
+                if (cart.Items.Count <= 0)
+                    throw new QuantityOfProductOutOfStockException(
+                        "Infelizmente os itens que estavam em seu carrinho esgotaram no estoque!");
             }
 
             cart.TotalPrice += _freightPrice;
@@ -125,7 +113,7 @@ public class CartService(
             httpContextAccessor.HttpContext);
 
         cartCreated.TotalPrice += _freightPrice;
-        
+
         return cartCreated;
     }
 

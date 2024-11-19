@@ -22,6 +22,7 @@ public class CreateOrderCommandHandler(
     IUserService userService,
     ICartService cartService,
     IEmailSenderService emailSenderService,
+    IStockService stockService,
     IMapper mapper) : IRequestHandler<CreateOrderCommand, (bool success, string message)>
 {
     public async Task<(bool success, string message)> Handle(
@@ -57,6 +58,21 @@ public class CreateOrderCommandHandler(
             if (cart?.Items is null || !cart.Items.Any())
                 throw new Exception("Carrinho vazio ou não encontrado. Verifique se há itens no seu carrinho.");
 
+            var invalidItems = await VerifyCartItemsInStock(cart.Items, cancellationToken);
+
+            if (invalidItems.Any())
+            {
+                cart.Items = cart.Items.Where(c => !invalidItems.Contains(c)).ToList();
+                await cartService.UpdateAsync(mapper.Map<UpdateCartCommand>(cart), cancellationToken);
+
+                foreach (var item in invalidItems)
+                {
+                    throw new QuantityOfProductOutOfStockException(
+                        $"O produto {item.Product.Name} foi retirado do seu " +
+                        $"carrinho, pois não se encontra mais em estoque.");
+                }
+            }
+            
             await cartService.DeleteAsync(mapper.Map<DeleteCartCommand>(cart), cancellationToken);
 
             var order = new PetWorldOficial.Domain.Entities.Order(user.Id, stripeSession?.Id, paymentMethod);
@@ -68,19 +84,33 @@ public class CreateOrderCommandHandler(
             order.AddItems(items);
 
             await orderService.CreateAsync(order, cancellationToken);
-            
+
             await emailSenderService.SendAsync(
-                user.Email, 
+                user.Email,
                 $"Pedido - {order.Id}",
                 "Seu pagamento foi confirmado, em breve lhe enviaremos atualizações sobre o seu pedido.\n\n" +
                 "Atencionsamente,\nEquipe Pet World");
-            
+
             return (success: true, message: "Recebemos seu pagamento! Seu pedido foi criado com sucesso.");
         }
         catch (Exception)
         {
             throw;
         }
+    }
+
+    private async Task<List<CartItem>> VerifyCartItemsInStock(List<CartItem> items, CancellationToken cancellationToken)
+    {
+        var notInStock = new List<CartItem>();
+
+        foreach (var item in items)
+            if (!await stockService.ValidateStockQuantity(item.ProductId, item.Quantity, cancellationToken))
+                notInStock.Add(item);
+
+        if (!notInStock.Any())
+            return [];
+
+        return notInStock;
     }
 
     private static EPaymentMethod ParsePaymentMethod(string paymentMethod)

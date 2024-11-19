@@ -89,7 +89,7 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li>
-                                        <a class="dropdown-item" href="#">Minha conta</a>
+                                        <a class="dropdown-item" asp-controller="User" asp-action="MyAccount">Minha conta</a>
                                     </li>
                                     @if (!User.IsInRole(ERole.Admin.ToString()))
                                     {

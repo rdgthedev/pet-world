@@ -19,6 +19,7 @@ public class AnimalController(
     IMemoryCache cache,
     IWebHostEnvironment webHostEnvironment,
     IAnimalRepository animalRepository,
+    ICategoryService categoryService,
     IUserService userService) : Controller
 {
     [HttpGet]
@@ -116,14 +117,11 @@ public class AnimalController(
 
         if (!ModelState.IsValid)
         {
-            if (cache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
-                command.Races = races!;
-
-            if (cache.TryGetValue("AnimalCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
-                command.Categories = categories!;
+            command.Categories = await categoryService.GetAllAnimalCategories(cancellationToken);
 
             if (command.AdminId.HasValue)
-                command.Users = await userService.GetAllUsersExceptCurrentAsync(command.AdminId!.Value, cancellationToken);
+                command.Users =
+                    await userService.GetAllUsersExceptCurrentAsync(command.AdminId!.Value, cancellationToken);
 
             return View(command);
         }
@@ -181,12 +179,7 @@ public class AnimalController(
 
         if (!ModelState.IsValid)
         {
-            if (cache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
-                command.Races = races!;
-
-            if (cache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
-                command.Categories = categories!;
-
+            command.Categories = await categoryService.GetAllAnimalCategories(cancellationToken);
             return View(command);
         }
 

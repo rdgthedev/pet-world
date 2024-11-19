@@ -36,28 +36,20 @@ public class UpdateAnimalCommandHandler(
                 if (animal is null)
                     throw new AnimalNotFoundException("Pet não encontrado!");
 
-                if (!memoryCache.TryGetValue("AnimalCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
-                {
-                    categories = await categoryService.GetAllAnimalCategories(cancellationToken);
-                    memoryCache.Set("AnimalCategories", categories, TimeSpan.FromHours(8));
-                }
-
-                // if (!memoryCache.TryGetValue("Races", out IEnumerable<RaceDetailsViewModel>? races))
+                // if (!memoryCache.TryGetValue("AnimalCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
                 // {
-                //     races = await raceService.GetAll(cancellationToken);
-                //     memoryCache.Set("Races", races, TimeSpan.FromHours(8));
+                //     categories = await categoryService.GetAllAnimalCategories(cancellationToken);
+                //     memoryCache.Set("AnimalCategories", categories, TimeSpan.FromHours(8));
                 // }
 
                 request.Name = animal.Name;
                 request.Gender = animal.Gender;
                 request.RaceName = animal.Race;
-                // request.RaceId = animal.Race.Id;
                 request.CategoryId = animal.Category.Id;
                 request.CategoryTitle = animal.Category.Title;
                 request.BirthDate = animal.BirthDate;
                 request.UserId = user.Id;
-                request.Categories = categories;
-                // request.Races = races;
+                request.Categories = await categoryService.GetAllAnimalCategories(cancellationToken);
                 request.ImageUrl = animal.ImageUrl;
 
                 return request;

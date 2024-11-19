@@ -1,8 +1,32 @@
-﻿@model PetWorldOficial.Application.ViewModels.Cart.CartDetailsViewModel
+﻿@model PetWorldOficial.Application.ViewModels.Cart.CartDetailsViewModel?
 
 @{
     ViewData["Title"] = "Carrinho";
     Layout = "_Layout";
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-12 alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close">
+        </button>
+    </div>
+</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-12 alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close">
+        </button>
+    </div>
+</div>
 }
 
 <div class="d-flex justify-content-center align-items-center">
@@ -13,7 +37,7 @@
 <section class="my-5">
     <div class="container">
         <h2 class="cart-title text-center mb-4">Carrinho de Compras</h2>
-        @if (Model.Items is not null && Model.Items.Any())
+        @if (Model != null && Model?.Items is not null && Model.Items.Any())
         {
             <div class="row">
                 <div class="col-lg-8">

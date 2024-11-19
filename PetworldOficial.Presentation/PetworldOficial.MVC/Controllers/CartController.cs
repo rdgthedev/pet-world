@@ -20,6 +20,11 @@ public class CartController(IMediator mediator) : Controller
             TempData["ErrorMessage"] = e.Message;
             return RedirectToAction("Login", "Auth");
         }
+        catch (QuantityOfProductOutOfStockException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
+        }
         catch (Exception)
         {
             throw;

@@ -38,6 +38,13 @@ public class UserController(
     }
 
     [HttpGet]
+    public IActionResult MyAccount()
+    {
+        return View();
+    }
+    
+
+    [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, CancellationToken cancellationToken)
     {
