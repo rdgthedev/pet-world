@@ -1,10 +1,10 @@
-name: Compilar e implantar o aplicativo .NET Core no aplicativo Web PetWorldOficial
+name: Compilar e implantar o aplicativo .NET Core no aplicativo Web PetworldOficialMVC20241119002214
 on:
   push:
     branches:
     - main
 env:
-  AZURE_WEBAPP_NAME: petworld
+  AZURE_WEBAPP_NAME: PetworldOficialMVC20241119002214
   AZURE_WEBAPP_PACKAGE_PATH: PetworldOficial.Presentation/PetworldOficial.MVC/published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
@@ -44,5 +44,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+        publish-profile: ${{ secrets.PetworldOficialMVC20241119002214_BB3E }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
