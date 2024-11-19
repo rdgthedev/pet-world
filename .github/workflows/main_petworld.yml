@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - petworld
+name: Build and Deploy ASP.Net Core App to Azure Web App - petworld
 
 on:
   push:
@@ -14,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
@@ -24,14 +22,17 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Dotnet publish
+        run: dotnet publish -c Release -o ./publish  # Diretório onde os arquivos serão publicados
+
+      - name: Set environment variable for Azure Web App package path
+        run: echo "AZURE_WEBAPP_PACKAGE_PATH=./publish" >> $GITHUB_ENV  # Define o caminho do pacote para o deploy
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: webapp  # Nome do artefato
+          path: ./publish  # O caminho dos arquivos publicados
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,20 +47,19 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
+          name: webapp  # Nome do artefato
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}  # Caminho onde o pacote será baixado
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_10E061A37DD448A0937F6534132645F4 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B8C2995FBDD34DA0885CA2463FC07B85 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_90116D34256D43D5AF46F7990C260970 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'petworld'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}  # Nome do Web App no Azure
+          slot-name: 'Production'  # Slot do Web App (caso não use slots, pode deixar como 'Production')
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}  # Caminho para o pacote a ser implantado

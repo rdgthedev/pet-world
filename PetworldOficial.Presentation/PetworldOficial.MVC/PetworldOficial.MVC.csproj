@@ -27,9 +27,4 @@
         <ApplicationIcon>wwwroot\Images\faviconPaw.ico</ApplicationIcon>
       <UserSecretsId>87fc9a43-e663-4ab4-962c-17e0b29a75eb</UserSecretsId>
   </PropertyGroup>
-
-  <PropertyGroup>
-  <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-  <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-</PropertyGroup>
 </Project>
