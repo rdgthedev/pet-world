@@ -60,6 +60,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}  # Nome do Web App no Azure
+          app-name: 'petworld'  # Nome do Web App no Azure
           slot-name: 'Production'  # Slot do Web App (caso não use slots, pode deixar como 'Production')
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}  # Caminho para o pacote a ser implantado
