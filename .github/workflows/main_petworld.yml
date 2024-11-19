@@ -1,18 +1,14 @@
-name: Build and Deploy ASP.Net Core App to Azure Web App - petworld
-
+name: Compilar e implantar o aplicativo .NET Core no aplicativo Web PetWorldOficial
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
-
+    - main
 env:
-  AZURE_WEBAPP_NAME: petworld  # Nome correto do seu app na Azure
-  AZURE_WEBAPP_PACKAGE_PATH: Petworld.Presentation/Petworld.MVC/published
+  AZURE_WEBAPP_NAME: petworld
+  AZURE_WEBAPP_PACKAGE_PATH: PetworldOficial.Presentation/PetworldOficial.MVC/published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
-  WORKING_DIRECTORY: Petworld.Presentation/Petworld.MVC
-
+  WORKING_DIRECTORY: PetworldOficial.Presentation/PetworldOficial.MVC
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,7 +31,6 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -49,5 +44,5 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # Usando o segredo do Publish Profile
+        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
