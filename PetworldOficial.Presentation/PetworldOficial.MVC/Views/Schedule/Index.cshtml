@@ -67,7 +67,7 @@ else if (TempData["SuccessMessage"] != null)
                     @* </div> *@
                     <div class="col-md-12 d-flex justify-content-end">
                         <input type="text" class="form-control" id="searchInput"
-                               placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchScheduling()">
+                               placeholder="Pesquisar por nome de animal, serviço ou funcionário..." onkeyup="searchScheduling()">
                     </div>
                 </div>
             </div>
@@ -84,17 +84,20 @@ else if (TempData["SuccessMessage"] != null)
                                         @if (string.IsNullOrEmpty(schedule.Animal.ImageUrl))
                                         {
                                             <img src="/Images/PetImage.jpg" alt="Animal" class="img-fluid me-4"
-                                                 style="width: 100px; object-fit: cover"/>
+                                                 style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px"/>
                                         }
                                         else
                                         {
                                             <img src="/Images/@schedule.Animal.ImageUrl" alt="Animal" class="img-fluid me-4"
-                                                 style="width: 100px; object-fit: cover"/>
+                                                 style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px"/>
                                         }
                                         <div>
                                             <h5 class="card-title">@schedule.Id - @schedule.Animal.Name</h5>
                                             <p class="card-text">
                                                 <strong>Serviço:</strong> @schedule.Service.Name
+                                            </p>
+                                            <p class="card-text">
+                                                <strong>Funcionário:</strong> @schedule.Employee.Name
                                             </p>
                                             <p>
                                                 <strong>Data:</strong> @schedule.Date.ToString("dd-MM-yyyy")
@@ -112,14 +115,13 @@ else if (TempData["SuccessMessage"] != null)
                                         </div>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <!-- Botões de editar e cancelar -->
                                         <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })"
-                                           class="btn btn-warning mb-2">
-                                            Editar
+                                           class="btn btn-warning mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-edit me-2"></i> Editar
                                         </a>
                                         <a href="@Url.Action("Cancel", "Schedule", new { id = schedule.Id })"
-                                           class="btn btn-danger">
-                                            Cancelar
+                                           class="btn btn-danger d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-trash me-2"></i> Cancelar
                                         </a>
                                     </div>
                                 </div>
@@ -155,20 +157,15 @@ else if (TempData["SuccessMessage"] != null)
             <!-- Filtro de Pesquisa -->
             <div class="container">
                 <div class="row mb-3">
-                    @* <div class="col-md-6 d-flex justify-content-start"> *@
-                    @*     <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index"> *@
-                    @*         <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Agendamento *@
-                    @*     </a> *@
-                    @* </div> *@
                     <div class="col-md-12 d-flex justify-content-end">
                         <input type="text" class="form-control" id="searchInput"
-                               placeholder="Pesquisar por nome de animal, serviço ou data..." onkeyup="searchScheduling()">
+                               placeholder="Pesquisar por nome de animal, serviço ou funcionário..." onkeyup="searchScheduling()">
                     </div>
                 </div>
             </div>
             <div class="container">
                 <div class="row" id="scheduleContainer">
-                    <div class="col-lg-12">
+                    <div class="col-lg-8">
 
                         @foreach (var schedule in Model)
                         {
@@ -178,12 +175,12 @@ else if (TempData["SuccessMessage"] != null)
                                         @if (string.IsNullOrEmpty(schedule.Animal.ImageUrl))
                                         {
                                             <img src="/Images/PetImage.jpg" alt="Animal" class="img-fluid me-4"
-                                                 style="width: 100px; object-fit: cover"/>
+                                                 style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px"/>
                                         }
                                         else
                                         {
                                             <img src="/Images/@schedule.Animal.ImageUrl" alt="Animal" class="img-fluid me-4"
-                                                 style="width: 100px; object-fit: cover"/>
+                                                 style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px"/>
                                         }
 
                                         <div>
@@ -213,23 +210,43 @@ else if (TempData["SuccessMessage"] != null)
                                     @if (schedule.Status == ESchedullingStatus.Pending.ToString())
                                     {
                                         <div class="d-flex flex-column">
-                                            <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })"
-                                               class="btn btn-outline-warning mb-2 d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-pencil me-2"></i> Editar
-                                            </a>
+
                                             <a href="@Url.Action("Finish", "Schedule", new { code = schedule.Code })"
-                                               class="btn btn-outline-success mb-2 d-flex align-items-center justify-content-center">
+                                               class="btn btn-success mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
                                                 <i class="bi bi-check-circle me-2"></i> Finalizar
                                             </a>
+
+                                            <a href="@Url.Action("Update", "Schedule", new { id = schedule.Id })"
+                                               class="btn btn-warning mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                                <i class="fas fa-edit me-2"></i> Editar
+                                            </a>
                                             <a href="@Url.Action("Cancel", "Schedule", new { code = schedule.Code })"
-                                               class="btn btn-outline-danger d-flex align-items-center justify-content-center">
-                                                <i class="bi bi-x-circle me-2"></i> Cancelar
+                                               class="btn btn-danger d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                                <i class="fas fa-trash me-2"></i> Cancelar
                                             </a>
                                         </div>
                                     }
                                 </div>
                             </div>
                         }
+                    </div>
+                    <!-- Coluna de resumo do agendamento -->
+                    <div class="col-lg-4">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h4 class="card-title">Resumo dos Agendamentos</h4>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Total de Agendamentos</span>
+                                        <strong>@Model.Count()</strong>
+                                    </li>
+                                </ul>
+                                <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block">
+                                    Agendar Novo
+                                    Serviço
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -20,6 +20,7 @@ public class Cart : Entity
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public DateTime ExpiresDate { get; private set; }
+    public decimal SubTotalPrice { get; private set; }
     public decimal TotalPrice { get; private set; }
     public List<CartItem> Items { get; private set; }
 
@@ -31,7 +32,8 @@ public class Cart : Entity
             return;
         }
 
-        TotalPrice = Items.Sum(x => x.TotalPrice);
+        SubTotalPrice = Items.Sum(x => x.TotalPrice);
+        TotalPrice = Items.Sum(x => x.TotalPrice) + 10;
     }
 
     public bool AddItem(CartItem item, int stockQuantity)

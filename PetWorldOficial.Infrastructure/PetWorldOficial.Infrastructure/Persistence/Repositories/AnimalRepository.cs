@@ -57,6 +57,8 @@ public class AnimalRepository(AppDbContext _context) : IAnimalRepository
             .AsNoTracking()
             .Where(a => a.OwnerId == ownerId)
             .Include(a => a.Owner)
+            .Include(a => a.Schedullings)
+            .ThenInclude(s => s.Employee)
             .ToListAsync(cancellationToken);
     }
 

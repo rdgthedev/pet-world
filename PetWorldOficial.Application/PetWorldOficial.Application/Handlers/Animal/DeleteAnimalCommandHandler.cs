@@ -35,7 +35,7 @@ public class DeleteAnimalCommandHandler(
                 request.RaceName = animal.Race;
                 request.UserId = animal.OwnerId;
                 request.Gender = animal.Gender;
-                // request.RaceId = animal.Race.Id;
+                request.ImageUrl = animal.ImageUrl;
                 request.CategoryId = animal.Category.Id;
 
                 return request;

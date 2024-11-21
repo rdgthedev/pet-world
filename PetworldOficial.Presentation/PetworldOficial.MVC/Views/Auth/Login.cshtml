@@ -10,6 +10,7 @@
         <div class="text-center mb-4">
             <img src="/Images/PetWorldLogo.png" alt="PetWorld Logo" style="width: 150px;"/>
         </div>
+        <br>
 
         @if (TempData["ErrorMessage"] != null)
         {
@@ -36,10 +37,10 @@
             <!-- Link "Esqueceu a senha" -->
             <div class="text-end mb-4">
                 <a asp-controller="Auth" asp-action="ForgotPassword" class="text-info">Esqueceu a senha?</a>
+                <button type="submit" class="btn btn-primary btn-block mb-4">Entrar</button>
             </div>
 
             <!-- Botão de Login -->
-            <button type="submit" class="btn btn-primary btn-block mb-4">Entrar</button>
 
             <!-- Link para Cadastro -->
             <div class="text-center">

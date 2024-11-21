@@ -9,6 +9,7 @@ namespace PetWorldOficial.Application.Commands.Cart
         public DateTime ExpiresDate { get; set; }
         public List<Domain.Entities.CartItem>? Items { get; set; }
         public int? ClientId { get; set; }
+        public decimal SubTotalPrice { get; set; }
         public decimal TotalPrice { get; set; }
     }
 }

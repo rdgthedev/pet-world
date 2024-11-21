@@ -160,6 +160,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .AsNoTracking()
             .Include(schedule => schedule.Service)
             .Include(schedule => schedule.Animal)
+            .Include(schedule => schedule.Employee)
             .Where(schedule => animalsIds.Contains(schedule.AnimalId))
             .ToListAsync(cancellationToken);
     }

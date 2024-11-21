@@ -36,6 +36,10 @@ else if (TempData["SuccessMessage"] != null)
 
 
 <form class="row g-3 d-flex justify-content-center align-items-center" asp-controller="Auth" asp-action="Register" method="post">
+    @if ((bool)!User.Identity?.IsAuthenticated!)
+    {
+        <input type="hidden" asp-for="Role" value="@ERole.User.ToString()">
+    }
     <div class="col-md-10">
         <label>
             <h5 class="fw-normal">Dados Pessoais</h5>
@@ -88,7 +92,7 @@ else if (TempData["SuccessMessage"] != null)
                     <option value="@role">@role.GetDisplayName()</option>
                 }
             </select>
-            <span asp-validation-for="Gender" class="text-danger"></span>
+            <span asp-validation-for="Role" class="text-danger"></span>
         </div>
     }
 
@@ -100,6 +104,11 @@ else if (TempData["SuccessMessage"] != null)
         </span>
         <br>
         <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="col-md-10">
+        <label asp-for="ConfirmPassword" class="form-label">Confirme a senha <span style="color: red;">*</span></label>
+        <input asp-for="ConfirmPassword" type="password" class="form-control shadow-none" placeholder="Confirme a senha">
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
 
     <div class="col-md-10">

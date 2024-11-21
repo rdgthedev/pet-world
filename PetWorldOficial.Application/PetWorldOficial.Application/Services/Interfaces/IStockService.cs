@@ -1,9 +1,5 @@
 ﻿using PetWorldOficial.Application.Commands.Product;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PetWorldOficial.Application.ViewModels.Stock;
 
 namespace PetWorldOficial.Application.Services.Interfaces
 {
@@ -11,6 +7,8 @@ namespace PetWorldOficial.Application.Services.Interfaces
     {
         Task CreateAsync(CreateProductCommand command, CancellationToken cancellationToken);
         Task UdpateAsync(UpdateProductCommand command, CancellationToken cancellationToken);
+        Task UdpateAsync(StockDetailsViewModel stockDetailsViewModel, CancellationToken cancellationToken);
+        Task<StockDetailsViewModel> GetByProductIdAsync(int productId, CancellationToken cancellationToken);
         Task<bool> ValidateStockQuantity(int id, int quantity, CancellationToken cancellationToken);
     }
 }

@@ -59,7 +59,7 @@ public class AuthController(
             TempData["SuccessMessage"] = "Cadastrado com sucesso!";
 
             if (User.IsInRole(ERole.Admin.ToString()))
-                return View();
+                return RedirectToAction("Index", "User");
 
             return RedirectToAction("Index", "Home");
         }

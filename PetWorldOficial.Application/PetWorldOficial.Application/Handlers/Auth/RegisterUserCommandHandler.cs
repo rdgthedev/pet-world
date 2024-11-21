@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using PetWorldOficial.Application.Commands;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
@@ -10,7 +11,8 @@ namespace PetWorldOficial.Application.Handlers.Auth;
 public class RegisterUserCommandHandler(
     IAuthService authService,
     IUserService userService,
-    IMapper mapper) : IRequestHandler<RegisterUserCommand, Unit>
+    IMapper mapper,
+    IHttpContextAccessor httpContextAccessor) : IRequestHandler<RegisterUserCommand, Unit>
 {
     public async Task<Unit> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
@@ -32,7 +34,9 @@ public class RegisterUserCommandHandler(
             if (userRegistered is null)
                 throw new UnableToRegisterUserException("Não foi possível registrar o usuário!");
 
-            await authService.SignIn(user);
+            if (!(bool)httpContextAccessor.HttpContext.User.Identity?.IsAuthenticated)
+                await authService.SignIn(user);
+
             return Unit.Value;
         }
         catch (Exception)

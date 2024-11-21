@@ -44,7 +44,7 @@ public class GetAllSchedulesQueryHandler(
                         .ToList();
             }
             
-            var animalsIds = (await animalService.GetByUserIdWithOwnerAndRace(user.Id, cancellationToken))
+            var animalsIds = (await animalService.GetByOwnerId(user.Id, cancellationToken))
                 .Select(a => a!.Id).ToList();
 
             animalsIds = animalsIds is null || !animalsIds.Any()

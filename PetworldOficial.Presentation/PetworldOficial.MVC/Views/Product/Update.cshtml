@@ -17,7 +17,7 @@
 <div class="d-flex justify-content-center align-items-center">
     @if (Model.ImageUrl != null)
     {
-        <img style="width: 250px;" src="\Images/@Model.ImageUrl" alt="Imagem do Produto">
+        <img style="width: min-content; height: 250px; object-fit: cover; border-radius: 5px" src="\Images/@Model.ImageUrl" alt="Imagem do Produto">
     }
 </div>
 

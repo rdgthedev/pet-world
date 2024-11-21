@@ -17,9 +17,15 @@ public class OrderController(IMediator mediator, IOrderService orderService) : C
             var orders = await mediator.Send(new GetAllOrdersQuery(), cancellationToken);
             return View(orders);
         }
+        catch (OrderNotFoundException e)
+        {
+            TempData["NotFoundOrderMessage"] = e.Message;
+            return View();
+        }
         catch (Exception)
         {
-            throw;
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+            return View();
         }
     }
 
@@ -58,6 +64,11 @@ public class OrderController(IMediator mediator, IOrderService orderService) : C
             TempData["OrderCreated"] = result.message;
             return RedirectToAction("Index");
         }
+        catch (QuantityOfProductOutOfStockException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index");
+        }   
         catch (Exception)
         {
             throw;

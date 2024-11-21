@@ -1,4 +1,5 @@
-﻿@using PetWorldOficial.Domain.Enums
+﻿@using System.Globalization
+@using PetWorldOficial.Domain.Enums
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model IEnumerable<PetWorldOficial.Application.ViewModels.Product.ProductDetailsViewModel>
 
@@ -14,7 +15,6 @@
     </h1>
     <br>
 </div>
-
 
 @if (TempData["ErrorMessage"] != null)
 {
@@ -42,7 +42,7 @@
 
 @if (Model != null && Model.Any())
 {
-    if (User.IsInRole(ERole.Admin.ToString()))
+    @if (User.IsInRole(ERole.Admin.ToString()))
     {
         <section class="my-5">
             <div class="container">
@@ -53,7 +53,13 @@
                         </a>
                     </div>
                     <div class="col-md-6 d-flex justify-content-end">
-                        <input type="text" class="form-control" id="productSearch" class="form-control" placeholder="Buscar produtos...">
+                        <div class="input-group">
+                            <input type="text" id="productSearchAdmin" class="form-control" placeholder="Buscar produtos..."
+                                   aria-label="Buscar produtos" aria-describedby="search-addon">
+                            <span class="input-group-text" id="search-addon">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -89,10 +95,12 @@
                                     </div>
                                     <div class="d-flex flex-column">
                                         <a href="@Url.Action("Update", "Product", new { id = product.Id })"
-                                           class="btn btn-warning mb-2">
-                                            Editar
+                                           class="btn btn-warning mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-edit me-2"></i> Editar
                                         </a>
-                                        <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="btn btn-danger">Deletar</a>
+                                        <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="btn btn-danger d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-trash me-2"></i> Deletar
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -104,32 +112,47 @@
     }
     else
     {
-        <div class="container">
+        <div class="container" id="productList">
             <div class="row mb-3">
-                <div class="col-md-12 d-flex justify-content-end">
-                    <input type="text" class="form-control" id="productSearch" class="form-control" placeholder="Buscar produtos...">
+                <div class="col-md-12 d-flex justify-content-start">
+                    <div class="input-group">
+                        <input type="text" id="productSearchClient" class="form-control" placeholder="Buscar produtos..."
+                               aria-label="Buscar produtos" aria-describedby="search-addon">
+                        <span class="input-group-text" id="search-addon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
-            <br>
-        </div>
-        <div class="container" id="productList">
             <div class="row">
                 @foreach (var product in Model)
                 {
                     <div class="col-md-3 mb-3 product-item">
                         <div class="card h-100">
-                            <!-- Adicionei 'text-center' para centralizar o conteúdo -->
                             <img src="/Images/@product.ImageUrl" class="card-img-top" alt="Produto"
                                  style="height: 200px; object-fit: contain; width: 100%; margin-top: 10px;">
                             <div class="card-body d-flex flex-column justify-content-between">
-                                <h5 class="card-title">@product.Name</h5>
+                                <h6 class="card-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                                    @product.Name
+                                </h6>
                                 <br>
                                 <p>
-                                    <b>Valor:</b> @product.Price.ToString("C")
+                                    <h5>@product.Price.ToString("C", new CultureInfo("pt-BR"))</h5>
                                 </p>
-                                <div class="d-grid gap-2 mt-auto">
-                                    <!-- Ajuste para centralizar e expandir o botão -->
-                                    <button class="btn btn-dark add-to-cart" data-product-id="@product.Id">Adicionar ao carrinho</button>
+                                <div class="d-grid gap-2">
+                                    @if (product.Stock.Quantity > 0)
+                                    {
+                                        <a class="btn btn-dark add-to-cart" data-product-id="@product.Id">
+                                            <i class="fas fa-cart-plus me-3"></i> Adicionar ao carrinho
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-white bg-secondary d-flex justify-content-center align-items-center"
+                                              style="height: 35px; border-radius: 0.3rem; padding: 0.375rem 0.75rem;">
+                                            <i class="fas fa-exclamation-circle me-2"></i> Estoque esgotado
+                                        </span>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -160,11 +183,11 @@ else
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        // Filtro de pesquisa
-        $('#productSearch').on('input', function() {
+    $(document).ready(function () {
+        // Filtro de pesquisa para Cliente
+        $('#productSearchClient').on('input', function () {
             var searchQuery = $(this).val().toLowerCase();
-            $('.product-item').each(function() {
+            $('.product-item').each(function () {
                 var productName = $(this).find('.card-title').text().toLowerCase();
                 if (productName.includes(searchQuery)) {
                     $(this).show();
@@ -175,19 +198,25 @@ else
         });
 
         // Adicionar ao carrinho
-        $('.add-to-cart').on('click', function(e) {
-            e.preventDefault();
-            var productId = $(this).data('product-id');
+        $('.add-to-cart').on('click', function (e) {
+            e.preventDefault(); // Evita o comportamento padrão do botão
+            var productId = $(this).data('product-id'); // Obtém o ID do produto do atributo data
 
+            // Faz a requisição AJAX para adicionar o produto ao carrinho
             $.ajax({
                 url: '/Cart/AddItem',
                 type: 'POST',
                 data: { productId: productId },
                 success: function(response) {
-                    alert("Produto adicionado ao carrinho!");
+                    // Exibe alerta padrão com base na resposta
+                    if (response.success) {
+                        alert('Produto adicionado com sucesso!');
+                    } else {
+                        alert('Erro: ' + response.message);
+                    }
                 },
                 error: function() {
-                    alert("Houve um erro ao adicionar o produto ao carrinho.");
+                    alert('Ocorreu um erro ao adicionar o produto!');
                 }
             });
         });

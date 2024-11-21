@@ -18,13 +18,14 @@
 </div>
 
 <div class="container">
-    <br>
     @if (TempData["ErrorMessage"] != null)
     {
         <div class="d-flex justify-content-center align-items-center">
             <div class="col-md-8 alert alert-danger" role="alert">
                 @TempData["ErrorMessage"]
-                <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button"
+                        class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                </button>
             </div>
         </div>
     }
@@ -33,7 +34,9 @@
         <div class="d-flex justify-content-center align-items-center">
             <div class="col-md-8 alert alert-success" role="alert">
                 @TempData["SuccessMessage"]
-                <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button"
+                        class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                </button>
             </div>
         </div>
     }
@@ -42,7 +45,7 @@
         @if (Model.ImageUrl != null)
         {
             <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
-                <img style="width: min-content; height: 250px" src="/Images/@Model.ImageUrl"
+                <img style="width: min-content; height: 250px; object-fit: cover; border-radius: 5px" src="/Images/@Model.ImageUrl"
                      class="card-img-top"
                      alt="...">
             </div>
@@ -50,25 +53,23 @@
         else
         {
             <div class="d-flex justify-content-center align-items-center" style="overflow: hidden">
-                <img style="width: min-content; height: 250px " src="/Images/PetImage.jpg"
+                <img style="width: min-content; height: 250px;  object-fit: cover; border-radius: 5px"
+                     src="/Images/PetImage.jpg"
                      class="card-img-top"
                      alt="...">
             </div>
         }
-
     </div>
-
-    <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Animal" asp-action="Update" method="post">
+    <br>
+    <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data"
+          asp-controller="Animal" asp-action="Update" method="post">
         <input type="hidden" asp-for="@Model.Id">
         <input type="hidden" asp-for="@Model.UserId">
-        @* <input type="hidden" asp-for="@Model.RaceName"> *@
-        @* <input type="hidden" asp-for="@Model.CategoryTitle"> *@
         <input type="hidden" asp-for="@Model.ImageUrl">
 
         @if (Model.CategoryId == 0)
         {
             <input type="hidden" asp-for="@Model.CategoryId">
-            @* <input type="hidden" asp-for="@Model.RaceId"> *@
         }
 
         <div class="col-md-6">
@@ -89,18 +90,6 @@
             <span asp-validation-for="Gender" class="text-danger"></span>
         </div>
 
-        @* <div class="col-md-6"> *@
-        @*     <label asp-for="@Model.RaceId" class="form-label">Raça <span style="color: red;">*</span></label> *@
-        @*     <select asp-for="@Model.RaceId" class="form-select shadow-none"> *@
-        @*         <option value="@Model.RaceId" disabled selected>@Model.RaceName</option> *@
-        @*         @foreach (var race in Model.Races) *@
-        @*         { *@
-        @*             <option value="@race.Id">@race.Name</option> *@
-        @*         } *@
-        @*     </select> *@
-        @*     <span asp-validation-for="RaceId" class="text-danger"></span> *@
-        @* </div> *@
-
         <div class="col-md-6">
             <label asp-for="@Model.RaceName" class="form-label">Raça<span style="color: red;">*</span></label>
             <input asp-for="@Model.RaceName" type="text" class="form-control shadow-none" placeholder="Digite a raça">
@@ -109,13 +98,14 @@
 
         <div class="col-md-2">
             <label asp-for="BirthDate" class="form-label">Data de Nascimento</label>
-            <input asp-for="BirthDate" type="date" max="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control shadow-none">
+            <input asp-for="BirthDate" type="date" max="@DateTime.Today.ToString("yyyy-MM-dd")"
+                   class="form-control shadow-none">
         </div>
 
         <div class="col-md-8">
             <label asp-for="@Model.CategoryId" class="form-label">Categoria <span style="color: red;">*</span></label>
             <select asp-for="@Model.CategoryId" class="form-select shadow-none">
-                <option value="@Model.CategoryId">@Model.CategoryTitle</option>
+                <option value="@Model.CategoryId" selected disabled>@Model.CategoryTitle</option>
                 @foreach (var category in Model.Categories)
                 {
                     <option value="@category.Id">@category.Title</option>
@@ -126,7 +116,8 @@
 
         <div class="col-md-8">
             <label asp-for="@Model.File" class="form-label">Imagem <span style="color: red;">*</span></label>
-            <input asp-for="@Model.File" type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
+            <input asp-for="@Model.File" type="file" class="form-control shadow-none" name="file"
+                   placeholder="Escolha uma imagem">
             <span asp-validation-for="File" class="text-danger"></span>
         </div>
 

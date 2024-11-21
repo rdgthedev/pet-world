@@ -115,7 +115,7 @@ else if (TempData["SuccessMessage"] != null)
         </div>
 
         <div class="col-md-8">
-            <label asp-for="@Model!.File" class="form-label">Imagem <span style="color: red;">*</span></label>
+            <label asp-for="@Model!.File" class="form-label">Imagem</label>
             <input asp-for="@Model!.File" type="file" class="form-control shadow-none" name="file" placeholder="Escolha uma imagem">
             <span asp-validation-for="File" class="text-danger"></span>
         </div>

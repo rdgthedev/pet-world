@@ -22,4 +22,12 @@ public class Stock : Entity
     public int Quantity { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
+
+    public void DecreaseQuantity(int quantity)
+    {
+        if (quantity <= 0)
+            return;
+
+        Quantity = quantity;
+    }
 }

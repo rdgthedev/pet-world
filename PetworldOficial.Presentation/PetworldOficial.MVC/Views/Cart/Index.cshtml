@@ -58,7 +58,7 @@
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span>Sub-Total</span>
-                                    <strong class="cart-sub-total-price">R$ 10,00</strong>
+                                    <strong class="cart-sub-total-price">@Model.SubTotal.ToString("C")</strong>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between">
                                     <span>Total</span>
@@ -133,7 +133,7 @@
                     if (response.success) {
                         // Se a operação for bem-sucedida, atualiza o preço total
                         $totalPrice.text('R$ ' + response.totalPrice.toFixed(2));
-                        $subTotalPrice.text('R$ ' + (response.totalPrice - 10).toFixed(2));
+                        $subTotalPrice.text('R$ ' + response.subTotalPrice.toFixed(2));
                     }
                 },
                 error: function() {

@@ -39,6 +39,11 @@ public class CartMap : IEntityTypeConfiguration<Cart>
             .HasColumnName("ExpiresDate")
             .HasColumnType("DATETIME")
             .IsRequired();
+        
+        builder.Property(s => s.SubTotalPrice)
+            .HasColumnName("SubTotalPrice")
+            .HasColumnType("DECIMAL(10,2)")
+            .IsRequired();
 
         builder.Property(s => s.TotalPrice)
             .HasColumnName("TotalPrice")
