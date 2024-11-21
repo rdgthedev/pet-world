@@ -48,13 +48,13 @@ public class UserService(
     {
         User? user;
 
-        if (!string.IsNullOrEmpty(userName))
-        {
-            user = await userRepository.GetByUserNameAsync(userName, cancellationToken);
-
-            if (user != null)
-                return new UserExistsViewModel(true, "Username já cadastrado!");
-        }
+        // if (!string.IsNullOrEmpty(userName))
+        // {
+        //     user = await userRepository.GetByUserNameAsync(userName, cancellationToken);
+        //
+        //     if (user != null)
+        //         return new UserExistsViewModel(true, "Username já cadastrado!");
+        // }
 
         if (!string.IsNullOrEmpty(cpf))
         {

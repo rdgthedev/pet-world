@@ -7,7 +7,6 @@ public sealed class User : IdentityUser<int>
 {
     public User(
         string name,
-        string userName,
         EGender gender,
         DateTime birthDate,
         string document,
@@ -19,7 +18,7 @@ public sealed class User : IdentityUser<int>
         string neighborhood,
         string? complement,
         string city,
-        string state) : base(userName)
+        string state) : base(email)
     {
         Name = name;
         Gender = gender;
@@ -39,7 +38,7 @@ public sealed class User : IdentityUser<int>
         Schedullings = new();
     }
 
-    public string Name { get; set; }
+    public string Name { get; private set; }
     public EGender Gender { get; private set; }
     public DateTime BirthDate { get; private set; }
     public string Document { get; private set; }
@@ -58,7 +57,7 @@ public sealed class User : IdentityUser<int>
 
     public void Update(
         string name,
-        string userName,
+        // string userName,
         EGender gender,
         DateTime birthDate,
         string document,

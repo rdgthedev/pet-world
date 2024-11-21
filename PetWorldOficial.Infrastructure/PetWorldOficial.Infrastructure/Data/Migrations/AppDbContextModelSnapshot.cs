@@ -754,9 +754,12 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("City");
 
                     b.Property<string>("Complement")
+                        .HasMaxLength(256)
                         .HasColumnType("NVARCHAR")
                         .HasColumnName("Complement");
 
@@ -797,7 +800,9 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.Property<string>("Neighborhood")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Neighborhood");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -821,18 +826,24 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.Property<string>("PostalCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("PostalCode");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("State")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("State");
 
                     b.Property<string>("Street")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("NVARCHAR")
+                        .HasColumnName("Street");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");

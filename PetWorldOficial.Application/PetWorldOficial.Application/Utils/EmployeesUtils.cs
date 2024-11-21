@@ -18,7 +18,7 @@ public static class EmployeesUtils
 
         scheduledEmployees = schedulings
             .Where(s => s.Time == schedulingTime || s.Time == timeAHead)
-            .Select(s => (s.Id, s.Employee.Name, false))
+            .Select(s => (s.Id, s.Employee.UserName!, false))
             .ToList();
 
         return scheduledEmployees;

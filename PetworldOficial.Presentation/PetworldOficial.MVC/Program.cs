@@ -55,9 +55,17 @@ builder.Services.AddDbContext<AppDbContext>(
             });
     });
 
-builder.Services.AddIdentity<User, Role>()
+builder.Services.AddIdentity<User, Role>(options =>
+    {
+        // options.
+    })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@._- ";
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

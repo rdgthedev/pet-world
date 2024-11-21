@@ -6,8 +6,8 @@ namespace PetWorldOficial.Application.Commands.User;
 public record RegisterUserCommand(
     [Required(ErrorMessage = "O nome é obrigatório!")]
     string Name,
-    [Required(ErrorMessage = "O nome de usuário é obrigatório!")]
-    string UserName,
+    // [Required(ErrorMessage = "O nome de usuário é obrigatório!")]
+    // string UserName,
     [Required(ErrorMessage = "O genêro é obrigatório!")]
     string Gender,
     [Required(ErrorMessage = "A data de nascimento é obrigatório!")]

@@ -10,8 +10,8 @@ public record UpdateUserCommand : IRequest<Unit>
     [Required(ErrorMessage = "O nome é obrigatório!")]
     public string Name { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "O nome é obrigatório!")]
-    public string UserName { get; set; } = string.Empty;
+    // [Required(ErrorMessage = "O nome é obrigatório!")]
+    // public string UserName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O nome é obrigatório!")]
     public string Gender { get; set; } = string.Empty;

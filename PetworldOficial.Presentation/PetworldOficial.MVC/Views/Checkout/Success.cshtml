@@ -73,7 +73,7 @@ else if (TempData["SuccessMessage"] != null)
                                             <div>
                                                 <h5 class="card-title">@animal.Id - @animal.Name</h5>
                                                 <p class="card-text">
-                                                    <strong>Dono:</strong> @animal.Owner.Name
+                                                    <strong>Dono:</strong> @animal.Owner?.Name
                                                 </p>
                                                 <p class="card-text">
                                                     <strong>CPF do dono:</strong> @animal.Owner.Document
@@ -147,10 +147,10 @@ else if (TempData["SuccessMessage"] != null)
                                             <div>
                                                 <h5 class="card-title">@animal.Id - @animal.Name</h5>
                                                 <p class="card-text">
-                                                    <strong>Dono:</strong> @animal.Owner.Name
+                                                    <strong>Dono:</strong> @animal.Owner?.Name
                                                 </p>
                                                 <p class="card-text">
-                                                    <strong>CPF do dono:</strong> @animal.Owner.Document
+                                                    <strong>CPF do dono:</strong> @animal.Owner?.Document
                                                 </p>
                                                 <p class="card-text">
                                                     <strong>Raça:</strong> @animal.Race
