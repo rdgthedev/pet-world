@@ -19,11 +19,15 @@ namespace PetWorldOficial.Application.Commands.Service
         [Required(ErrorMessage = "O Preço é obrigatório!")]
         public double? Price { get; set; }
 
+        [Required(ErrorMessage = "A categoria é obrigatória")]
+        public int? CategoryId { get; set; }
+
+
         public string BaseUrl { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
-        public int CategoryId { get; set; }
 
-        public IEnumerable<CategoryDetailsViewModel> Categories { get; set; } = Enumerable.Empty<CategoryDetailsViewModel>();
+        public IEnumerable<CategoryDetailsViewModel> Categories { get; set; } =
+            Enumerable.Empty<CategoryDetailsViewModel>();
     }
 }

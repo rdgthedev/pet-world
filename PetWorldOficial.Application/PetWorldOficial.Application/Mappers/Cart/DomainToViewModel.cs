@@ -14,6 +14,7 @@ public class DomainToViewModel : Profile
                 ClientId = c.ClientId,
                 ExpiresDate = c.ExpiresDate,
                 Items = c.Items,
+                SubTotal = c.Items.Sum(i => i.TotalPrice),
                 TotalPrice = c.Items.Sum(i => i.TotalPrice)
             });
     }

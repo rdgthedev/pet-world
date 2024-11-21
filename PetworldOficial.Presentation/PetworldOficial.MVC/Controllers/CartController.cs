@@ -40,24 +40,25 @@ public class CartController(IMediator mediator) : Controller
     {
         if (!ModelState.IsValid)
         {
-            TempData["ErrorMessage"] = "Produto não encontrado!";
-            return RedirectToAction("Index", "Product");
+            return Json(new { message = "Produto não encontrado!" });
         }
 
         try
         {
             var result = await mediator.Send(command, cancellationToken);
-            return Json(new { result.success, result.totalPrice });
+            return Json(new { result.success, result.subTotalPrice, result.totalPrice});
+        }
+        catch (QuantityOfProductOutOfStockException e)
+        {
+            return Json(new { success = false, message = e.Message });
         }
         catch (ProductNotFoundException e)
         {
-            TempData["ErrorMessage"] = e.Message;
-            return RedirectToAction("Index", "Product");
+            return Json(new { success = false, message = e.Message });
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Ocorreu um erro interno";
-            return RedirectToAction("Index", "Product");
+            return Json(new { success = false, message = "Ocorreu um erro interno!" });
         }
     }
 
@@ -75,7 +76,7 @@ public class CartController(IMediator mediator) : Controller
         try
         {
             var result = await mediator.Send(command, cancellationToken);
-            return Json(new { result.success, result.totalPrice });
+            return Json(new { result.success, result.subTotalPrice, result.totalPrice});
         }
         catch (ProductNotFoundException e)
         {

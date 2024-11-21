@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices.JavaScript;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using PetWorldOficial.Application.ViewModels;
@@ -16,7 +17,8 @@ public record CreateProductCommand : IRequest<CreateProductCommand>
 
     [Required(ErrorMessage = "A imagem é obrigatória!")]
     public IFormFile File { get; set; } = null!;
-
+    
+    [Required(ErrorMessage = "O preço é obrigatório!")]
     [Range(0.01, double.MaxValue, ErrorMessage = "O Preço deve ser maior que zero!")]
     public decimal? Price { get; set; } = null!;
 
@@ -26,6 +28,7 @@ public record CreateProductCommand : IRequest<CreateProductCommand>
     [Range(1, int.MaxValue, ErrorMessage = "O Fornecedor é obrigatório!")]
     public int SupplierId { get; set; }
     
+    [Required(ErrorMessage = "A quantidade é obrigatória!")]
     [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
     public int? Quantity { get; set; }
 

@@ -31,6 +31,7 @@ public class CartService(
         return new CartDetailsViewModel
         {
             Id = cart.Id,
+            ClientId = cart.ClientId,
             ExpiresDate = cart.ExpiresDate,
             Items = cart.Items.Select(x => new CartItem(x.Product, cart.Id, 1)).ToList(),
             TotalPrice = cart.Items.Sum(i => i.TotalPrice)
@@ -99,8 +100,6 @@ public class CartService(
                     throw new QuantityOfProductOutOfStockException(
                         "Infelizmente os itens que estavam em seu carrinho esgotaram no estoque!");
             }
-
-            cart.TotalPrice += _freightPrice;
 
             return cart;
         }

@@ -2,16 +2,13 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyModel;
-using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.Commands.Order;
 using PetWorldOficial.Application.Services.Interfaces;
+using PetWorldOficial.Application.ViewModels.Stock;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
-using PetWorldOficial.Domain.Interfaces.Services;
 using Stripe.Checkout;
 
 namespace PetWorldOficial.Application.Handlers.Order;
@@ -22,6 +19,7 @@ public class CreateOrderCommandHandler(
     IUserService userService,
     ICartService cartService,
     IEmailSenderService emailSenderService,
+    IProductService productService,
     IStockService stockService,
     IMapper mapper) : IRequestHandler<CreateOrderCommand, (bool success, string message)>
 {
@@ -72,7 +70,7 @@ public class CreateOrderCommandHandler(
                         $"carrinho, pois não se encontra mais em estoque.");
                 }
             }
-            
+
             await cartService.DeleteAsync(mapper.Map<DeleteCartCommand>(cart), cancellationToken);
 
             var order = new PetWorldOficial.Domain.Entities.Order(user.Id, stripeSession?.Id, paymentMethod);
@@ -84,6 +82,12 @@ public class CreateOrderCommandHandler(
             order.AddItems(items);
 
             await orderService.CreateAsync(order, cancellationToken);
+
+            foreach (var item in items)
+            {
+                var stockDetailsViewModel = await stockService.GetByProductIdAsync(item.ProductId, cancellationToken);
+                await DecreaseItemsInStock(stockDetailsViewModel, item.Quantity, cancellationToken);
+            }
 
             await emailSenderService.SendAsync(
                 user.Email,
@@ -111,6 +115,22 @@ public class CreateOrderCommandHandler(
             return [];
 
         return notInStock;
+    }
+
+    private async Task DecreaseItemsInStock(
+        StockDetailsViewModel stockDetailsViewModel,
+        int quantity,
+        CancellationToken cancellationToken)
+    {
+        stockDetailsViewModel.Quantity -= quantity;
+        await stockService.UdpateAsync(stockDetailsViewModel, cancellationToken);
+        // var productsToUpdate = new List<Domain.Entities.Product>();
+        //
+        // items.ForEach(i => i.Product.Stock.DecreaseQuantity(i.Quantity));
+        // productsToUpdate.AddRange(items.Select(i => i.Product).ToList());
+        //
+        // foreach (var product in productsToUpdate)
+        //     await productService.Update(mapper.Map<UpdateProductCommand>(product), cancellationToken);
     }
 
     private static EPaymentMethod ParsePaymentMethod(string paymentMethod)

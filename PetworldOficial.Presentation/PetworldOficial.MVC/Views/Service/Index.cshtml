@@ -8,7 +8,7 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid tpy-3">
+<div class="container-fluid py-3">
     <br>
     <h1 class="text-center">
         Serviços
@@ -18,67 +18,81 @@
 
 @if (TempData["ErrorMessage"] != null)
 {
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        @TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
 }
 
 @if (TempData["SuccessMessage"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
 }
 
-
-@if (Model is not null && Model.Count() != 0)
+@if (Model != null && Model.Any())
 {
-    if (User.IsInRole(ERole.Admin.ToString()))
+    @if (User.IsInRole(ERole.Admin.ToString()))
     {
-        <!-- Seção de Agendamentos -->
         <section class="my-5">
-            <!-- Campo de pesquisa -->
             <div class="container">
                 <div class="row mb-3">
                     <div class="col-md-6 d-flex justify-content-start">
-
-                        <a class="btn btn-dark fw-normal shadow-none me-2" asp-controller="Service" asp-action="Create">
-                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo serviço
+                        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Create">
+                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Serviço
                         </a>
                     </div>
                     <div class="col-md-6 d-flex justify-content-end">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar serviço..." onkeyup="searchService()">
+                        <div class="input-group">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar serviços..."
+                                   aria-label="Pesquisar serviços" aria-describedby="search-addon" oninput="searchService()">
+                            <span class="input-group-text" id="search-addon">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="container">
-                <div class="row" id="serviceContainer">
-                    <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-lg-12" id="serviceList">
                         @foreach (var service in Model)
                         {
-                            <div class="card cart-card mb-3 service-card">
+                            <div class="card cart-card mb-3 service-item">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div class="d-flex">
-                                        <img
-                                            src="/Images/@service!.ImageUrl"
-                                            alt="Animal"
-                                            class="img-fluid me-4"
-                                            style="width: 100px; object-fit: cover"/>
+                                        <img src="/Images/@service!.ImageUrl" alt="Serviço" class="img-fluid me-4" style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px;"/>
                                         <div>
-                                            <h5 class="card-title service-name">@service.Id - @service.Name</h5>
-                                            <p class="card-text">Duração: @service.DurationInMinutes minutos</p>
-                                            <p>
-                                                <strong>Preço:</strong> @service.Price.ToString("C")
-                                            </p>
+                                            <h5 class="card-title">@service.Name</h5>
+                                            <div style="font-size: 0.875rem;">
+                                                <p>
+                                                    <strong>Valor:</strong> @service.Price.ToString("C")
+                                                </p>
+                                                <p><strong>Duração:</strong> @service.DurationInMinutes minutos</p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <!-- Botões de editar e cancelar -->
-                                        <a href="@Url.Action("Create", "Schedule", new { id = service.Id })" class="btn btn-dark mb-2">Agendar</a>
-                                        <a href="@Url.Action("Update", "Service", new { id = service.Id })" class="btn btn-warning mb-2">Editar</a>
-                                        <a href="@Url.Action("Delete", "Service", new { id = service.Id })" class="btn btn-danger">Deletar</a>
+                                        <a href="@Url.Action("Create", "Schedule", new { id = service.Id })"
+                                           class="btn btn-success mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-calendar-check me-2"></i> Agendar
+                                        </a>
+                                        <a href="@Url.Action("Update", "Service", new { id = service.Id })"
+                                           class="btn btn-warning mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-edit me-2"></i> Editar
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Service", new { id = service.Id })"
+                                           class="btn btn-danger d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-trash me-2"></i> Deletar
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -90,19 +104,22 @@
     }
     else
     {
-        <div class="container">
+        <div class="container" id="serviceList">
             <div class="row mb-3">
-                <div class="col-md-12 d-flex justify-content-end">
-                    <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar serviço..." onkeyup="searchService()">
+                <div class="col-md-12 d-flex justify-content-start">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar serviços..."
+                               aria-label="Pesquisar serviços" aria-describedby="search-addon" oninput="searchService()">
+                        <span class="input-group-text" id="search-addon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
-            <br>
-        </div>
-        <div class="container">
-            <div class="row" id="serviceContainer">
+            <div class="row">
                 @foreach (var service in Model)
                 {
-                    <div class="col-md-3 mb-4 service-card">
+                    <div class="col-md-3 mb-4 service-item">
                         <div class="card h-100">
                             <img src="/Images/@service!.ImageUrl" class="ImagemCard card-img-top" alt="..." style="height: 200px; object-fit: cover; width: 100%">
                             <div class="card-body d-flex flex-column">
@@ -116,7 +133,9 @@
                                 </div>
                                 <br>
                                 <div class="d-grid gap-2">
-                                    <a class="btn btn-dark" asp-controller="Schedule" asp-action="Create" asp-route-id="@service.Id">Agendar</a>
+                                    <a class="btn btn-dark" asp-controller="Schedule" asp-action="Create" asp-route-id="@service.Id">
+                                        <i class="fas fa-calendar-alt"></i> Agendar
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -140,17 +159,17 @@ else
     function searchService() {
         var input = document.getElementById("searchInput");
         var filter = input.value.toLowerCase();
-        var serviceContainer = document.getElementById("serviceContainer");
-        var serviceCards = serviceContainer.getElementsByClassName("service-card");
+        var serviceContainer = document.getElementById("serviceList");
+        var serviceCards = serviceContainer.getElementsByClassName("service-item");
 
         for (var i = 0; i < serviceCards.length; i++) {
-            var serviceName = serviceCards[i].getElementsByClassName("service-name")[0];
+            var serviceName = serviceCards[i].getElementsByClassName("card-title")[0];
             if (serviceName) {
                 var textValue = serviceName.textContent || serviceName.innerText;
                 if (textValue.toLowerCase().indexOf(filter) > -1) {
-                    serviceCards[i].style.display = "";
+                    serviceCards[i].style.display = ""; // Exibe o serviço se o nome corresponder
                 } else {
-                    serviceCards[i].style.display = "none";
+                    serviceCards[i].style.display = "none"; // Oculta o serviço se não corresponder
                 }
             }
         }

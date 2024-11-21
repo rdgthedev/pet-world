@@ -13,9 +13,10 @@ public class DecreaseItemCommandHandler(
     IProductService productService,
     IUserService userService,
     IMapper mapper,
-    IHttpContextAccessor httpContextAccessor) : IRequestHandler<DecreaseItemCommand, (bool success, decimal totalPrice)>
+    IHttpContextAccessor httpContextAccessor)
+    : IRequestHandler<DecreaseItemCommand, (bool success, decimal subTotalPrice, decimal totalPrice)>
 {
-    public async Task<(bool success, decimal totalPrice)> Handle(DecreaseItemCommand request,
+    public async Task<(bool success, decimal subTotalPrice, decimal totalPrice)> Handle(DecreaseItemCommand request,
         CancellationToken cancellationToken)
     {
         try
@@ -37,7 +38,8 @@ public class DecreaseItemCommandHandler(
                 cartEntity.DecreaseItem(item);
 
             await cartService.UpdateAsync(mapper.Map<UpdateCartCommand>(cartEntity), cancellationToken);
-            return (true, cartEntity.TotalPrice);
+            
+            return (true, cartEntity.SubTotalPrice, cartEntity.TotalPrice);
         }
         catch (Exception)
         {

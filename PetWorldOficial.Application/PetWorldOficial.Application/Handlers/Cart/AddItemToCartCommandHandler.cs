@@ -17,9 +17,10 @@ public class AddItemToCartCommandHandler(
     IUserService userService,
     IMapper mapper,
     IHttpContextAccessor httpContextAccessor)
-    : IRequestHandler<AddOrIncreaseItemToCartCommand, (bool success, decimal totalPrice)>
+    : IRequestHandler<AddOrIncreaseItemToCartCommand, (bool success, decimal subTotalPrice, decimal totalPrice)>
 {
-    public async Task<(bool success, decimal totalPrice)> Handle(AddOrIncreaseItemToCartCommand request,
+    public async Task<(bool success, decimal subTotalPrice, decimal totalPrice)> Handle(
+        AddOrIncreaseItemToCartCommand request,
         CancellationToken cancellationToken)
     {
         try
@@ -36,11 +37,18 @@ public class AddItemToCartCommandHandler(
 
             var cart = await cartService.GetOrCreateCartForUserAsync(userId, cancellationToken);
 
-            var cartEntity = mapper.Map<Domain.Entities.Cart>(cart);
-            var success = cartEntity.AddItem(new CartItem(product.Id, cart.Id, 1, product.Price), product.Stock.Quantity);
-            await cartService.UpdateAsync(mapper.Map<UpdateCartCommand>(cartEntity), cancellationToken);
+            var item = cart.Items?.FirstOrDefault(i => i.ProductId == product.Id);
 
-            return (success, cartEntity.TotalPrice);
+            if (item?.Quantity >= product.Stock.Quantity)
+                throw new QuantityOfProductOutOfStockException(
+                    "Você atingiu a quantidade máxima desse item no carrinho!");
+            
+            var cartEntity = mapper.Map<Domain.Entities.Cart>(cart);
+            var success = cartEntity.AddItem(new CartItem(product.Id, cart.Id, 1, product.Price),
+                product.Stock.Quantity);
+            await cartService.UpdateAsync(mapper.Map<UpdateCartCommand>(cartEntity), cancellationToken);
+            
+            return (success, cartEntity.SubTotalPrice, cartEntity.TotalPrice); 
         }
         catch (Exception)
         {

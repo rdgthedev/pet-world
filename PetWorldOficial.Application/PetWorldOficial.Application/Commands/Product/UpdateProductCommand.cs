@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Application.ViewModels.Supplier;
+using PetWorldOficial.Domain.Entities;
 
 namespace PetWorldOficial.Application.Commands.Product;
 
@@ -26,7 +27,7 @@ public record UpdateProductCommand : IRequest<UpdateProductCommand>
     public int SupplierId { get; set; }
     
     [Required(ErrorMessage = "A quantidade não pode ser vazia!")]
-    [Range(1, int.MaxValue, ErrorMessage = "deve ser inserido no mínimo um produto!")]
+    [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
     public int? QuantityInStock { get; set; }
     public IFormFile? File { get; set; }
 
@@ -36,6 +37,7 @@ public record UpdateProductCommand : IRequest<UpdateProductCommand>
     public string Message { get; set; } = string.Empty;
     public string BaseUrl { get; set; } = string.Empty;
     public int ProductId { get; set; }
+    public Stock? Stock { get; set; }
 
     public IEnumerable<CategoryDetailsViewModel> Categories { get; set; } = Enumerable.Empty<CategoryDetailsViewModel>();
 

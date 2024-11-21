@@ -211,6 +211,10 @@ namespace PetWorldOficial.Infrastructure.Migrations
                         .HasColumnType("DATETIME")
                         .HasColumnName("LastUpdatedAt");
 
+                    b.Property<decimal>("SubTotalPrice")
+                        .HasColumnType("DECIMAL(10,2)")
+                        .HasColumnName("SubTotalPrice");
+
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("DECIMAL(10,2)")
                         .HasColumnName("TotalPrice");

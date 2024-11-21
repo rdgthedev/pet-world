@@ -22,12 +22,6 @@
                     <a class="nav-link active" asp-controller="Service" asp-action="Index">Serviços</a>
                 </li>
 
-
-                @* <li class="nav-item"> *@
-                @*     <a class="nav-link active" asp-controller="Animal" asp-action="Register">Cadastrar Pet</a> *@
-                @* </li> *@
-
-
                 @if (User.IsInRole(ERole.Admin.ToString()))
                 {
                     <li class="nav-item">

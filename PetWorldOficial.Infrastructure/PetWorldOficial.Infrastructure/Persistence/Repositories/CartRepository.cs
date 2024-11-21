@@ -51,10 +51,16 @@ namespace PetWorldOficial.Infrastructure.Persistence.Repositories
                     trackedProduct.State = EntityState.Detached;
                 }
             }
-
-
+            
+            // var trackedCart = context.ChangeTracker.Entries<Cart>()
+            //     .FirstOrDefault(e => e.Entity.Id == cart.Id);
+            //
+            // if (trackedCart != null)
+            // {
+            //     trackedCart.State = EntityState.Detached;
+            // }
+            
             context.Carts.Update(cart);
-
             await context.SaveChangesAsync(cancellationToken);
         }
 
