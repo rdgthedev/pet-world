@@ -1,4 +1,5 @@
-﻿@using PetWorldOficial.Domain.Enums
+﻿@using System.Globalization
+@using PetWorldOficial.Domain.Enums
 @using PetworldOficial.MVC.Utils
 @model PetWorldOficial.Application.ViewModels.Order.OrderDetailsViewModel
 
@@ -21,7 +22,7 @@
                         <strong>Frete:</strong> R$ 10,00
                     </p>
                     <p>
-                        <strong>Total:</strong> @Model.TotalPrice.ToString("C")
+                        <strong>Total:</strong> @Model.TotalPrice.ToString("C", new CultureInfo("pt-BR"))
                     </p>
                     <p>
                         <strong>Status:</strong>

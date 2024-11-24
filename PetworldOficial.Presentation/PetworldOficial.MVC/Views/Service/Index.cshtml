@@ -152,6 +152,14 @@ else
         <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
             @TempData["NotFoundService"]
         </h2>
+        @if (User.IsInRole(ERole.Admin.ToString()))
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Create">
+                    Adicionar Serviço
+                </a>
+            </div>
+        }
     </div>
 }
 

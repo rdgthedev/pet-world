@@ -54,8 +54,8 @@ Layout = "_Layout";
             </div>
             <div class="col-md-6 d-flex justify-content-end">
                 <div class="input-group">
-                    <input type="text" id="productSearchAdmin" class="form-control" placeholder="Buscar produtos..."
-                           aria-label="Buscar produtos" aria-describedby="search-addon">
+                    <input type="text" id="productSearchAdmin" class="form-control" placeholder="Pesquisar produtos..."
+                           aria-label="Pesquisar produtos" aria-describedby="search-addon">
                     <span class="input-group-text" id="search-addon">
                                 <i class="fas fa-search"></i>
                             </span>
@@ -87,6 +87,9 @@ Layout = "_Layout";
                                     <p class="card-text">
                                         <strong>Fornecedor:</strong> @product.SupplierName
                                     </p>
+                                    <p class="card-text">
+                                        <strong>Preço:</strong> @product.Price.ToString("C", new CultureInfo("pt-BR"))
+                                    </p>
                                     <p>
                                         <strong>Quantidade em estoque:</strong> @product.Stock.Quantity
                                     </p>
@@ -116,8 +119,8 @@ else
     <div class="row mb-3">
         <div class="col-md-12 d-flex justify-content-start">
             <div class="input-group">
-                <input type="text" id="productSearchClient" class="form-control" placeholder="Buscar produtos..."
-                       aria-label="Buscar produtos" aria-describedby="search-addon">
+                <input type="text" id="productSearchClient" class="form-control" placeholder="Pesquisar produtos..."
+                       aria-label="Pesquisar produtos" aria-describedby="search-addon">
                 <span class="input-group-text" id="search-addon">
                             <i class="fas fa-search"></i>
                         </span>
