@@ -1,5 +1,7 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Application.Commands.Service;
 using PetWorldOficial.Application.Services.Implementations;
@@ -22,6 +24,7 @@ using UserService = PetWorldOficial.Application.Services.Implementations.UserSer
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddLocalization();
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
 builder.Services.AddHttpContextAccessor();
 
@@ -41,6 +44,19 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
+var defaultCulture = new CultureInfo("pt-BR");
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(defaultCulture),
+    SupportedCultures = new List<CultureInfo> { defaultCulture },
+    SupportedUICultures = new List<CultureInfo> { defaultCulture }
+};
+
+localizationOptions.RequestCultureProviders.Clear();
+CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
+
 
 builder.Services.Configure<OpeningHours>(builder.Configuration.GetSection("OpeningHours"));
 
@@ -73,10 +89,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         // Tempo de expiração do cookie de autenticação
         options.ExpireTimeSpan = TimeSpan.FromMinutes(8); // Defina o tempo conforme necessário
         options.SlidingExpiration = true;
-        
+
         options.Events.OnSigningOut = async context =>
         {
-            if ((bool)context.HttpContext.User.Identity?.IsAuthenticated) 
+            if ((bool)context.HttpContext.User.Identity?.IsAuthenticated)
             {
                 context.HttpContext.Response.Cookies.Delete("CartId");
             }
