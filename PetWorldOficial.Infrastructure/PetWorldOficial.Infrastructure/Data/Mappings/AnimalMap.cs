@@ -51,7 +51,7 @@ public class AnimalMap : IEntityTypeConfiguration<Animal>
             .HasColumnName("Gender")
             .HasConversion(
                 eg => eg.ToString(),
-                s => (EGender)Enum.Parse(typeof(EGender), s)
+                s => (EPetGender)Enum.Parse(typeof(EPetGender), s)
             )
             .HasMaxLength(20)
             .IsRequired();

@@ -82,7 +82,7 @@
             <label asp-for="@Model.Gender" class="form-label">Gênero <span style="color: red;">*</span></label>
             <select asp-for="@Model.Gender" class="form-select shadow-none">
                 <option value="@Model.Gender" selected disabled hidden>@gender.GetDisplayName()</option>
-                @foreach (EGender gender in Enum.GetValues(typeof(EGender)))
+                @foreach (EPetGender gender in Enum.GetValues(typeof(EPetGender)))
                 {
                     <option value="@gender">@gender.GetDisplayName()</option>
                 }
@@ -108,7 +108,7 @@
                 <option value="@Model.CategoryId" selected disabled>@Model.CategoryTitle</option>
                 @foreach (var category in Model.Categories)
                 {
-                    <option value="@category.Id">@category.Title</option>
+                    <option value="@category!.Id">@category.Title</option>
                 }
             </select>
             <span asp-validation-for="CategoryId" class="text-danger"></span>

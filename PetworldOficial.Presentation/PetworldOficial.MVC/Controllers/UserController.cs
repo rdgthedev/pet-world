@@ -38,11 +38,59 @@ public class UserController(
     }
 
     [HttpGet]
-    public IActionResult MyAccount()
+    [Authorize(Roles = "Admin, User")]
+    public async Task<IActionResult> MyAccount(CancellationToken cancellationToken)
     {
+        try
+        {
+            var result = await mediator.Send(new MyAccountCommand(), cancellationToken);
+            return View(result);
+        }
+        catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (UnableToChangePasswordException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+        }
+
         return View();
     }
-    
+
+    [HttpPost]
+    public async Task<IActionResult> MyAccount(
+        MyAccountCommand command,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return View();
+
+        try
+        {
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.Message;
+            return View(result);
+        }
+        catch (UserNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (UnableToChangePasswordException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
+        catch (Exception e)
+        {
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
+        }
+
+        return View();
+    }
 
     [HttpGet]
     [Authorize(Roles = "Admin")]

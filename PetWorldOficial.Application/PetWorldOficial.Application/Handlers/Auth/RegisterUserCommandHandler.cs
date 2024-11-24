@@ -19,7 +19,6 @@ public class RegisterUserCommandHandler(
         try
         {
             var userExists = await userService.UserExistsAsync(
-                request.UserName,
                 request.Document,
                 request.PhoneNumber,
                 request.Email,

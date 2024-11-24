@@ -23,12 +23,13 @@ public class UpdateStatusToCanceledCommandHandler(
                 throw new ScheduleNotFoundException("Agendamento não encontrado!");
 
             var schedulings = mapper.Map<IEnumerable<Schedulling>>(schedulingDetailsViewModel);
-            schedulings.ToList().ForEach(s => s.UpdateStatusToFinished());
+            schedulings.ToList().ForEach(s => s.UpdateStatusToCanceled());
 
-            await schedulingService.UpdateRange(mapper.Map<List<UpdateSchedulingCommand>>(schedulings),
+            await schedulingService.UpdateRange(
+                mapper.Map<List<UpdateSchedulingCommand>>(schedulings),
                 cancellationToken);
 
-            return (200, $"O agendamento de número {schedulings.First().Id} foi finalizado com sucesso!");
+            return (200, $"O agendamento de número {schedulings.First().Id} foi cancelado com sucesso!");
         }
         catch (Exception)
         {

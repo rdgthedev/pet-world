@@ -13,7 +13,6 @@ namespace PetWorldOficial.Application.Services.Implementations;
 public class UserService(
     IUserRepository userRepository,
     IScheduleRepository schedulingRepository,
-    UserManager<User> userManager,
     IMapper mapper) : IUserService
 {
     public async Task<IEnumerable<UserDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken)
@@ -40,7 +39,6 @@ public class UserService(
     }
 
     public async Task<UserExistsViewModel> UserExistsAsync(
-        string? userName,
         string? cpf,
         string? phoneNumber,
         string? email,
@@ -48,13 +46,13 @@ public class UserService(
     {
         User? user;
 
-        if (!string.IsNullOrEmpty(userName))
-        {
-            user = await userRepository.GetByUserNameAsync(userName, cancellationToken);
-
-            if (user != null)
-                return new UserExistsViewModel(true, "Username já cadastrado!");
-        }
+        // if (!string.IsNullOrEmpty(userName))
+        // {
+        //     user = await userRepository.GetByUserNameAsync(userName, cancellationToken);
+        //
+        //     if (user != null)
+        //         return new UserExistsViewModel(true, "Username já cadastrado!");
+        // }
 
         if (!string.IsNullOrEmpty(cpf))
         {
@@ -105,6 +103,16 @@ public class UserService(
             await schedulingRepository.DeleteRangeAsync(user.Schedullings, cancellationToken);
 
         await userRepository.DeleteAsync(user);
+    }
+
+    public async Task UpdatePasswordAsync(MyAccountCommand command)
+    {
+        var user = await userRepository.GetByEmailAsync(command.Email);
+
+        if (user is null)
+            throw new UserNotFoundException("Usuário não encontrado!");
+        
+        await userRepository.UpdatePasswordAsync(user, command.Password!, command.NewPassword!);
     }
 
     public async Task<IEnumerable<UserDetailsViewModel>> GetAllUsersExceptCurrentAsync(

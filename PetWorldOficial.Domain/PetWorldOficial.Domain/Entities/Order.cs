@@ -62,7 +62,7 @@ public class Order : Entity
             return;
         }
 
-        TotalPrice = Items.Sum(x => x.TotalPrice);
+        TotalPrice = Items.Sum(x => x.TotalPrice) + 10;
     }
 
     public void UpdateStatusToAwaitingPickUp()
@@ -95,5 +95,14 @@ public class Order : Entity
     public void UpdateStatusToCanceled()
     {
         Status = EOrderStatus.Canceled;
+    }
+
+    public string GetAddress()
+    {
+        return $"{Client.Street}, {Client.Number}" +
+               (string.IsNullOrWhiteSpace(Client.Complement)
+                   ? ""
+                   : $", {Client.Complement}") +
+               $", {Client.Neighborhood}, {Client.City} - {Client.State}, {Client.PostalCode}";
     }
 }

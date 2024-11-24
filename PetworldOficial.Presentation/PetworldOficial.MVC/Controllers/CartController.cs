@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Domain.Exceptions;
@@ -8,6 +9,7 @@ namespace PetworldOficial.MVC.Controllers;
 public class CartController(IMediator mediator) : Controller
 {
     [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
         try

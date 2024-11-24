@@ -22,14 +22,14 @@
         <form asp-controller="Auth" asp-action="Login">
             <!-- Campo de Email -->
             <div class="form-outline mb-4">
-                <input asp-for="Email" type="email" id="email" class="form-control text-white" placeholder="Digite seu email" style="background-color: #555; border: 1px solid #666;" required/>
+                <input asp-for="Email" type="text" id="email" class="form-control text-white" placeholder="Digite seu email" style="background-color: #555; border: 1px solid #666;"/>
                 <label class="form-label text-light" for="email">Email</label>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <!-- Campo de Senha -->
             <div class="form-outline mb-4">
-                <input asp-for="Password" type="password" id="password" class="form-control text-white" placeholder="Digite sua senha" style="background-color: #555; border: 1px solid #666;" required/>
+                <input asp-for="Password" type="password" id="password" class="form-control text-white" placeholder="Digite sua senha" style="background-color: #555; border: 1px solid #666;"/>
                 <label class="form-label text-light" for="password">Senha</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>

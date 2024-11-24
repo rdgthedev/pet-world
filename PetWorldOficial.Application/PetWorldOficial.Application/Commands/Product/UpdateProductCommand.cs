@@ -27,7 +27,7 @@ public record UpdateProductCommand : IRequest<UpdateProductCommand>
     public int SupplierId { get; set; }
     
     [Required(ErrorMessage = "A quantidade não pode ser vazia!")]
-    [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
+    // [Range(1, int.MaxValue, ErrorMessage = "Deve ser inserido no mínimo um produto!")]
     public int? QuantityInStock { get; set; }
     public IFormFile? File { get; set; }
 

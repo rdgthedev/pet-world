@@ -6,11 +6,11 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid text-black py-3">
+<div class="container-fluid py-3">
     <br>
-    <h2 class="display-6 text-center fw">
-        <img src="/Images/DadosDoUsuario.png" alt="">
-    </h2>
+    <h1 class="text-center">
+        Dados do Usuário
+    </h1>
     <br>
 </div>
 
@@ -31,9 +31,9 @@
     </div>
 
     <div class="col-md-10">
-        <label asp-for="UserName" class="form-label">Nome de Usuário</label>
-        <input asp-for="UserName" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
-        <span asp-validation-for="UserName" class="text-danger"></span>
+        <label asp-for="Name" class="form-label">Dono</label>
+        <input asp-for="Name" type="text" class="form-control shadow-none" placeholder="Nome" readonly>
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="col-md-10">

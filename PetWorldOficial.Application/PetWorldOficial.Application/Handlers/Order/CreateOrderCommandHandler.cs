@@ -54,7 +54,8 @@ public class CreateOrderCommandHandler(
             var cart = await cartService.GetCartByUserId(user.Id, cancellationToken);
 
             if (cart?.Items is null || !cart.Items.Any())
-                throw new Exception("Carrinho vazio ou não encontrado. Verifique se há itens no seu carrinho.");
+                throw new CartNotFoundException(
+                    "Carrinho vazio ou não encontrado. Adicione itens ao seu carrinho antes de fazer um pedido!.");
 
             var invalidItems = await VerifyCartItemsInStock(cart.Items, cancellationToken);
 
@@ -63,17 +64,19 @@ public class CreateOrderCommandHandler(
                 cart.Items = cart.Items.Where(c => !invalidItems.Contains(c)).ToList();
                 await cartService.UpdateAsync(mapper.Map<UpdateCartCommand>(cart), cancellationToken);
 
-                foreach (var item in invalidItems)
-                {
-                    throw new QuantityOfProductOutOfStockException(
-                        $"O produto {item.Product.Name} foi retirado do seu " +
-                        $"carrinho, pois não se encontra mais em estoque.");
-                }
+                var invalidProductNames = invalidItems.Select(item => item.Product.Name).ToList();
+
+                throw new QuantityOfProductOutOfStockException(
+                    $"Os seguintes produtos foram retirados do " +
+                    $"seu carrinho, pois não estão mais em estoque: {string.Join(", ", invalidProductNames)}");
             }
 
             await cartService.DeleteAsync(mapper.Map<DeleteCartCommand>(cart), cancellationToken);
 
-            var order = new PetWorldOficial.Domain.Entities.Order(user.Id, stripeSession?.Id, paymentMethod);
+            var order = new PetWorldOficial.Domain.Entities.Order(
+                user.Id,
+                stripeSession?.Id,
+                paymentMethod);
 
             var items = cart.Items
                 .Select(i => new OrderItem(i.ProductId, order.Id, i.Quantity, i.Product.Price))
@@ -124,13 +127,6 @@ public class CreateOrderCommandHandler(
     {
         stockDetailsViewModel.Quantity -= quantity;
         await stockService.UdpateAsync(stockDetailsViewModel, cancellationToken);
-        // var productsToUpdate = new List<Domain.Entities.Product>();
-        //
-        // items.ForEach(i => i.Product.Stock.DecreaseQuantity(i.Quantity));
-        // productsToUpdate.AddRange(items.Select(i => i.Product).ToList());
-        //
-        // foreach (var product in productsToUpdate)
-        //     await productService.Update(mapper.Map<UpdateProductCommand>(product), cancellationToken);
     }
 
     private static EPaymentMethod ParsePaymentMethod(string paymentMethod)

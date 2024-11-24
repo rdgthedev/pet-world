@@ -94,7 +94,7 @@ public class CartService(
             if (itemsToRemove.Any())
             {
                 await cartItemRepository.DeleteRangeAsync(itemsToRemove, cancellationToken);
-                cart.Items = cart.Items.Where(ci => itemsToRemove.Any(i => ci.Id != i.Id)).ToList();
+                cart.Items = cart.Items.Where(ci => !itemsToRemove.Contains(ci)).ToList();
 
                 if (cart.Items.Count <= 0)
                     throw new QuantityOfProductOutOfStockException(

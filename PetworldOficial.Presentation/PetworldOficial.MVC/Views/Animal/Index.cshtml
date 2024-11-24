@@ -77,8 +77,13 @@ else if (TempData["SuccessMessage"] != null)
                             </a>
                         </div>
                         <div class="col-md-6 d-flex justify-content-end">
-                            <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar pet..."
-                                   onkeyup="searchPet()">
+                            <div class="input-group">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar serviços..."
+                                       aria-label="Pesquisar serviços" aria-describedby="search-addon" oninput="searchPet()">
+                                <span class="input-group-text" id="search-addon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="row" id="petList">
@@ -107,7 +112,7 @@ else if (TempData["SuccessMessage"] != null)
                                             <div>
                                                 <h5 class="card-title">@animal.Id - @animal.Name</h5>
                                                 <p class="card-text">
-                                                    <strong>Dono:</strong> @animal.Owner.Name
+                                                    <strong>Dono:</strong> @animal.Owner?.Name
                                                 </p>
                                                 <p class="card-text">
                                                     <strong>CPF do dono:</strong> @animal.Owner.Document
@@ -154,6 +159,7 @@ else if (TempData["SuccessMessage"] != null)
         else
         {
             <section class="my-5">
+
                 <div class="container">
                     <div class="row mb-3">
                         <div class="col-md-6 d-flex justify-content-start">
@@ -162,8 +168,13 @@ else if (TempData["SuccessMessage"] != null)
                             </a>
                         </div>
                         <div class="col-md-6 d-flex justify-content-end">
-                            <input type="text" class="form-control" id="searchInput"
-                                   placeholder="Pesquisar por nome do pet, dono ou cpf do dono..." onkeyup="searchPet()">
+                            <div class="input-group">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar serviços..."
+                                       aria-label="Pesquisar serviços" aria-describedby="search-addon" oninput="searchPet()">
+                                <span class="input-group-text" id="search-addon">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div class="row" id="petList">
@@ -192,7 +203,7 @@ else if (TempData["SuccessMessage"] != null)
                                             <div>
                                                 <h5 class="card-title">@animal.Id - @animal.Name</h5>
                                                 <p class="card-text">
-                                                    <strong>Dono:</strong> @animal.Owner.Name
+                                                    <strong>Dono:</strong> @animal.Owner?.Name
                                                 </p>
                                                 <p class="card-text">
                                                     <strong>CPF do dono:</strong> @animal.Owner.Document
@@ -238,15 +249,16 @@ else if (TempData["SuccessMessage"] != null)
 }
 else
 {
-    <div class="container-fluid py-3">
-        <h2 class="text-center">
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
             @TempData["NotFoundPetMessage"]
         </h2>
-        <div class="d-flex justify-content-center align-items-center">
-            <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
-                <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
-            </a>
-        </div>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
+            <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
+        </a>
     </div>
 }
 

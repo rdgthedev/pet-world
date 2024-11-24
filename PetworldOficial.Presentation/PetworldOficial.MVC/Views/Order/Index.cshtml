@@ -68,11 +68,11 @@
                                     <div>
                                         @if (!User.IsInRole(ERole.Admin.ToString()))
                                         {
-                                            <h5 class="card-title supplier-name">Número do pedido: @order.Id</h5>
+                                            <h5 class="card-title supplier-name">Número do pedido #@order.Id</h5>
                                         }
                                         else
                                         {
-                                            <h5 class="card-title supplier-name">Número do pedido: @order!.Id - @order.Client.Name</h5>
+                                            <h5 class="card-title supplier-name">Número do pedido #@order.Id</h5>
                                         }
                                         <p class="card-text">
                                             <strong>Método de pagamento:</strong> @(Enum.Parse<EPaymentMethod>(order.PaymentMethod).GetDisplayName())
@@ -133,7 +133,7 @@
                                             </a>
                                         }
 
-                                        if (Enum.Parse<EOrderStatus>(order.Status) is not EOrderStatus.Canceled)
+                                        if (Enum.Parse<EOrderStatus>(order.Status) is EOrderStatus.PaymentConfirmed)
                                         {
                                             <a
                                                 asp-controller="Order"
@@ -141,7 +141,7 @@
                                                 asp-route-id="@order.Id"
                                                 class="btn btn-danger mb-2"
                                                 style="width: 200px">
-                                                <i class="bi bi-x-circle"></i> Cancelado
+                                                <i class="bi bi-x-circle"></i> Cancelar
                                             </a>
                                         }
                                     }

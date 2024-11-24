@@ -64,10 +64,15 @@ public class OrderController(IMediator mediator, IOrderService orderService) : C
             TempData["OrderCreated"] = result.message;
             return RedirectToAction("Index");
         }
+        catch (CartNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Cart");
+        }   
         catch (QuantityOfProductOutOfStockException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Cart");
         }   
         catch (Exception)
         {

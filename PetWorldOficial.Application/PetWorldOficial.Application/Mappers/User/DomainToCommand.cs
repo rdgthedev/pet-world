@@ -12,8 +12,7 @@ public class DomainToCommand : Profile
                 => new UpdateUserCommand
                 {
                     Id = user.Id,
-                    Name = user.Name,
-                    UserName = user.UserName!,
+                    // UserName = user.UserName!,
                     Gender = user.Gender.ToString(),
                     BirthDate = user.BirthDate,
                     Document = user.Document,

@@ -56,7 +56,7 @@ else if (TempData["SuccessMessage"] != null)
             <label asp-for="@Model.Gender" class="form-label">Gênero <span style="color: red;">*</span></label>
             <select asp-for="@Model.Gender" class="form-select shadow-none">
                 <option value="" selected disabled>Selecione o gênero</option>
-                @foreach (EGender gender in Enum.GetValues(typeof(EGender)))
+                @foreach (EPetGender gender in Enum.GetValues(typeof(EPetGender)))
                 {
                     <option value="@gender">@gender.GetDisplayName()</option>
                 }

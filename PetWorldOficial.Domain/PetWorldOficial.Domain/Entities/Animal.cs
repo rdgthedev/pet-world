@@ -9,7 +9,7 @@ public class Animal : Entity
 
     public Animal(
         string name,
-        EGender gender,
+        EPetGender gender,
         string race,
         int categoryId,
         int ownerId,
@@ -28,12 +28,11 @@ public class Animal : Entity
     
     public string Name { get; private set; }
     public DateTime? BirthDate { get; private set; }
-    public EGender Gender { get; private set; }
+    public EPetGender Gender { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? LastUpdatedAt { get; private set; }
     public string? ImageUrl { get; set; }
     public string Race { get; private set; }
-    // public Race Race { get; private set; }
     public int CategoryId { get; set; }
     public Category Category { get; set; }
     public int OwnerId { get; private set; }

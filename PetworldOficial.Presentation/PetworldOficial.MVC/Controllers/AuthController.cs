@@ -96,6 +96,7 @@ public class AuthController(
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult ForgotPassword()
     {
         return View();
@@ -123,6 +124,7 @@ public class AuthController(
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> ResetPassword(
         ResetPasswordCommand command,
         CancellationToken cancellationToken)
