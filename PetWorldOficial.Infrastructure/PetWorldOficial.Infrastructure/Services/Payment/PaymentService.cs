@@ -15,30 +15,45 @@ public class PaymentService(
     IHttpContextAccessor httpContextAccessor,
     IConfiguration configuration) : IPaymentService
 {
-    public async Task<(int statusCode, string sessionId)> CreateSessionCheckout(string email, List<CartItem> items,
-        CancellationToken cancellationToken)
+    public async Task<(int statusCode, string sessionId)> CreateSessionCheckout(string email, List<CartItem> items, CancellationToken cancellationToken)
     {
         try
         {
             var domain = configuration["Domain"];
+            var lineItems = items.Select(ci => new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = (long)(ci.Product.Price * 100), 
+                    Currency = "brl",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = ci.Product.Name
+                    }
+                },
+                Quantity = ci.Quantity,
+            }).ToList();
+            
+            lineItems.Add(new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = 1000, 
+                    Currency = "brl",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = "Frete"
+                    }
+                },
+                Quantity = 1
+            });
+
             var options = new SessionCreateOptions
             {
-                LineItems = items.Select(ci => new SessionLineItemOptions
-                {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        UnitAmount = (long)(ci.Product.Price * 100),
-                        Currency = "brl",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = ci.Product.Name
-                        }
-                    },
-                    Quantity = ci.Quantity,
-                }).ToList(),
+                LineItems = lineItems,
                 Mode = "payment",
                 SuccessUrl = domain + "/Order/Create?session_id={{CHECKOUT_SESSION_ID}}&paymentMethod=card",
-                CancelUrl = domain + "/Cancel",
+                CancelUrl = domain + "/Checkout/PaymentMethods",
                 CustomerEmail = email,
                 PaymentMethodTypes = new List<string> { "card" }
             };
@@ -54,6 +69,7 @@ public class PaymentService(
             throw;
         }
     }
+
 
     public async Task<Session?> CheckoutWebHook(
         Stream body,

@@ -32,4 +32,5 @@ public static class Validation
 
         return new DefaultRangeAndCategoryDTO(categoriesDefaultRange[category], category);
     }
+
 }

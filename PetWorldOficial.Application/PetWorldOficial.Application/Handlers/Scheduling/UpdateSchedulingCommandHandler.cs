@@ -37,6 +37,7 @@ public class UpdateSchedulingCommandHandler(
                 request.CategoryName = scheduling.Service.Category.Title;
                 request.AnimalId = scheduling.AnimalId;
                 request.Time = scheduling.Time;
+                request.Observation = scheduling.Observation;
 
                 return request;
             }

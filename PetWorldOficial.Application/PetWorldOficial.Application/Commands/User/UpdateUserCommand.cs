@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using MediatR;
+using PetWorldOficial.Application.Validations;
 
 namespace PetWorldOficial.Application.Commands.User;
 
@@ -10,9 +11,6 @@ public record UpdateUserCommand : IRequest<Unit>
     [Required(ErrorMessage = "O nome é obrigatório!")]
     public string Name { get; set; } = string.Empty;
 
-    // [Required(ErrorMessage = "O nome é obrigatório!")]
-    // public string UserName { get; set; } = string.Empty;
-
     [Required(ErrorMessage = "O nome é obrigatório!")]
     public string Gender { get; set; } = string.Empty;
 
@@ -20,6 +18,7 @@ public record UpdateUserCommand : IRequest<Unit>
     public string RoleName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O documento é obrigatório!")]
+    [CustomValidation(typeof(CPFValidator), nameof(CPFValidator.IsValid))]
     public string Document { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "A data é obrigatória!")]

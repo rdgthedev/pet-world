@@ -87,4 +87,11 @@ public sealed class User : IdentityUser<int>
 
         LastUpdatedAt = DateTime.Now;
     }
+
+    public string GetFormattedAddress()
+    {
+        return $"{Street}, {Number}" +
+               (string.IsNullOrWhiteSpace(Complement) ? "" : $", {Complement}") +
+               $", {Neighborhood}, {City} - {State}, {PostalCode}";
+    }
 }

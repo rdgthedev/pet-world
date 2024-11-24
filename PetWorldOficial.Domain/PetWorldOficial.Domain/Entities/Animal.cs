@@ -33,7 +33,6 @@ public class Animal : Entity
     public DateTime? LastUpdatedAt { get; private set; }
     public string? ImageUrl { get; set; }
     public string Race { get; private set; }
-    // public Race Race { get; private set; }
     public int CategoryId { get; set; }
     public Category Category { get; set; }
     public int OwnerId { get; private set; }

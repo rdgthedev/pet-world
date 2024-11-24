@@ -27,7 +27,7 @@ public class UpdateStatusToFinishedCommandHandler(
 
             await schedulingService.UpdateRange(mapper.Map<List<UpdateSchedulingCommand>>(schedulings), cancellationToken);
 
-            return (200, $"O agendamento de número {schedulings.First().Id} foi cancelado com sucesso!");
+            return (200, $"O agendamento de número {schedulings.First().Id} foi finalizado com sucesso!");
         }
         catch (Exception)
         {

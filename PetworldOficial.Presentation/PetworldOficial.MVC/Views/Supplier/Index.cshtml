@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid tpy-3">
+<div class="container-fluid py-3">
     <br>
     <h1 class="text-center">
         Lista de Fornecedores
@@ -43,7 +43,13 @@
                     </a>
                 </div>
                 <div class="col-md-6 d-flex justify-content-end">
-                    <input type="text" class="form-control" id="searchInput" placeholder="Pesquisar por nome ou e-mail..." onkeyup="searchSupplier()">
+                    <div class="input-group">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar serviços..."
+                               aria-label="Pesquisar serviços" aria-describedby="search-addon" oninput="searchSupplier()">
+                        <span class="input-group-text" id="search-addon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -13,7 +13,6 @@ public interface IUserService
     Task<UserDetailsViewModel?> GetByEmailAsync(string email, CancellationToken cancellationToken);
 
     Task<UserExistsViewModel> UserExistsAsync(
-        string? userName,
         string? cpf,
         string? phoneNumber,
         string? email,
@@ -21,6 +20,7 @@ public interface IUserService
 
     Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken);
     Task DeleteAsync(DeleteUserCommand command, CancellationToken cancellationToken);
+    Task UpdatePasswordAsync(MyAccountCommand command);
 
     Task<IEnumerable<UserDetailsViewModel>> GetAllUsersExceptCurrentAsync(
         int userId,

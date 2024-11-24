@@ -73,12 +73,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         // Tempo de expiração do cookie de autenticação
         options.ExpireTimeSpan = TimeSpan.FromMinutes(8); // Defina o tempo conforme necessário
         options.SlidingExpiration = true;
-
-        // Evento acionado quando o usuário faz logout
+        
         options.Events.OnSigningOut = async context =>
         {
-            // Verifica se o usuário está autenticado, se estiver, remove o CartId
-            if ((bool)context.HttpContext.User.Identity?.IsAuthenticated)
+            if ((bool)context.HttpContext.User.Identity?.IsAuthenticated) 
             {
                 context.HttpContext.Response.Cookies.Delete("CartId");
             }

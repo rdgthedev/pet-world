@@ -38,10 +38,13 @@ public class Cart : Entity
 
     public bool AddItem(CartItem item, int stockQuantity)
     {
-        var excededStockQuantity = Items.FirstOrDefault(i => i.ProductId == item.ProductId)?.Quantity == stockQuantity;
+        var excededStockQuantity = Items.FirstOrDefault(i => i.ProductId == item.ProductId)?.Quantity >= stockQuantity;
 
         if (item is null || excededStockQuantity)
+        {
+            SubTotalPrice = TotalPrice - 10;
             return false;
+        }
 
         var existingItem = Items.FirstOrDefault(i => i.ProductId == item.ProductId);
 

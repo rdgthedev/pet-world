@@ -1,8 +1,8 @@
-﻿using System.Linq.Expressions;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
+using PetWorldOficial.Domain.Exceptions;
 using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
@@ -29,6 +29,14 @@ public class UserRepository(
             .AsNoTracking()
             .Where(u => u.Id != userId)
             .ToListAsync(cancellationToken);
+
+    public async Task UpdatePasswordAsync(User user, string currentPassword, string newPassword)
+    {
+        var result = await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+        if (!result.Succeeded)
+            throw new UnableToChangePasswordException("Erro ao tentar alterar a senha");
+    }
 
 
     public async Task<IEnumerable<User?>> GetUsersByRoleAsync(ERole roleName)

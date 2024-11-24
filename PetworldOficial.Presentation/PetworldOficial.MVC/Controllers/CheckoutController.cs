@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PetWorldOficial.Application.Commands.Cart;
 using PetWorldOficial.Application.Commands.Checkout;
@@ -9,12 +10,19 @@ namespace PetworldOficial.MVC.Controllers;
 
 public class CheckoutController(IMediator mediator) : Controller
 {
+    [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Checkout(CancellationToken cancellationToken)
     {
         try
         {
             var result = await mediator.Send(new CreateCheckoutSessionCommand(), cancellationToken);
             return result;
+        }
+        catch (QuantityOfProductOutOfStockException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index", "Cart");
         }
         catch (Exception)
         {
@@ -23,6 +31,7 @@ public class CheckoutController(IMediator mediator) : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "Admin, User")]
     public IActionResult PaymentMethods()
     {
         return View();
