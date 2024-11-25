@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
@@ -26,19 +27,21 @@ public class AuthService(
         return user;
     }
 
-    public async Task<User?> Register(User user, string? role, string password)
+    public async Task<IdentityResult?> Register(User user, string? role, string password)
     {
         var result = await userManager.CreateAsync(user, password);
 
         if (!result.Succeeded)
-            return null!;
+        {
+            return result;
+        }
 
         await userManager.AddToRoleAsync(user, role ?? ERole.User.ToString());
 
         if (!result.Succeeded)
         {
             await userManager.DeleteAsync(user);
-            return null!;
+            return result;
         }
 
         var name = user.Name.Split(' ');
@@ -46,7 +49,7 @@ public class AuthService(
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.GivenName, name[0]));
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Email, user.Email!));
 
-        return user;
+        return result;
     }
 
     public async Task ResetPassword(
