@@ -250,14 +250,13 @@ else if (TempData["SuccessMessage"] != null)
 else
 {
     <div class="container-fluid text-black py-3">
-        <br>
         <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
             @TempData["NotFoundPetMessage"]
         </h2>
     </div>
     <div class="d-flex justify-content-center align-items-center">
         <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
-            <img style="width: 25px" src="/Images/addition.svg" alt="">Novo Pet
+            Novo Pet
         </a>
     </div>
 }

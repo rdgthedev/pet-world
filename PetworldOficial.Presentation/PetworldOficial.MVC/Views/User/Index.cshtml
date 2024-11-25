@@ -8,31 +8,32 @@
     Layout = "_Layout";
 }
 
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+else if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+
+<div class="container-fluid py-3">
+    <br>
+    <h1 class="text-center">
+        Lista de Usuários
+    </h1>
+    <br>
+</div>
+
 @if (Model is not null && Model.Any())
 {
-    <div class="container-fluid py-3">
-        <br>
-        <h1 class="text-center">
-            Lista de Usuários
-        </h1>
-        <br>
-    </div>
-
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger" role="alert">
-            @TempData["ErrorMessage"]
-            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    else if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success" role="alert">
-            @TempData["SuccessMessage"]
-            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
     <section class="my-5">
         <div class="container">
             <!-- Linha contendo o botão e a barra de pesquisa -->
@@ -102,8 +103,14 @@
 else
 {
     <div class="container-fluid text-black py-3">
-        <br>
-        <h2 class="display-6 text-center fw">@TempData["UserNotFoundMessage"]</h2>
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
+            @TempData["UserNotFoundMessage"]
+        </h2>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Animal" asp-action="Register">
+            Novo Usuário
+        </a>
     </div>
 }
 
