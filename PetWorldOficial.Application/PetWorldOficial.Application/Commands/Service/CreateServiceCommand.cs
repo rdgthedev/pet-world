@@ -14,6 +14,7 @@ namespace PetWorldOficial.Application.Commands.Service
         public IFormFile File { get; set; } = null!;
 
         [Required(ErrorMessage = "A duração em minutos é obrigatória!")]
+        [RegularExpression("^(30|60)$", ErrorMessage = "A duração deve ser de 30 ou 60 minutos!")]
         public int? DurationInMinutes { get; set; }
 
         [Required(ErrorMessage = "O Preço é obrigatório!")]

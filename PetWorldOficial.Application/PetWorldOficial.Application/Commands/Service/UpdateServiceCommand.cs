@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices.JavaScript;
 using PetWorldOficial.Application.ViewModels;
 using PetWorldOficial.Domain.Entities;
 
