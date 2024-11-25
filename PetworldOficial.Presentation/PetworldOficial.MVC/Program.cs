@@ -13,9 +13,11 @@ using PetWorldOficial.Infrastructure.Services;
 using Newtonsoft.Json;
 using PetWorldOficial.Application.Configuration.SendInBlue;
 using PetWorldOficial.Application.Settings;
+using PetWorldOficial.Application.Utils;
 using PetWorldOficial.Domain.Interfaces.Services;
 using PetWorldOficial.Infrastructure.Data.Context;
 using PetWorldOficial.Infrastructure.Services.Payment;
+using PetworldOficial.MVC.Configurations;
 using Stripe;
 using AuthService = PetWorldOficial.Infrastructure.Services.Auth.AuthService;
 using IAuthService = PetWorldOficial.Application.Services.Interfaces.IAuthService;
@@ -76,7 +78,8 @@ builder.Services.AddIdentity<User, Role>(options =>
         // options.
     })
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddErrorDescriber<PortugueseIdentityErrorDescriberConfiguration>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -161,6 +164,7 @@ builder.Services.AddMediatR(m => m.RegisterServicesFromAssembly(typeof(CreateSer
 
 
 var app = builder.Build();
+app.UseRequestLocalization(localizationOptions);
 
 if (!app.Environment.IsDevelopment())
 {

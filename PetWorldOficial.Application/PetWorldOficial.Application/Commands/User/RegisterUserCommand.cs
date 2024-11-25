@@ -17,8 +17,6 @@ public record RegisterUserCommand(
     string Document,
     [Required(ErrorMessage = "O perfil é obrigatório!")]
     string? Role,
-    [Required(ErrorMessage = "A senha é obrigatória!")]
-    string Password,
     [Required(ErrorMessage = "O email é obrigatório!")]
     string Email,
     [Required(ErrorMessage = "O telefone é obrigatório!")]
@@ -36,7 +34,9 @@ public record RegisterUserCommand(
     [Required(ErrorMessage = "A cidade é obrigatória!")]
     string City,
     [Required(ErrorMessage = "O estado é obrigatório!")]
-    string State) : IRequest<Unit>
+    string State,
+    [Required(ErrorMessage = "A senha é obrigatória!")]
+    string Password) : IRequest<List<string>>
 {
     [Required(ErrorMessage = "A confirmação de senha é obrigatória!")]
     [Compare(nameof(Password), ErrorMessage = "As senhas não coincidem.")]

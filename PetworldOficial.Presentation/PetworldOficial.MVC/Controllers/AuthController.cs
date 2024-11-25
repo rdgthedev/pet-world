@@ -55,12 +55,21 @@ public class AuthController(
 
         try
         {
-            await mediator.Send(command, cancellationToken);
+            var errors = await mediator.Send(command, cancellationToken);
+
+
+            if (errors.Any())
+            {
+                foreach (var error in errors)
+                    ModelState.AddModelError(string.Empty, error);
+
+                return View(command);
+            }
+
             TempData["SuccessMessage"] = "Cadastrado com sucesso!";
 
             if (User.IsInRole(ERole.Admin.ToString()))
                 return RedirectToAction("Index", "User");
-
             return RedirectToAction("Index", "Home");
         }
         catch (UserAlreadyExistsException e)
