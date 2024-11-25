@@ -222,24 +222,6 @@ else if (TempData["SuccessMessage"] != null)
                             </div>
                         }
                     </div>
-                    @* <!-- Coluna de resumo do agendamento --> *@
-                    @* <div class="col-lg-4"> *@
-                    @*     <div class="card bg-light"> *@
-                    @*         <div class="card-body"> *@
-                    @*             <h4 class="card-title">Resumo dos Agendamentos</h4> *@
-                    @*             <ul class="list-group list-group-flush mb-3"> *@
-                    @*                 <li class="list-group-item d-flex justify-content-between"> *@
-                    @*                     <span>Total de Agendamentos</span> *@
-                    @*                     <strong>@Model.Count()</strong> *@
-                    @*                 </li> *@
-                    @*             </ul> *@
-                    @*             <a asp-action="Index" asp-controller="Service" class="btn btn-success btn-block"> *@
-                    @*                 Agendar Novo *@
-                    @*                 Serviço *@
-                    @*             </a> *@
-                    @*         </div> *@
-                    @*     </div> *@
-                    @* </div> *@
                 </div>
             </div>
         </section>
@@ -251,6 +233,11 @@ else
         <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
             @TempData["NotFoundScheduling"]
         </h2>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Service" asp-action="Index">
+            Novo Agendamento
+        </a>
     </div>
 }
 
