@@ -32,14 +32,12 @@ public class RegisterUserCommandHandler(
             }
 
             var user = mapper.Map<Domain.Entities.User>(request);
-
             var result = await authService.Register(user, request.Role, request.Password);
 
             if ((bool)result?.Errors.Any())
             {
                 var identityErrors = result.Errors.Select(e => e.Description).ToList();
                 errors.AddRange(identityErrors);
-
                 return errors;
             }
 

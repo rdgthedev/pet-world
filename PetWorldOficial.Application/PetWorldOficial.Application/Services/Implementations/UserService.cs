@@ -13,6 +13,7 @@ namespace PetWorldOficial.Application.Services.Implementations;
 public class UserService(
     IUserRepository userRepository,
     IScheduleRepository schedulingRepository,
+    IRoleService roleService,
     IMapper mapper) : IUserService
 {
     public async Task<IEnumerable<UserDetailsViewModel>> GetAllAsync(CancellationToken cancellationToken)
@@ -46,14 +47,6 @@ public class UserService(
     {
         User? user;
 
-        // if (!string.IsNullOrEmpty(userName))
-        // {
-        //     user = await userRepository.GetByUserNameAsync(userName, cancellationToken);
-        //
-        //     if (user != null)
-        //         return new UserExistsViewModel(true, "Username já cadastrado!");
-        // }
-
         if (!string.IsNullOrEmpty(cpf))
         {
             user = await userRepository.GetByCpfAsync(cpf, cancellationToken);
@@ -81,7 +74,10 @@ public class UserService(
         return new UserExistsViewModel(false, null!);
     }
 
-    public async Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken)
+    public async Task UpdateAsync(
+        UpdateUserCommand command,
+        CancellationToken cancellationToken,
+        bool isAdmin)
     {
         var user = await userRepository.GetByIdAsync(command.Id, cancellationToken);
 
@@ -89,7 +85,23 @@ public class UserService(
             throw new UserNotFoundException("Usuário não encontrado!");
 
         var userUpdated = mapper.Map(command, user);
+
+        var roles = await roleService.GetRolesByUserAsync(user);
+
         await userRepository.UpdateAsync(userUpdated);
+
+        if (isAdmin)
+        {
+            if (!roles.Any())
+                throw new Exception("Nenhum perfil encontrado!");
+
+            var roleDeleted = await userRepository.RemoveFromRolesAsync(user, roles.First());
+
+            if (!roleDeleted)
+                throw new Exception("Não foi possível alterar o perfil do usuário!");
+
+            await userRepository.AddRoleToUserAsync(user, command.RoleName);
+        }
     }
 
     public async Task DeleteAsync(DeleteUserCommand command, CancellationToken cancellationToken)
@@ -111,7 +123,7 @@ public class UserService(
 
         if (user is null)
             throw new UserNotFoundException("Usuário não encontrado!");
-        
+
         await userRepository.UpdatePasswordAsync(user, command.Password!, command.NewPassword!);
     }
 

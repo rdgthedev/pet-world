@@ -7,9 +7,7 @@ using PetWorldOficial.Domain.Interfaces.Repositories;
 
 namespace PetWorldOficial.Infrastructure.Persistence.Repositories;
 
-public class UserRepository(
-    UserManager<User> userManager,
-    RoleManager<Role> roleManager) : IUserRepository
+public class UserRepository(UserManager<User> userManager) : IUserRepository
 {
     public async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken)
         => await userManager
@@ -30,6 +28,12 @@ public class UserRepository(
             .Where(u => u.Id != userId)
             .ToListAsync(cancellationToken);
 
+    public async Task<bool> AddRoleToUserAsync(User user, string newRole)
+    {
+        var result = await userManager.AddToRoleAsync(user, newRole);
+        return result.Succeeded;
+    }
+
     public async Task UpdatePasswordAsync(User user, string currentPassword, string newPassword)
     {
         var result = await userManager.ChangePasswordAsync(user, currentPassword, newPassword);
@@ -42,6 +46,12 @@ public class UserRepository(
     public async Task<IEnumerable<User?>> GetUsersByRoleAsync(ERole roleName)
     {
         return await userManager.GetUsersInRoleAsync(roleName.ToString());
+    }
+
+    public async Task<bool> RemoveFromRolesAsync(User user, string currentRole)
+    {
+        var result = await userManager.RemoveFromRoleAsync(user, currentRole);
+        return result.Succeeded;
     }
 
     public async Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken)

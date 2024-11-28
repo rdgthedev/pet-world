@@ -37,8 +37,8 @@ public record UpdateUserCommand : IRequest<Unit>
     [Required(ErrorMessage = "O número é obrigatório!")]
     public int Number { get; set; }
 
-    [Required(ErrorMessage = "O complemento é obrigatório!")]
-    public string Complement { get; set; } = string.Empty;
+    // [Required(ErrorMessage = "O complemento é obrigatório!")]
+    public string? Complement { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "O CEP é obrigatório!")]
     public string PostalCode { get; set; } = string.Empty;

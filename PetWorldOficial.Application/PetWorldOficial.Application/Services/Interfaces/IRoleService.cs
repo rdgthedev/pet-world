@@ -8,4 +8,5 @@ public interface IRoleService
 {
     Task<RoleDetailsViewModel?> GetByName(string name);
     Task<bool> AddRoleAsync(RegisterRoleCommand role);
+    Task<List<string>> GetRolesByUserAsync(User user);
 }

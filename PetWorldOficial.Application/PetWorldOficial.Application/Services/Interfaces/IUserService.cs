@@ -18,7 +18,7 @@ public interface IUserService
         string? email,
         CancellationToken cancellationToken);
 
-    Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken);
+    Task UpdateAsync(UpdateUserCommand command, CancellationToken cancellationToken, bool isAdmin = false);
     Task DeleteAsync(DeleteUserCommand command, CancellationToken cancellationToken);
     Task UpdatePasswordAsync(MyAccountCommand command);
 

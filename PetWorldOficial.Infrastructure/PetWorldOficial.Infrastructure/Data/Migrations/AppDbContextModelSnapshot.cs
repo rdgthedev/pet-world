@@ -417,8 +417,7 @@ namespace PetWorldOficial.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("NVARCHAR")
+                        .HasColumnType("NVARCHAR(MAX)")
                         .HasColumnName("Description");
 
                     b.Property<string>("ImageUrl")
