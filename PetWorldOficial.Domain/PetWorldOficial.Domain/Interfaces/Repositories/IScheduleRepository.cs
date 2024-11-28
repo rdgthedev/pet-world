@@ -20,7 +20,7 @@ public interface IScheduleRepository
     Task<Schedulling?> GetByIdWithAnimalAndService(int id, CancellationToken cancellationToken);
 
     public Task<IEnumerable<Schedulling?>> GetAllByAnimalsIds(IEnumerable<int> animalIds,
-        CancellationToken cancellationToken);
+        CancellationToken cancellationToken); 
 
     Task<Schedulling?> GetByAnimalIdAndDateAndTime(
         int animalId,

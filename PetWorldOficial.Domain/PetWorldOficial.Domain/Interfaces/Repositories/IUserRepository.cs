@@ -13,6 +13,8 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<IEnumerable<User>> GetAllUsersExceptCurrentAsync(int userId, CancellationToken cancellationToken);
     Task<IEnumerable<User?>> GetUsersByRoleAsync(ERole roleName);
+    Task<bool> RemoveFromRolesAsync(User user, string currentRole);
+    Task<bool> AddRoleToUserAsync(User user, string newRole);
     Task UpdatePasswordAsync(
         User user, 
         string currentPassword, 

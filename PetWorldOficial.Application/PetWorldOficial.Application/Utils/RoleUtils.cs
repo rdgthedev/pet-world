@@ -8,9 +8,9 @@ public static class RoleUtils
     {
         return serviceName switch
         {
-            "teste" => ERole.Grooming,
             "Tosa" => ERole.Grooming,
-            "Banho/Tosa" => ERole.Grooming,
+            "Banho&Tosa" => ERole.Grooming,
+            "Banho" => ERole.Grooming,
             _ => ERole.Veterinary
         };
     }

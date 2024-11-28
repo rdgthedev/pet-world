@@ -10,10 +10,14 @@ namespace PetWorldOficial.Infrastructure.Services;
 public class RoleService : IRoleService
 {
     private readonly RoleManager<Role> _roleManager;
+    private readonly UserManager<User> _userManager;
 
-    public RoleService(RoleManager<Role> roleManager)
+    public RoleService(
+        RoleManager<Role> roleManager,
+        UserManager<User> userManager)
     {
         _roleManager = roleManager;
+        _userManager = userManager;
     }
 
     public async Task<RoleDetailsViewModel?> GetByName(string name)
@@ -24,7 +28,12 @@ public class RoleService : IRoleService
         return await _roleManager.Roles.AsNoTracking().Select(role => new RoleDetailsViewModel(role.Name!))
             .FirstOrDefaultAsync(r => r.Name == name);
     }
-
+    
+    public async Task<List<string>> GetRolesByUserAsync(User user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+        return roles.ToList();
+    }
     public async Task<bool> AddRoleAsync(RegisterRoleCommand role)
     {
         var roleResult = await _roleManager
