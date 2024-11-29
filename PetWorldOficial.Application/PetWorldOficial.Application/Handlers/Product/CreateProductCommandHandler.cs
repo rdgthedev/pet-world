@@ -12,7 +12,6 @@ public class CreateProductCommandHandler(
     IProductService productService,
     ISupplierService supplierService,
     IImageService imageService,
-    IMemoryCache memoryCache,
     ICategoryService categoryService,
     IStockService stockService) : IRequestHandler<CreateProductCommand, CreateProductCommand>
 {
@@ -24,17 +23,16 @@ public class CreateProductCommandHandler(
         {
             if (string.IsNullOrEmpty(request.Name.Trim()))
             {
-                if (!memoryCache.TryGetValue("ProductCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
-                {
-                    categories = await categoryService.GetAllProductCategories(cancellationToken);
-                    memoryCache.Set("ProductCategories", categories, TimeSpan.FromHours(8));
-                }
+                var categories = await categoryService.GetAllProductCategories(cancellationToken);
 
-                if (!memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))
-                {
-                    suppliers = await supplierService.GetAllAsync(cancellationToken);
-                    memoryCache.Set("Suppliers", suppliers, TimeSpan.FromHours(8));
-                }
+                if (!categories.Any())
+                    throw new Exception("Não é possível cadastrar um produto, pois não há categorias cadastradas!");
+
+                var suppliers = await supplierService.GetAllAsync(cancellationToken);
+
+                if (!suppliers.Any())
+                    throw new SupplierNotFoundException(
+                        "Não é possível cadastrar um produto, pois não há fornecedores cadastrados!");
 
                 request.Categories = categories;
                 request.Suppliers = suppliers;
@@ -68,6 +66,5 @@ public class CreateProductCommandHandler(
         {
             throw;
         }
-
     }
 }

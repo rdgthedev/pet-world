@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetWorldOficial.Application.Extensions
 @using PetWorldOficial.Domain.Enums
 @model PetWorldOficial.Application.Commands.Scheduling.CreateScheduleCommand
 
@@ -104,7 +105,7 @@ else if (TempData["SuccessMessage"] != null)
                         @animal.Name
                         @if (!User.IsInRole(ERole.User.ToString()))
                         {
-                            <span class="text-muted"> - Dono: <strong>@animal.Owner!.Name</strong> - <span class="fst-italic">@animal.Owner.Document</span></span>
+                            <span class="text-muted"> - Dono: <strong>@animal.Owner!.Name</strong> - <span class="fst-italic">CPF: @animal.Owner.Document.MaskCPF()</span></span>
                         }
                     </option>
                 }

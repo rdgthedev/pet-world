@@ -19,7 +19,7 @@ public class GetAllSchedulesQueryHandler(
     {
         try
         {
-            var email = request.UserPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var email = request.UserPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
             var user = await userService.GetByEmailAsync(
                 email!,

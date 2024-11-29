@@ -62,7 +62,7 @@ public class ProductController(
     //     }
     // }
     //
-    [HttpGet()]
+    [HttpGet]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new CreateProductCommand(), cancellationToken);
@@ -77,12 +77,8 @@ public class ProductController(
     {
         if (!ModelState.IsValid)
         {
-            if (memoryCache.TryGetValue("ProductCategories", out IEnumerable<CategoryDetailsViewModel>? categories))
-                command.Categories = categories;
-
-            if (memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))
-                command.Suppliers = suppliers;
-
+            command.Categories = await categoryService.GetAllProductCategories(cancellationToken);
+            command.Suppliers = await supplierService.GetAllAsync(cancellationToken);
             return View(command);
         }
 
@@ -121,7 +117,6 @@ public class ProductController(
         try
         {
             command.Id = id;
-
             var result = await mediator.Send(command, cancellationToken);
             ModelState.Clear();
             return View(result);
@@ -147,7 +142,6 @@ public class ProductController(
         {
             command.Categories = await categoryService.GetAllProductCategories(cancellationToken);
             command.Suppliers = await supplierService.GetAllAsync(cancellationToken);
-            
             return View(command);
         }
 

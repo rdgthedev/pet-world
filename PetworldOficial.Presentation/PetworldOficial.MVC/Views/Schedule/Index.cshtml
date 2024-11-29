@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using PetWorldOficial.Application.Extensions
 @using PetWorldOficial.Domain.Enums
 @using PetworldOficial.MVC.Utils
 @model IEnumerable<PetWorldOficial.Application.ViewModels.Schedule.ScheduleDetailsViewModel>
@@ -109,6 +110,9 @@ else if (TempData["SuccessMessage"] != null)
                                                 <strong>Duração:</strong> @schedule.Service.DurationInMinutes minutos
                                             </p>
                                             <p>
+                                                <strong>Observação:</strong> @(schedule.Observation ?? "Não possui")
+                                            </p>
+                                            <p>
                                                 <strong>Status:</strong>
                                                 @(Enum.Parse<ESchedullingStatus>(schedule.Status).GetDisplayName())
                                             </p>
@@ -174,6 +178,12 @@ else if (TempData["SuccessMessage"] != null)
                                                 <strong>Serviço:</strong> @schedule.Service.Name
                                             </p>
                                             <p class="card-text">
+                                                <strong>Dono:</strong> @schedule.Animal.Owner.Name
+                                            </p>
+                                            <p class="card-text">
+                                                <strong>CPF do dono:</strong> @schedule.Animal.Owner.Document.MaskCPF()
+                                            </p>
+                                            <p class="card-text">
                                                 <strong>Funcionário:</strong> @schedule.Employee.Name
                                             </p>
                                             <p>
@@ -184,6 +194,9 @@ else if (TempData["SuccessMessage"] != null)
                                             </p>
                                             <p>
                                                 <strong>Duração:</strong> @schedule.Service.DurationInMinutes minutos
+                                            </p>
+                                            <p>
+                                                <strong>Observação:</strong> @(schedule.Observation ?? "Não possui")
                                             </p>
                                             <p>
                                                 <strong>Status:</strong>

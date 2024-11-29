@@ -28,6 +28,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Include(s => s.Service)
             .Include(s => s.Employee)
             .Include(s => s.Animal)
+            .ThenInclude(a => a.Owner)
             .ToListAsync(cancellationToken);
     }
 
