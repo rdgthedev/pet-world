@@ -34,7 +34,7 @@ namespace PetWorldOficial.Application.Handlers.Service
                 var serviceResult = await serviceService.GetByName(request.Name, cancellationToken);
 
                 if (serviceResult != null)
-                    throw new ServiceAlreadyExistsException("Serviço já existe!");
+                    throw new ServiceAlreadyExistsException("Já existe um serviço com esse nome!");
 
                 var path = Path.Combine(request.BaseUrl, "wwwroot");
 

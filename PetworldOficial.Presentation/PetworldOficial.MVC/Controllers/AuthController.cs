@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
@@ -47,7 +46,8 @@ public class AuthController(
     public IActionResult Register() => View();
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromForm] RegisterUserCommand command,
+    public async Task<IActionResult> Register(
+        [FromForm] RegisterUserCommand command,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
@@ -70,6 +70,7 @@ public class AuthController(
 
             if (User.IsInRole(ERole.Admin.ToString()))
                 return RedirectToAction("Index", "User");
+
             return RedirectToAction("Index", "Home");
         }
         catch (UserAlreadyExistsException e)
@@ -116,12 +117,19 @@ public class AuthController(
         ForgotPasswordCommand command,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return View();
+        try
+        {
+            if (!ModelState.IsValid)
+                return View();
 
-        var result = await mediator.Send(command, cancellationToken);
-        TempData["SuccessMessage"] = result.message;
-        return View();
+            var result = await mediator.Send(command, cancellationToken);
+            TempData["SuccessMessage"] = result.message;
+            return View();
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
     }
 
     [HttpGet]
@@ -147,10 +155,20 @@ public class AuthController(
             // TempData["SuccessMessage"] = result.
             return RedirectToAction("Login");
         }
-        catch (Exception e)
+        catch (UserNotFoundException e)
         {
-            Console.WriteLine(e);
-            throw;
+            TempData["ErrorMessage"] = e.Message;
+            return View();
+        }
+        catch (InvalidTokenException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
+        }
+        catch (UnableToResetPasswordException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View();
         }
     }
 }

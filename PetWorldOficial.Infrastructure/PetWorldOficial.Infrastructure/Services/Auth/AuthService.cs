@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PetWorldOficial.Application.Commands.User;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Domain.Entities;
@@ -32,9 +31,7 @@ public class AuthService(
         var result = await userManager.CreateAsync(user, password);
 
         if (!result.Succeeded)
-        {
             return result;
-        }
 
         await userManager.AddToRoleAsync(user, role ?? ERole.User.ToString());
 
@@ -58,11 +55,11 @@ public class AuthService(
         string newPassword)
     {
         var existingUser = await userManager.FindByEmailAsync(user.Email!);
-        
+
         var isValid = await userManager.VerifyUserTokenAsync(
-            user, 
-            TokenOptions.DefaultProvider, 
-            "ResetPassword", 
+            user,
+            TokenOptions.DefaultProvider,
+            "ResetPassword",
             token);
 
         if (!isValid)
@@ -71,7 +68,7 @@ public class AuthService(
         var result = await userManager.ResetPasswordAsync(existingUser!, token, newPassword);
 
         if (!result.Succeeded)
-            throw new Exception("Ocorreu um erro ao tentar resetar sua senha!");
+            throw new UnableToResetPasswordException("Ocorreu um erro ao tentar resetar sua senha!");
     }
 
     public Task<string> GenerateForgetPasswordTokenAsync(User user)

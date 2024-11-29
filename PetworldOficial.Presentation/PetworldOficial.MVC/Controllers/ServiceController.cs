@@ -120,7 +120,6 @@ public class ServiceController(
         try
         {
             var result = await mediator.Send(new UpdateServiceCommand { Id = id }, cancellationToken);
-
             return View(result);
         }
         catch (ServiceNotFoundException e)
@@ -157,6 +156,10 @@ public class ServiceController(
 
             TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
+        }
+        catch (ServiceAlreadyExistsException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
         }
         catch (ServiceNotFoundException e)
         {
