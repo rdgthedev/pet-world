@@ -75,12 +75,11 @@ public class ProductController(
         [FromForm] CreateProductCommand command,
         CancellationToken cancellationToken)
     {
+        command.Categories = await categoryService.GetAllProductCategories(cancellationToken);
+        command.Suppliers = await supplierService.GetAllAsync(cancellationToken);
+        
         if (!ModelState.IsValid)
-        {
-            command.Categories = await categoryService.GetAllProductCategories(cancellationToken);
-            command.Suppliers = await supplierService.GetAllAsync(cancellationToken);
             return View(command);
-        }
 
         try
         {
@@ -138,12 +137,11 @@ public class ProductController(
         [FromForm] UpdateProductCommand command,
         CancellationToken cancellationToken)
     {
+        command.Categories = await categoryService.GetAllProductCategories(cancellationToken);
+        command.Suppliers = await supplierService.GetAllAsync(cancellationToken);
+
         if (!ModelState.IsValid)
-        {
-            command.Categories = await categoryService.GetAllProductCategories(cancellationToken);
-            command.Suppliers = await supplierService.GetAllAsync(cancellationToken);
             return View(command);
-        }
 
         try
         {
@@ -159,7 +157,7 @@ public class ProductController(
         catch (InvalidExtensionException e)
         {
             TempData["ErrorMessage"] = e.Message;
-            return RedirectToAction("Index", "Product");
+            return View(command);
         }
         catch (Exception)
         {

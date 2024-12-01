@@ -121,7 +121,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
 
     public async Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDateAndCategory(
         DateTime date,
-        ECategoryType categoryType,
+        string categoryType,
         CancellationToken cancellationToken)
     {
         return await _context
@@ -129,7 +129,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .AsNoTracking()
             .Include(s => s.Employee)
             .Include(s => s.Service)
-            .Where(s => s.Date.Date == date.Date && s.Service.Category.Title == categoryType.ToString()
+            .Where(s => s.Date.Date == date.Date && s.Service.Category.Title == categoryType
                                                  && s.Status != ESchedullingStatus.Canceled
                                                  && s.Status != ESchedullingStatus.Finished)
             .Select(s => s.Time)
@@ -214,7 +214,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
     }
 
     public async Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
-        ECategoryType categoryType,
+        string categoryType,
         DateTime schedullingDate,
         CancellationToken cancellationToken)
     {
@@ -224,7 +224,7 @@ public class ScheduleRepository(AppDbContext _context) : IScheduleRepository
             .Include(s => s.Service)
             .Include(s => s.Employee)
             .Where(s => s.Date.Date == schedullingDate.Date
-                        && s.Service.Category.Title == categoryType.ToString()
+                        && s.Service.Category.Title == categoryType
                         && s.Status != ESchedullingStatus.Canceled
                         && s.Status != ESchedullingStatus.Finished)
             .ToListAsync(cancellationToken);

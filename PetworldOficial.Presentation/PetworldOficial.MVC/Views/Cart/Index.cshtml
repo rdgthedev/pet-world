@@ -5,32 +5,32 @@
     Layout = "_Layout";
 }
 
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-8 alert alert-danger" role="alert" style="display:none;" id="error-message"></div>
-</div>
-
-@if (TempData["ErrorMessage"] != null)
-{
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-8 alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-    </div>
-</div>
-}
-else if (TempData["SuccessMessage"] != null)
-{
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-8 alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-</div>
-}
-
 <!-- Seção do carrinho de compras -->
 <section class="my-5">
     <div class="container">
-        <h2 class="cart-title text-center mb-4">Carrinho de Compras</h2>
+        <h1 class="text-center">Carrinho de Compras</h1>
+
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="col-md-8 alert alert-danger" role="alert" style="display:none;" id="error-message"></div>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="col-md-8 alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            </div>
+        }
+        else if (TempData["SuccessMessage"] != null)
+        {
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="col-md-8 alert alert-success" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        }
         @if (Model?.Items is not null && Model.Items.Any())
         {
             <div class="row">

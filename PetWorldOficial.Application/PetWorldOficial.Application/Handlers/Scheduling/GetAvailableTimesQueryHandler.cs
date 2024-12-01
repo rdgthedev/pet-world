@@ -4,7 +4,6 @@ using PetWorldOficial.Application.DTO;
 using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Utils;
-using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetWorldOficial.Application.Handlers.Scheduling;
@@ -25,39 +24,25 @@ public class GetAvailableTimesQueryHandler(
         try
         {
             var service = await serviceService.GetByName(request.ServiceName, cancellationToken);
-            
+
             if (service is null)
                 throw new ServiceNotFoundException(
                     "Não foi possível agendar este serviço no momento. Tente novamente mais tarde!");
 
-            if (!Enum.TryParse(service.Category.Title, true, out ERole role))
-                throw new Exception("Perfil não encontrado!");
-            
-            // var role = Enum.GetNames(typeof(ERole)).FirstOrDefault(r => r == category.ToString());
-
-            // if (role is null)
-            //     throw new Exception("Perfil não encontrado!");
-            
+            var role = RoleUtils.GetRole(service.Category.Title);
             var times = TimesGenerator.Generate(request.Date, _defaultRange);
-
             var employeesCount = await userService.CountUsersByRoleAsync(role);
 
             if (employeesCount <= 0)
                 throw new UserNotFoundException(
                     "Não foi possível agendar este serviço no momento. Tente novamente mais tarde!");
 
-            // var service = await serviceService.GetByName(request.ServiceName, cancellationToken);
-            //
-            // if (service is null)
-            //     throw new ServiceNotFoundException(
-            //         "Não foi possível agendar este serviço no momento. Tente novamente mais tarde!");
-
             var schedulingsTimes = await scheduleService
                 .GetAllSchedulesTimesByDateAndCategory(
                     request.Date,
                     service.Category.Title,
                     cancellationToken);
-
+ 
             if (!schedulingsTimes.Any() && !Validation.IsDurationOneHour(request.DurationInMinutes))
                 return times;
 

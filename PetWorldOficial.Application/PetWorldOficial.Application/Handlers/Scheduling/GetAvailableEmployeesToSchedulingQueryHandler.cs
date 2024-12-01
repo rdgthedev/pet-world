@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.Utils;
-using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
 namespace PetWorldOficial.Application.Handlers.Scheduling;
@@ -22,10 +21,7 @@ public class GetAvailableEmployeesToSchedulingQueryHandler(
     {
         try
         {
-            // var roleName = RoleUtils.GetRoleByServiceName(request.ServiceName);
-            
-            if (!Enum.TryParse(request.CategoryName, true, out ERole role))
-                throw new Exception("Perfil não encontrado!");
+            var role = RoleUtils.GetRole(request.CategoryName);
 
             var employees = (await userService.GetUsersByRoleAsync(role, cancellationToken))
                 .Select(e => (e.Id, e.Name, true))
@@ -47,7 +43,6 @@ public class GetAvailableEmployeesToSchedulingQueryHandler(
                 _defaultRange);
 
             employees = EmployeesUtils.AdjustEmployees(employees, scheduledEmployees);
-
             return employees;
         }
         catch (Exception)

@@ -44,7 +44,7 @@ public interface IScheduleRepository
 
     Task<IEnumerable<TimeSpan>> GetAllScheduleTimesByDateAndCategory(
         DateTime date,
-        ECategoryType categoryType,
+        string categoryType,
         CancellationToken cancellationToken);
 
     Task<IEnumerable<Schedulling>> GetAllSchedulingsByDateAndTimeAsync(
@@ -55,7 +55,7 @@ public interface IScheduleRepository
     Task<int> CountSchedulesAsync(DateTime scheduleDate, TimeSpan time, CancellationToken cancellationToken);
 
     Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
-        ECategoryType categoryType,
+        string categoryType,
         DateTime schedullingDate,
         CancellationToken cancellationToken);
 
