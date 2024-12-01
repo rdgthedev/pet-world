@@ -122,6 +122,10 @@ public class ServiceController(
             var result = await mediator.Send(new UpdateServiceCommand { Id = id }, cancellationToken);
             return View(result);
         }
+        catch (ServiceAlreadyExistsException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+        }
         catch (ServiceNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
@@ -140,8 +144,7 @@ public class ServiceController(
         IFormFile? file,
         CancellationToken cancellationToken)
     {
-        command.Category =
-            mapper.Map<Category>(await categoryService.GetById(command.CategoryId!.Value, cancellationToken));
+        command.Category = mapper.Map<Category>(await categoryService.GetById(command.CategoryId!.Value, cancellationToken));
         command.Categories = await categoryService.GetAllServiceCategories(cancellationToken);
 
         if (!ModelState.IsValid)
@@ -160,6 +163,7 @@ public class ServiceController(
         catch (ServiceAlreadyExistsException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            return View(command);
         }
         catch (ServiceNotFoundException e)
         {
@@ -167,7 +171,7 @@ public class ServiceController(
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Ocorreu um erro!";
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
         }
 
         return RedirectToAction("Index");
@@ -188,7 +192,7 @@ public class ServiceController(
         }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Ocorreu um erro!";
+            TempData["ErrorMessage"] = "Ocorreu um erro interno!";
         }
 
         return RedirectToAction("Index");

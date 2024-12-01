@@ -30,6 +30,7 @@ namespace PetWorldOficial.Application.Commands.Service
         public string Message { get; set; } = string.Empty;
         public IFormFile? File { get; set; }
         public string RootPath { get; set; } = string.Empty;
+        public string CurrentName { get; set; } = string.Empty;
 
         public IEnumerable<CategoryDetailsViewModel> Categories { get; set; } =
             Enumerable.Empty<CategoryDetailsViewModel>();

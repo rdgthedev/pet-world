@@ -144,8 +144,9 @@ public class ScheduleService(
         string category,
         CancellationToken cancellationToken)
         => await _scheduleRepository
-            .GetAllScheduleTimesByDateAndCategory(date,
-                (ECategoryType)Enum.Parse(typeof(ECategoryType), category),
+            .GetAllScheduleTimesByDateAndCategory(
+                date,
+                category,
                 cancellationToken);
 
     public async Task<IEnumerable<Schedulling>> GetByCategoryAndDate(
@@ -153,7 +154,7 @@ public class ScheduleService(
         DateTime date,
         CancellationToken cancellationToken)
         => await _scheduleRepository.GetByCategoryAndDate(
-            (ECategoryType)Enum.Parse(typeof(ECategoryType), category),
+            category,
             date,
             cancellationToken);
 

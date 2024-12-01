@@ -9,6 +9,14 @@
     Layout = "_Layout";
 }
 
+<div class="container-fluid py-3">
+    <br>
+    <h1 class="text-center">
+        Lista de Usuários
+    </h1>
+    <br>
+</div>
+
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger" role="alert">
@@ -24,14 +32,6 @@ else if (TempData["SuccessMessage"] != null)
     </div>
 }
 
-
-<div class="container-fluid py-3">
-    <br>
-    <h1 class="text-center">
-        Lista de Usuários
-    </h1>
-    <br>
-</div>
 
 @if (Model is not null && Model.Any())
 {

@@ -15,6 +15,30 @@
     <br>
 </div>
 
+@if (TempData["ErrorMessage"] != null)
+{
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-12 alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close">
+        </button>
+    </div>
+</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-12 alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                data-bs-dismiss="alert" aria-label="Close">
+        </button>
+    </div>
+</div>
+}
+
 <div class="d-flex justify-content-center align-items-center">
     <img style="width: min-content; height: 250px; object-fit: cover; border-radius: 5px" src="\Images/@Model.ImageUrl" alt="Imagem do Produto">
 </div>
@@ -25,7 +49,8 @@
     <form class="row g-3 d-flex justify-content-center align-items-center" enctype="multipart/form-data" asp-controller="Service" asp-action="Update" method="post">
 
         <input type="hidden" asp-for="ImageUrl">
-        <input type="hidden" asp-for="CategoryId">
+        @* <input type="hidden" asp-for="CategoryId"> *@
+        <input type="hidden" asp-for="CurrentName" value="@Model.Name">
 
         <div class="col-md-8">
             <label asp-for="@Model.Name" class="form-label">Nome<span style="color: red;">*</span></label>

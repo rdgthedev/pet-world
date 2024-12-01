@@ -4,8 +4,8 @@
 @model IEnumerable<PetWorldOficial.Application.ViewModels.Product.ProductDetailsViewModel>
 
 @{
-ViewData["Title"] = "Produtos";
-Layout = "_Layout";
+    ViewData["Title"] = "Produtos";
+    Layout = "_Layout";
 }
 
 <div class="container-fluid py-3">
@@ -18,170 +18,170 @@ Layout = "_Layout";
 
 @if (TempData["ErrorMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
-                data-bs-dismiss="alert" aria-label="Close">
-        </button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
-</div>
 }
 
 @if (TempData["SuccessMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
-                data-bs-dismiss="alert" aria-label="Close">
-        </button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-12 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
-</div>
 }
 
 @if (Model != null && Model.Any())
 {
-@if (User.IsInRole(ERole.Admin.ToString()))
-{
-<section class="my-5">
-    <div class="container">
-        <div class="row mb-3">
-            <div class="col-md-6 d-flex justify-content-start">
-                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
-                    <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Produto
-                </a>
-            </div>
-            <div class="col-md-6 d-flex justify-content-end">
-                <div class="input-group">
-                    <input type="text" id="productSearchAdmin" class="form-control" placeholder="Pesquisar produtos..."
-                           aria-label="Pesquisar produtos" aria-describedby="search-addon">
-                    <span class="input-group-text" id="search-addon">
+    @if (User.IsInRole(ERole.Admin.ToString()))
+    {
+        <section class="my-5">
+            <div class="container">
+                <div class="row mb-3">
+                    <div class="col-md-6 d-flex justify-content-start">
+                        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
+                            <img style="width: 25px" src="/Images/addition.svg" alt=""> Novo Produto
+                        </a>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <div class="input-group">
+                            <input type="text" id="productSearchAdmin" class="form-control" placeholder="Pesquisar produtos..."
+                                   aria-label="Pesquisar produtos" aria-describedby="search-addon">
+                            <span class="input-group-text" id="search-addon">
                                 <i class="fas fa-search"></i>
                             </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12" id="productList">
+                        @foreach (var product in Model)
+                        {
+                            <div class="card cart-card mb-3 product-item">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="d-flex">
+                                        <img
+                                            src="/Images/@product!.ImageUrl"
+                                            alt="Produto"
+                                            class="img-fluid me-4"
+                                            style=" width: 150px; height: 150px; object-fit: scale-down"/>
+                                        <div>
+                                            <h5 class="card-title">@product.Id - @product.Name</h5>
+                                            <br>
+                                            <div style="font-size: 0.875rem;">
+                                                <p class="card-text">
+                                                    <strong>Descrição:</strong> @product.Description
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>Categoria:</strong> @product.CategoryName
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>Fornecedor:</strong> @product.SupplierName
+                                                </p>
+                                                <p class="card-text">
+                                                    <strong>Preço:</strong> @product.Price.ToString("C", new CultureInfo("pt-BR"))
+                                                </p>
+                                                <p>
+                                                    <strong>Quantidade em estoque:</strong> @product.Stock.Quantity
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <a href="@Url.Action("Update", "Product", new { id = product.Id })"
+                                           class="btn btn-warning mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-edit me-2"></i> Editar
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="btn btn-danger d-flex align-items-center justify-content-center" style="border-radius: 10px;">
+                                            <i class="fas fa-trash me-2"></i> Deletar
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-12" id="productList">
+        </section>
+    }
+    else
+    {
+        <div class="container" id="productList">
+            <div class="row mb-3">
+                <div class="col-md-12 d-flex justify-content-start">
+                    <div class="input-group">
+                        <input type="text" id="productSearchClient" class="form-control" placeholder="Pesquisar produtos..."
+                               aria-label="Pesquisar produtos" aria-describedby="search-addon">
+                        <span class="input-group-text" id="search-addon">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 @foreach (var product in Model)
                 {
-                <div class="card cart-card mb-3 product-item">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div class="d-flex">
-                            <img
-                                src="/Images/@product!.ImageUrl"
-                                alt="Produto"
-                                class="img-fluid me-4"
-                                style=" width: 150px; height: 150px; object-fit: scale-down"/>
-                            <div>
-                                <h5 class="card-title">@product.Id - @product.Name</h5>
+                    <div class="col-md-3 mb-3 product-item">
+                        <div class="card h-100">
+                            <img src="/Images/@product.ImageUrl" class="card-img-top" alt="Produto"
+                                 style="height: 200px; object-fit: contain; width: 100%; margin-top: 10px;">
+                            <div class="card-body d-flex flex-column justify-content-between">
+                                <h6 class="card-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
+                                    @product.Name
+                                </h6>
                                 <br>
-                                <div style="font-size: 0.875rem;">
-                                    <p class="card-text">
-                                        <strong>Descrição:</strong> @product.Description
-                                    </p>
-                                    <p class="card-text">
-                                        <strong>Categoria:</strong> @product.CategoryName
-                                    </p>
-                                    <p class="card-text">
-                                        <strong>Fornecedor:</strong> @product.SupplierName
-                                    </p>
-                                    <p class="card-text">
-                                        <strong>Preço:</strong> @product.Price.ToString("C", new CultureInfo("pt-BR"))
-                                    </p>
-                                    <p>
-                                        <strong>Quantidade em estoque:</strong> @product.Stock.Quantity
-                                    </p>
+                                <p>
+                                    <h5>@product.Price.ToString("C", new CultureInfo("pt-BR"))</h5>
+                                </p>
+                                <div class="d-grid gap-2">
+                                    @if (product.Stock.Quantity > 0)
+                                    {
+                                        <a class="btn btn-dark add-to-cart" data-product-id="@product.Id">
+                                            <i class="fas fa-cart-plus me-3"></i> Adicionar ao carrinho
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-white bg-secondary d-flex justify-content-center align-items-center"
+                                              style="height: 35px; border-radius: 0.3rem; padding: 0.375rem 0.75rem;">
+                                            <i class="fas fa-exclamation-circle me-2"></i> Estoque esgotado
+                                        </span>
+                                    }
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex flex-column">
-                            <a href="@Url.Action("Update", "Product", new { id = product.Id })"
-                               class="btn btn-warning mb-2 d-flex align-items-center justify-content-center" style="border-radius: 10px;">
-                                <i class="fas fa-edit me-2"></i> Editar
-                            </a>
-                            <a href="@Url.Action("Delete", "Product", new { id = product.Id })" class="btn btn-danger d-flex align-items-center justify-content-center" style="border-radius: 10px;">
-                                <i class="fas fa-trash me-2"></i> Deletar
-                            </a>
-                        </div>
                     </div>
-                </div>
                 }
             </div>
         </div>
-    </div>
-</section>
+    }
 }
 else
 {
-<div class="container" id="productList">
-    <div class="row mb-3">
-        <div class="col-md-12 d-flex justify-content-start">
-            <div class="input-group">
-                <input type="text" id="productSearchClient" class="form-control" placeholder="Pesquisar produtos..."
-                       aria-label="Pesquisar produtos" aria-describedby="search-addon">
-                <span class="input-group-text" id="search-addon">
-                            <i class="fas fa-search"></i>
-                        </span>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        @foreach (var product in Model)
+    <div class="container-fluid text-black py-3">
+        <br>
+        <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
+            @TempData["ProductNotFound"]
+        </h2>
+        <br>
+        @if (User.IsInRole(ERole.Admin.ToString()))
         {
-        <div class="col-md-3 mb-3 product-item">
-            <div class="card h-100">
-                <img src="/Images/@product.ImageUrl" class="card-img-top" alt="Produto"
-                     style="height: 200px; object-fit: contain; width: 100%; margin-top: 10px;">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <h6 class="card-title" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
-                        @product.Name
-                    </h6>
-                    <br>
-                    <p>
-                    <h5>@product.Price.ToString("C", new CultureInfo("pt-BR"))</h5>
-                    </p>
-                    <div class="d-grid gap-2">
-                        @if (product.Stock.Quantity > 0)
-                        {
-                        <a class="btn btn-dark add-to-cart" data-product-id="@product.Id">
-                            <i class="fas fa-cart-plus me-3"></i> Adicionar ao carrinho
-                        </a>
-                        }
-                        else
-                        {
-                        <span class="text-white bg-secondary d-flex justify-content-center align-items-center"
-                              style="height: 35px; border-radius: 0.3rem; padding: 0.375rem 0.75rem;">
-                                            <i class="fas fa-exclamation-circle me-2"></i> Estoque esgotado
-                                        </span>
-                        }
-                    </div>
-                </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
+                    Adicionar Produto
+                </a>
             </div>
-        </div>
         }
     </div>
-</div>
-}
-}
-else
-{
-<div class="container-fluid text-black py-3">
-    <br>
-    <h2 class="text-center text-muted" style="font-size: 23px; font-weight: normal;">
-        @TempData["ProductNotFound"]
-    </h2>
-    <br>
-    @if (User.IsInRole(ERole.Admin.ToString()))
-    {
-    <div class="d-flex justify-content-center align-items-center">
-        <a class="btn btn-dark fw-normal shadow-none" asp-controller="Product" asp-action="Create">
-            Adicionar Produto
-        </a>
-    </div>
-    }
-</div>
 }
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

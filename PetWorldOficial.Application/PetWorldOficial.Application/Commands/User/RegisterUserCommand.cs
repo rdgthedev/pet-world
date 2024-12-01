@@ -24,7 +24,7 @@ public record RegisterUserCommand(
     [Required(ErrorMessage = "A rua é obrigatória!")]
     string Street,
     [Required(ErrorMessage = "O número é obrigatório!")]
-    [Range(1, int.MaxValue, ErrorMessage = "Esse número é inváliado!")]
+    [Range(1, int.MaxValue, ErrorMessage = "Esse número é inválido!")]
     int? Number,
     [Required(ErrorMessage = "O CEP é obrigatório!")]
     string PostalCode,

@@ -29,18 +29,6 @@ public class UpdateProductCommandHandler(
                 if (product is null)
                     throw new ProductNotFoundException("Produto não encontrado!");
 
-                if (!memoryCache.TryGetValue("Categories", out IEnumerable<CategoryDetailsViewModel>? categories))
-                {
-                    categories = await categoryService.GetAllProductCategories(cancellationToken);
-                    memoryCache.Set("Categories", categories, TimeSpan.FromHours(8));
-                }
-
-                if (!memoryCache.TryGetValue("Suppliers", out IEnumerable<SupplierDetailsViewModel>? suppliers))
-                {
-                    suppliers = await supplierService.GetAllAsync(cancellationToken);
-                    memoryCache.Set("Suppliers", suppliers, TimeSpan.FromHours(8));
-                }
-
                 request.Name = product.Name;
                 request.Description = product.Description;
                 request.Price = product.Price;
@@ -48,8 +36,8 @@ public class UpdateProductCommandHandler(
                 request.CategoryId = product.CategoryId;
                 request.ImageUrl = product.ImageUrl;
                 request.QuantityInStock = product.Stock.Quantity;
-                request.Categories = categories!;
-                request.Suppliers = suppliers!;
+                request.Categories = await categoryService.GetAllProductCategories(cancellationToken);
+                request.Suppliers = await supplierService.GetAllAsync(cancellationToken);
                 request.CategoryName = product.CategoryName;
                 request.SupplierName = product.SupplierName;
                 request.ProductId = product.Id;
