@@ -168,11 +168,11 @@ public class ScheduleController(
 
     [HttpGet]
     [Authorize(Roles = "Admin, User")]
-    public async Task<IActionResult> Update(int id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(Guid id, CancellationToken cancellationToken)
     {
         try
         {
-            var command = new UpdateSchedulingCommand(User) { Id = id };
+            var command = new UpdateSchedulingCommand(User) { Code = id };
             var result = await mediator.Send(command, cancellationToken);
             return View(result);
         }
@@ -190,7 +190,8 @@ public class ScheduleController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update(UpdateSchedulingCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(UpdateSchedulingCommand command,
+        CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {

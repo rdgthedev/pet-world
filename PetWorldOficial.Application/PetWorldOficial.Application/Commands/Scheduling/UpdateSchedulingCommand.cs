@@ -10,6 +10,7 @@ namespace PetWorldOficial.Application.Commands.Scheduling;
 public record UpdateSchedulingCommand(ClaimsPrincipal? UserPrincipal) : IRequest<UpdateSchedulingCommand>
 {
     public int Id { get; set; }
+    public int? SecondId { get; set; }
 
     [Required(ErrorMessage = "O pet é obrigatório!")]
     public int? AnimalId { get; set; }
