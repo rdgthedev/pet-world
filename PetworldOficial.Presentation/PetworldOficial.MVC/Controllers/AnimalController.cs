@@ -142,10 +142,15 @@ public class AnimalController(
             TempData["ErrorMessage"] = e.Message;
             return RedirectToAction("Login", "Auth");
         }
+        catch (InvalidExtensionException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View(command);
+        }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Ocorreu um erro interno. Não foi possível realizar o cadastro do pet!";
-            return View();
+            return View(command);
         }
 
         return RedirectToAction("Index");
