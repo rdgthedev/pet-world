@@ -219,13 +219,7 @@ else if (TempData["SuccessMessage"] != null)
                         console.log('Horários Disponíveis:', data);
                     },
                     error: function (xhr, status, error) {
-                        if (xhr.status === 404 || xhr.status === 500){
-                            var response = JSON.parse(xhr.responseText);
-                            window.location.href = response.redirectToUrl;
-                        }
-                        else {
-                            console.error('Erro ao buscar horários disponíveis:', error);
-                        }
+                        console.error('Erro ao buscar horários disponíveis:', error);
                     }
                 });
             }
@@ -272,13 +266,7 @@ else if (TempData["SuccessMessage"] != null)
                         console.log('Funcionários Disponíveis:', data);
                     },
                     error: function (xhr, status, error) {
-                        if (xhr.status === 404 || xhr.status === 500){
-                            var response = JSON.parse(xhr.responseText);
-                            window.location.href = response.redirectToUrl;
-                        }
-                        else{
-                            console.error('Erro ao buscar funcionários disponíveis:', error);
-                        }
+                        console.error('Erro ao buscar funcionários disponíveis:', error);
                     }
                 });
             }
