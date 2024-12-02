@@ -29,17 +29,17 @@ public class ScheduleController(
         catch (UserNotFoundException ex)
         {
             TempData["ErrorMessage"] = ex.Message;
-            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
+            return StatusCode(404, new { redirectToUrl = Url.Action("Index", "Service") });
         }
         catch (ServiceNotFoundException ex)
         {
             TempData["ErrorMessage"] = ex.Message;
-            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
+            return StatusCode(404, new { redirectToUrl = Url.Action("Index", "Service") });
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Não é possível agendar este serviço no momento. Tente novamente mais tarde!";
-            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
+            return StatusCode(500, new { redirectToUrl = Url.Action("Index", "Service") });
         }
     }
 
@@ -53,9 +53,15 @@ public class ScheduleController(
             var result = await mediator.Send(query, cancellationToken);
             return Json(result);
         }
+        catch (UserNotFoundException ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return StatusCode(404, new { redirectToUrl = Url.Action("Index", "Service") });
+        }
         catch (Exception)
         {
-            return RedirectToAction("Index", "Service");
+            TempData["ErrorMessage"] = "Não é possível agendar este serviço no momento. Tente novamente mais tarde!";
+            return StatusCode(500, new { redirectToUrl = Url.Action("Index", "Service") });
         }
     }
 
@@ -73,7 +79,6 @@ public class ScheduleController(
         catch (UserNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
-
             return RedirectToAction("Login", "Auth");
         }
         catch (ScheduleNotFoundException e)
@@ -260,7 +265,7 @@ public class ScheduleController(
 
     [HttpGet]
     public async Task<IActionResult> Cancel(
-        [FromQuery]  UpdateStatusToCanceledCommand command,
+        [FromQuery] UpdateStatusToCanceledCommand command,
         CancellationToken cancellationToken)
     {
         try

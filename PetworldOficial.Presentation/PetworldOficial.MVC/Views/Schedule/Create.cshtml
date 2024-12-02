@@ -113,21 +113,6 @@ else if (TempData["SuccessMessage"] != null)
             <span asp-validation-for="@Model.AnimalId" class="text-danger"></span>
         </div>
 
-        @* @if (Model != null && Model.Users.Count() > 0) *@
-        @* { *@
-        @*     <div class="col-md-8"> *@
-        @*         <label asp-for="@Model.UserId" class="form-label">Dono <span style="color: red;">*</span></label> *@
-        @*         <select asp-for="@Model.UserId" class="form-select shadow-none"> *@
-        @*             <option value="" selected disabled>Selecione o dono</option> *@
-        @*             @foreach (var user in Model.Users) *@
-        @*             { *@
-        @*                 <option value="@user!.Id">@user!.Email</option> *@
-        @*             } *@
-        @*         </select> *@
-        @*         <span asp-validation-for="UserId" class="text-danger"></span> *@
-        @*     </div> *@
-        @* } *@
-
         <div class="col-md-8">
             <label asp-for="@Model.EmployeeId" class="form-label">Funcionário <span style="color: red;">*</span></label>
             <select asp-for="@Model.EmployeeId" id="employee" class="form-select shadow-none">
@@ -234,7 +219,13 @@ else if (TempData["SuccessMessage"] != null)
                         console.log('Horários Disponíveis:', data);
                     },
                     error: function (xhr, status, error) {
-                        console.error('Erro ao buscar horários disponíveis:', error);
+                        if (xhr.status === 404 || xhr.status === 500){
+                            var response = JSON.parse(xhr.responseText);
+                            window.location.href = response.redirectToUrl;
+                        }
+                        else {
+                            console.error('Erro ao buscar horários disponíveis:', error);
+                        }
                     }
                 });
             }
@@ -281,7 +272,13 @@ else if (TempData["SuccessMessage"] != null)
                         console.log('Funcionários Disponíveis:', data);
                     },
                     error: function (xhr, status, error) {
-                        console.error('Erro ao buscar funcionários disponíveis:', error);
+                        if (xhr.status === 404 || xhr.status === 500){
+                            var response = JSON.parse(xhr.responseText);
+                            window.location.href = response.redirectToUrl;
+                        }
+                        else{
+                            console.error('Erro ao buscar funcionários disponíveis:', error);
+                        }
                     }
                 });
             }

@@ -7,7 +7,7 @@
     Layout = "_Layout";
 }
 
-<div class="container-fluid tpy-3">
+<div class="container-fluid py-3">
     <br>
     <h1 class="text-center">
         Dados do Serviço
@@ -17,26 +17,26 @@
 
 @if (TempData["ErrorMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
-                data-bs-dismiss="alert" aria-label="Close">
-        </button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-8 alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
-</div>
 }
 
 @if (TempData["SuccessMessage"] != null)
 {
-<div class="d-flex justify-content-center align-items-center">
-    <div class="col-md-12 alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-        <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
-                data-bs-dismiss="alert" aria-label="Close">
-        </button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="col-md-8 alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+            <button style="position: absolute; top: 0.7rem; right: 0; padding: 0.5rem 1rem;" type="button" class="btn-close"
+                    data-bs-dismiss="alert" aria-label="Close">
+            </button>
+        </div>
     </div>
-</div>
 }
 
 <div class="d-flex justify-content-center align-items-center">

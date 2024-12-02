@@ -1,8 +1,11 @@
 ﻿using System.Security.Claims;
+using AutoMapper;
 using MediatR;
+using PetWorldOficial.Application.Commands.Scheduling;
 using PetWorldOficial.Application.Queries.Schedule;
 using PetWorldOficial.Application.Services.Interfaces;
 using PetWorldOficial.Application.ViewModels.Schedule;
+using PetWorldOficial.Domain.Entities;
 using PetWorldOficial.Domain.Enums;
 using PetWorldOficial.Domain.Exceptions;
 
@@ -11,7 +14,8 @@ namespace PetWorldOficial.Application.Handlers.Scheduling;
 public class GetAllSchedulesQueryHandler(
     IScheduleService scheduleService,
     IUserService userService,
-    IAnimalService animalService) : IRequestHandler<GetAllSchedulesQuery, IEnumerable<ScheduleDetailsViewModel>>
+    IAnimalService animalService,
+    IMapper mapper) : IRequestHandler<GetAllSchedulesQuery, IEnumerable<ScheduleDetailsViewModel>>
 {
     public async Task<IEnumerable<ScheduleDetailsViewModel>> Handle(
         GetAllSchedulesQuery request,
@@ -29,21 +33,30 @@ public class GetAllSchedulesQueryHandler(
                 throw new UserNotFoundException("Ocorreu um erro. Tente fazer o login novamente no site." +
                                                 " Possívelmente sua sessão foi expirada!");
 
-            var isAdmin = request.UserPrincipal!.IsInRole(ERole.Admin.ToString());
+            var isAdmin = request.UserPrincipal.IsInRole(ERole.Admin.ToString());
+
+            IEnumerable<ScheduleDetailsViewModel> schedulingsResult = [];
+            var schedulingsUpdated = new List<ScheduleDetailsViewModel>();
 
             if (isAdmin)
             {
-                var schedulingsResult = await scheduleService.GetAll(cancellationToken);
-                schedulingsResult = GroupSchedulings(schedulingsResult.ToList());
+                schedulingsResult = await scheduleService.GetAll(cancellationToken);
+
+                schedulingsUpdated = await CancelExpiredSchedulings(
+                    schedulingsResult.ToList(),
+                    cancellationToken);
+
+                schedulingsResult = GroupSchedulings(schedulingsUpdated.ToList());
 
                 return schedulingsResult is null || !schedulingsResult.Any()
                     ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
                     : schedulingsResult
                         .OrderBy(s => s.Status != ESchedullingStatus.Pending.ToString())
                         .ThenBy(s => s.Status)
+                        .ThenByDescending(s => s.Date)
                         .ToList();
             }
-            
+
             var animalsIds = (await animalService.GetByOwnerId(user.Id, cancellationToken))
                 .Select(a => a!.Id).ToList();
 
@@ -51,15 +64,20 @@ public class GetAllSchedulesQueryHandler(
                 ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
                 : animalsIds;
 
-            var schedulings = await scheduleService.GetAllByAnimalsIds(animalsIds, cancellationToken);
+            schedulingsResult = await scheduleService.GetAllByAnimalsIds(animalsIds, cancellationToken);
 
-            schedulings = GroupSchedulings(schedulings.ToList());
+            schedulingsUpdated = await CancelExpiredSchedulings(
+                schedulingsResult.ToList(),
+                cancellationToken);
 
-            return schedulings is null || !schedulings.Any()
+            schedulingsResult = GroupSchedulings(schedulingsUpdated.ToList());
+
+            return schedulingsResult is null || !schedulingsResult.Any()
                 ? throw new ScheduleNotFoundException("Nenhum agendamento encontrado!")
-                : schedulings
+                : schedulingsResult
                     .OrderBy(s => s.Status != ESchedullingStatus.Pending.ToString())
                     .ThenBy(s => s.Status)
+                    .ThenByDescending(s => s.Date)
                     .ToList();
         }
         catch (Exception)
@@ -86,5 +104,42 @@ public class GetAllSchedulesQueryHandler(
             .ToList();
 
         return listOfSchedulings;
+    }
+
+    private async Task<List<ScheduleDetailsViewModel>> CancelExpiredSchedulings(
+        List<ScheduleDetailsViewModel> schedullings,
+        CancellationToken cancellationToken)
+    {
+        var expiredSchedulings = mapper.Map<List<Schedulling>>(schedullings)
+            .Where(s => s.Date < DateTime.Today && s.Status == ESchedullingStatus.Pending)
+            .ToList();
+
+        var schedulingsToUpdate = new List<Schedulling>();
+
+        foreach (var scheduling in expiredSchedulings)
+        {
+            scheduling.UpdateStatusToCanceled();
+            schedulingsToUpdate.Add(scheduling);
+        }
+
+        if (!expiredSchedulings.Any())
+            return schedullings;
+
+        await scheduleService.UpdateRange(
+            mapper.Map<List<UpdateSchedulingCommand>>(expiredSchedulings),
+            cancellationToken);
+
+        foreach (var scheduling in schedullings.ToList())
+        {
+            var schedulingToUpdate = schedulingsToUpdate?.FirstOrDefault(s => s.Id == scheduling.Id);
+
+            if (schedulingToUpdate is not null)
+            {
+                schedullings.Remove(scheduling);
+                schedullings.Add(mapper.Map<ScheduleDetailsViewModel>(schedulingToUpdate));
+            }
+        }
+
+        return schedullings;
     }
 }
