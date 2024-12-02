@@ -29,17 +29,17 @@ public class ScheduleController(
         catch (UserNotFoundException ex)
         {
             TempData["ErrorMessage"] = ex.Message;
-            return StatusCode(404, new { redirectToUrl = Url.Action("Index", "Service") });
+            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
         }
         catch (ServiceNotFoundException ex)
         {
             TempData["ErrorMessage"] = ex.Message;
-            return StatusCode(404, new { redirectToUrl = Url.Action("Index", "Service") });
+            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
         }
         catch (Exception)
         {
             TempData["ErrorMessage"] = "Não é possível agendar este serviço no momento. Tente novamente mais tarde!";
-            return StatusCode(500, new { redirectToUrl = Url.Action("Index", "Service") });
+            return Json(new { redirectToUrl = Url.Action("Index", "Service") });
         }
     }
 
@@ -53,15 +53,9 @@ public class ScheduleController(
             var result = await mediator.Send(query, cancellationToken);
             return Json(result);
         }
-        catch (UserNotFoundException ex)
-        {
-            TempData["ErrorMessage"] = ex.Message;
-            return StatusCode(404, new { redirectToUrl = Url.Action("Index", "Service") });
-        }
         catch (Exception)
         {
-            TempData["ErrorMessage"] = "Não é possível agendar este serviço no momento. Tente novamente mais tarde!";
-            return StatusCode(500, new { redirectToUrl = Url.Action("Index", "Service") });
+            return RedirectToAction("Index", "Service");
         }
     }
 
