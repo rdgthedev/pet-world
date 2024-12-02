@@ -160,6 +160,11 @@ public class ServiceController(
             TempData["SuccessMessage"] = result.Message;
             return RedirectToAction("Index");
         }
+        catch (InvalidExtensionException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return View(command);
+        }
         catch (ServiceAlreadyExistsException e)
         {
             TempData["ErrorMessage"] = e.Message;

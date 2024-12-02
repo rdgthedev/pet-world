@@ -224,8 +224,14 @@ else
                         alert('Erro: ' + response.message);
                     }
                 },
-                error: function() {
-                    alert('Ocorreu um erro ao adicionar o produto!');
+                error: function(xhr) {
+                    // Verifica se o status é 401 (não autorizado)
+                    if (xhr.status === 401) {
+                        // Redireciona para a página de login
+                        window.location.href = '@Url.Action("Login", "Auth")';
+                    } else {
+                        alert('Ocorreu um erro ao adicionar o produto!');
+                    }
                 }
             });
         });

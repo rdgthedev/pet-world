@@ -34,7 +34,8 @@ public class CartController(IMediator mediator) : Controller
 
         return View();
     }
-
+    
+    [Authorize(Roles = "User")]
     [HttpPost]
     public async Task<IActionResult> AddItem(
         AddOrIncreaseItemToCartCommand command,

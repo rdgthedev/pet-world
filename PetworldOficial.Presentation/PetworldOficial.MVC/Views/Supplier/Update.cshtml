@@ -36,20 +36,20 @@ else if (TempData["SuccessMessage"] != null)
     <input type="hidden" asp-for="Id">
 
     <div class="col-md-10">
-        <label asp-for="Name" class="form-label">Nome <span style="color: red;">*</span></label>
-        <input asp-for="Name" type="text" class="form-control shadow-none" placeholder="Nome">
+        <label asp-for="@Model.Name" class="form-label">Nome <span style="color: red;">*</span></label>
+        <input asp-for="@Model.Name" type="text" class="form-control shadow-none" placeholder="Nome">
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="col-md-10">
-        <label asp-for="CNPJ" class="form-label">CNPJ <span style="color: red;">*</span></label>
-        <input asp-for="CNPJ" type="text" class="form-control shadow-none">
+        <label asp-for="@Model.CNPJ" class="form-label">CNPJ <span style="color: red;">*</span></label>
+        <input asp-for="@Model.CNPJ" type="text" class="form-control shadow-none">
         <span asp-validation-for="CNPJ" class="text-danger"></span>
     </div>
 
     <div class="col-md-10">
-        <label asp-for="Email" class="form-label">E-mail <span style="color: red;">*</span></label>
-        <input asp-for="Email" type="email" class="form-control shadow-none" placeholder="email@exemplo.com">
+        <label asp-for="@Model.Email" class="form-label">E-mail <span style="color: red;">*</span></label>
+        <input asp-for="@Model.Email" type="email" class="form-control shadow-none" placeholder="email@exemplo.com">
         <span asp-validation-for="Email" class="text-danger"></span>
     </div>
 
@@ -98,8 +98,37 @@ else if (TempData["SuccessMessage"] != null)
 
     <div class="col-md-5">
         <label asp-for="State" class="form-label">Estado <span style="color: red;">*</span></label>
-        <input asp-for="State" type="text" class="form-control shadow-none">
-        <span asp-validation-for="State" class="text-danger"></span>
+        <select id="State" asp-for="State" name="State" class="form-select shadow-none">
+            <option value="@Model.State">@Model.State</option>
+            <option value="AC">AC</option>
+            <option value="AL">AL</option>
+            <option value="AP">AP</option>
+            <option value="AM">AM</option>
+            <option value="BA">BA</option>
+            <option value="CE">CE</option>
+            <option value="DF">DF</option>
+            <option value="ES">ES</option>
+            <option value="GO">GO</option>
+            <option value="MA">MA</option>
+            <option value="MT">MT</option>
+            <option value="MS">MS</option>
+            <option value="MG">MG</option>
+            <option value="PA">PA</option>
+            <option value="PB">PB</option>
+            <option value="PR">PR</option>
+            <option value="PE">PE</option>
+            <option value="PI">PI</option>
+            <option value="RJ">RJ</option>
+            <option value="RN">RN</option>
+            <option value="RS">RS</option>
+            <option value="RO">RO</option>
+            <option value="RR">RR</option>
+            <option value="SC">SC</option>
+            <option value="SP">SP</option>
+            <option value="SE">SE</option>
+            <option value="TO">TO</option>
+        </select>
+        <span class="text-danger" id="state-validation"></span>
         <br>
     </div>
     <div class="d-flex justify-content-center align-items-center">
